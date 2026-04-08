@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>オリエンテーション | データサイエンス実践コース</title>
+<link rel="stylesheet" href="_base.css">
+<style>
+  :root { --accent: #2C3E50; --accent2: #4A90D9; }
+  .slide-header { background: var(--accent); }
+  #progress-bar { background: var(--accent2); }
+  ul.points li::before { color: var(--accent2); }
+  .step-num { background: var(--accent2); }
+  .slide.type-title { background: linear-gradient(135deg, #1a2a4a 0%, #2C3E50 60%, #4A90D9 100%); }
+</style>
+</head>
+<body>
+<div class="presentation">
+<div id="progress-bar"></div>
+
+  <!-- S1: タイトル -->
+  <div class="slide type-title active">
+    <div class="title-wrap">
+      <div class="title-badge">2026年度 研修プログラム</div>
+      <div class="title-main">データサイエンス<br>実践コース</div>
+      <div class="title-sub">Pythonでデータ分析を体験する1日</div>
+      <div class="title-meta">9:00〜16:30 ／ Jupyter Lab（ローカル環境）</div>
+    </div>
+  </div>
+
+  <!-- S2: 今日のゴール -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">今日のゴール</h2>
+      <div class="highlight-box info" style="font-size:1.4em; margin-bottom:28px;">
+        「Pythonを使ったデータ分析がどうやってできるのか、<br>
+        データサイエンティストとして <strong>こういうことができる</strong> という<br>
+        実務イメージを持つ」
+      </div>
+      <ul class="points">
+        <li class="good">データを読み込んで集計できる</li>
+        <li class="good">グラフでデータの傾向を確認できる</li>
+        <li class="good">画像データが数値の配列だとわかる</li>
+        <li class="good">機械学習モデルを作って評価できる</li>
+        <li class="good">生成AIをコーディングに活用できる</li>
+      </ul>
+      <div class="highlight-box warn" style="margin-top:24px; font-size:1.15em;">
+        ❌ Pythonの文法を完全に覚える必要はありません<br>
+        ❌ コードをゼロから一人で書けなくても大丈夫です
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: DSの仕事フロー -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">データサイエンティストの仕事フロー</h2>
+      <div class="flow-row" style="margin: 20px 0 12px;">
+        <div class="flow-box" style="background:#4A90D9;">① データ<br>収集・準備</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#5BA85A;">② EDA<br>探索的分析</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#E8A838;">③ 可視化<br>仮説立て</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#C0392B;">④ モデル<br>構築・評価</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#8E44AD;">⑤ 結果の<br>解釈・報告</div>
+      </div>
+      <div style="text-align:center; color:#7f8c8d; font-size:1em; margin-bottom:20px;">← 今日体験する範囲 →</div>
+      <table class="slide-table" style="margin-top:8px;">
+        <thead><tr><th style="background:#2C3E50;">作業</th><th style="background:#2C3E50;">実務での時間比率（目安）</th></tr></thead>
+        <tbody>
+          <tr><td>データ収集・クリーニング</td><td>約 40〜50%</td></tr>
+          <tr><td>EDA・可視化</td><td>約 20〜30%</td></tr>
+          <tr><td>モデル構築・評価</td><td>約 10〜20%</td></tr>
+          <tr><td>結果の解釈・報告</td><td>約 10〜20%</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box info" style="margin-top:20px;">
+        <strong>ポイント：</strong>モデルを「作ること」より、データを理解し結果を解釈することの方が圧倒的に時間がかかります
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: スケジュール -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">本日のスケジュール</h2>
+      <table class="slide-table">
+        <thead><tr><th style="background:#2C3E50; width:180px;">時間</th><th style="background:#2C3E50; width:260px;">チャプター</th><th style="background:#2C3E50;">内容</th><th style="background:#2C3E50; width:180px;">形式</th></tr></thead>
+        <tbody>
+          <tr><td>9:00〜9:20</td><td>オリエンテーション</td><td>今日の流れ・生成AIルール</td><td>座学</td></tr>
+          <tr><td>9:20〜10:20</td><td style="color:#4A90D9;font-weight:700;">Ch.1 データ読み込み・集計</td><td>pandas基本操作</td><td>座学20分＋演習40分</td></tr>
+          <tr><td>10:20〜10:30</td><td style="color:#95a5a6;">休憩</td><td>—</td><td>—</td></tr>
+          <tr><td>10:30〜11:30</td><td style="color:#5BA85A;font-weight:700;">Ch.2 データ可視化・EDA</td><td>matplotlib / seaborn</td><td>座学20分＋演習40分</td></tr>
+          <tr><td>11:30〜12:30</td><td style="color:#E8A838;font-weight:700;">Ch.3 画像処理入門</td><td>Pillow × NumPy</td><td>座学20分＋演習40分</td></tr>
+          <tr><td>12:30〜13:30</td><td style="color:#95a5a6;">昼食</td><td>—</td><td>—</td></tr>
+          <tr><td>13:30〜14:30</td><td style="color:#C0392B;font-weight:700;">Ch.4 機械学習モデル構築</td><td>scikit-learn</td><td>座学20分＋演習40分</td></tr>
+          <tr><td>14:30〜14:40</td><td style="color:#95a5a6;">休憩</td><td>—</td><td>—</td></tr>
+          <tr><td>14:40〜16:10</td><td style="color:#8E44AD;font-weight:700;">Ch.5 総合演習</td><td>乳がん診断データで自力実装</td><td>演習90分</td></tr>
+          <tr><td>16:10〜16:30</td><td>まとめ・振り返り</td><td>気づきの整理・次のステップ</td><td>座学</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- S5: 生成AIルール -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">生成AIの活用ルール（本日共通）</h2>
+      <div style="font-size:1.3em; color:#2C3E50; margin-bottom:20px; text-align:center;">
+        生成AIは「賢いコーディング補助ツール」です
+      </div>
+      <div class="two-col">
+        <div class="col-box" style="background:#EBF5FB; border:2px solid #4A90D9;">
+          <h3 style="color:#2471A3;">✅ AIに任せてよいこと</h3>
+          <ul>
+            <li>コードの書き方がわからない</li>
+            <li>ライブラリのオプションを調べたい</li>
+            <li>エラーメッセージを修正したい</li>
+            <li>グラフの見た目を整えたい</li>
+            <li>ボイラープレートを生成したい</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FEF9E7; border:2px solid #E8A838;">
+          <h3 style="color:#9A7D0A;">⚡ 自分でやること</h3>
+          <ul>
+            <li>何を分析するかを決める</li>
+            <li>グラフから仮説を立てる</li>
+            <li>欠損値の処理方針を判断する</li>
+            <li>結果の数値を解釈する</li>
+            <li>ビジネス上の示唆を導き出す</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box danger" style="margin-top:20px; font-size:1.15em;">
+        「AIのコードが多すぎてわからない」を防ぐため、<strong>コードは少しずつ</strong>生成させましょう
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: プロンプトテンプレート -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">AIへの質問の仕方：プロンプトテンプレート</h2>
+      <pre class="code-block">【目的】ワインデータの品種ごとにアルコール度数の平均を集計したい
+【使うライブラリ】pandas
+【制約】Python 3.8、インターネット接続なし、外部ライブラリ追加不可
+【わからない点】groupby の書き方を教えてください</pre>
+      <div style="margin-top:24px;">
+        <table class="slide-table">
+          <thead><tr><th style="background:#C0392B;">悪いプロンプト例</th><th style="background:#C0392B;">問題点</th></tr></thead>
+          <tbody>
+            <tr><td>「機械学習のコードを書いて」</td><td>範囲が広すぎる → 理解できないコードが大量に出る</td></tr>
+            <tr><td>「このデータを分析して」</td><td>分析の目的が決まっていない</td></tr>
+            <tr><td>「エラーを直して」（コードを貼るだけ）</td><td>なぜエラーが起きたか理解できない</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="highlight-box success" style="margin-top:20px; font-size:1.15em;">
+        🔑 <strong>目的 → ライブラリ → 制約 → わからない点</strong> の4点を必ず書く
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: 使用データと環境 -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">本日の環境と使用データ</h2>
+      <div class="highlight-box info" style="margin-bottom:24px; font-size:1.2em;">
+        🖥️ <strong>環境：</strong>ローカル Jupyter Lab（インターネット接続不要）<br>
+        📦 <strong>ライブラリ：</strong>インストール済み環境のみ使用（追加インストール不要）
+      </div>
+      <table class="slide-table">
+        <thead><tr><th style="background:#2C3E50; width:120px;">チャプター</th><th style="background:#2C3E50;">データセット</th><th style="background:#2C3E50;">概要</th><th style="background:#2C3E50; width:200px;">読み込み方</th></tr></thead>
+        <tbody>
+          <tr><td>Ch.1〜4</td><td>ワインデータ<br><code>load_wine()</code></td><td>イタリア産ワイン 178件・13特徴量・3品種</td><td>sklearn.datasets</td></tr>
+          <tr><td>Ch.3</td><td>手書き数字<br><code>load_digits()</code></td><td>手書き数字 1,797枚・8×8ピクセル</td><td>sklearn.datasets</td></tr>
+          <tr><td>Ch.5</td><td>乳がん診断<br><code>load_breast_cancer()</code></td><td>腫瘍データ 569件・30特徴量・2クラス</td><td>sklearn.datasets</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box success" style="margin-top:20px; font-size:1.15em;">
+        ✅ すべて scikit-learn 内蔵データ → 追加ダウンロード不要
+      </div>
+    </div>
+  </div>
+
+  <!-- S8: 動作確認 -->
+  <div class="slide type-content">
+    <div class="slide-header">オリエンテーション</div>
+    <div class="slide-body">
+      <h2 class="slide-title">動作確認をしましょう</h2>
+      <div style="font-size:1.15em; color:#7f8c8d; margin-bottom:20px;">
+        <code>notebooks/ch1_data_analysis.ipynb</code> を Jupyter Lab で開き、最初のセルを実行してください
+      </div>
+      <pre class="code-block"><span class="kw">import</span> pandas <span class="kw">as</span> pd
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+<span class="kw">import</span> matplotlib.pyplot <span class="kw">as</span> plt
+<span class="kw">import</span> seaborn <span class="kw">as</span> sns
+<span class="kw">import</span> japanize_matplotlib
+<span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_wine
+<span class="kw">from</span> PIL <span class="kw">import</span> Image, ImageFilter
+
+<span class="fn">print</span>(<span class="st">'準備OK！'</span>)</pre>
+      <ul class="points" style="margin-top:24px;">
+        <li class="good">エラーなく実行できた → 準備完了です！</li>
+        <li class="warn">エラーが出た場合 → 講師に申し出てください</li>
+      </ul>
+    </div>
+  </div>
+
+<div id="nav">
+  <button onclick="prev()">&#9664;</button>
+  <span id="counter">1 / 8</span>
+  <button onclick="next()">&#9654;</button>
+</div>
+</div>
+
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+
+function show(n) {
+  slides[current].classList.remove('active');
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+}
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#nav')) { next(); }
+});
+
+show(0);
+
+function scaleSlides() {
+  const pres = document.querySelector('.presentation');
+  const scaleX = window.innerWidth  / 960;
+  const scaleY = window.innerHeight / 540;
+  const scale  = Math.min(scaleX, scaleY) * 0.96;
+  pres.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', scaleSlides);
+scaleSlides();
+</script>
+<div id="hint">← → キー / クリック でスライド移動　｜　F11 でフルスクリーン</div>
+</body>
+</html>

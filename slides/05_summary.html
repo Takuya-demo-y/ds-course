@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>まとめ・振り返り | データサイエンス実践コース</title>
+<link rel="stylesheet" href="_base.css">
+<style>
+  :root { --accent: #2C3E50; --accent2: #8E44AD; }
+  .slide-header { background: var(--accent); }
+  #progress-bar { background: var(--accent2); }
+  ul.points li::before { color: var(--accent2); }
+  .step-num { background: var(--accent2); }
+  .slide.type-title { background: linear-gradient(135deg, #1a0a2e 0%, #4a1a6e 50%, #8E44AD 100%); }
+
+  /* チェックリスト */
+  .check-group { margin-bottom:20px; }
+  .check-group h3 { font-size:1.1em; font-weight:700; margin-bottom:10px; }
+  .check-items { display:flex; flex-wrap:wrap; gap:8px; }
+  .check-item {
+    background:#f8f9fa; border:1.5px solid #dee2e6; border-radius:8px;
+    padding:8px 14px; font-size:1.0em; color:#495057; cursor:pointer;
+    transition: all 0.2s;
+    user-select:none;
+  }
+  .check-item.done { background:#EAFAF1; border-color:#5BA85A; color:#1E8449; }
+  .check-item.done::before { content:'✅ '; }
+  .check-item:not(.done)::before { content:'□ '; }
+</style>
+</head>
+<body>
+<div class="presentation">
+<div id="progress-bar"></div>
+
+  <!-- S1: タイトル -->
+  <div class="slide type-title active">
+    <div class="title-wrap">
+      <div class="title-badge">まとめ ／ 16:10〜16:30</div>
+      <div class="title-main">まとめ・振り返り</div>
+      <div class="title-sub">今日1日で体験した<br>データサイエンティストの仕事</div>
+    </div>
+  </div>
+
+  <!-- S2: 今日体験したこと -->
+  <div class="slide type-content">
+    <div class="slide-header">まとめ・振り返り</div>
+    <div class="slide-body">
+      <h2 class="slide-title">今日体験したこと</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr 1fr 1fr; gap:14px; flex:1;">
+        <div class="col-box" style="background:#EBF5FB; border:2px solid #4A90D9;">
+          <h3 style="color:#2471A3; font-size:1.05em;">Ch.1<br>pandas</h3>
+          <ul style="font-size:0.95em;">
+            <li>head / info / describe</li>
+            <li>欠損値処理</li>
+            <li>groupby・filter</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#EAFAF1; border:2px solid #5BA85A;">
+          <h3 style="color:#1E8449; font-size:1.05em;">Ch.2<br>EDA</h3>
+          <ul style="font-size:0.95em;">
+            <li>ヒストグラム</li>
+            <li>箱ひげ図</li>
+            <li>散布図・heatmap</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FEF9E7; border:2px solid #E8A838;">
+          <h3 style="color:#9A7D0A; font-size:1.05em;">Ch.3<br>画像処理</h3>
+          <ul style="font-size:0.95em;">
+            <li>画像＝数値配列</li>
+            <li>Pillow 操作</li>
+            <li>フィルタ処理</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FDEDEC; border:2px solid #C0392B;">
+          <h3 style="color:#922B21; font-size:1.05em;">Ch.4<br>機械学習</h3>
+          <ul style="font-size:0.95em;">
+            <li>train_test_split</li>
+            <li>StandardScaler</li>
+            <li>RF・混同行列</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#F4ECF7; border:2px solid #8E44AD;">
+          <h3 style="color:#7D3C98; font-size:1.05em;">Ch.5<br>総合演習</h3>
+          <ul style="font-size:0.95em;">
+            <li>全部使って自力実装</li>
+            <li>仮説→検証→解釈</li>
+            <li>AI活用しながら</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box info" style="margin-top:16px; font-size:1.15em;">
+        これが <strong>データサイエンティストの仕事の縮小版</strong> です
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: 全体フロー再確認 -->
+  <div class="slide type-content">
+    <div class="slide-header">まとめ・振り返り</div>
+    <div class="slide-body">
+      <h2 class="slide-title">データサイエンティストの仕事フロー（再確認）</h2>
+      <div class="flow-row" style="margin:20px 0 16px; gap:4px;">
+        <div class="flow-box" style="background:#4A90D9;">データを<br>読み込む</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#5BA85A;">データを<br>理解する（EDA）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#E8A838;">仮説を<br>立てる</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#C0392B;">モデルを<br>作る</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#8E44AD;">結果を<br>解釈する</div>
+      </div>
+      <table class="slide-table">
+        <thead><tr><th style="background:#2C3E50; width:200px;">ステップ</th><th style="background:#2C3E50; width:160px;">今日のChapter</th><th style="background:#2C3E50;">使ったツール・概念</th></tr></thead>
+        <tbody>
+          <tr><td>データを読み込む</td><td>Ch.1</td><td>pandas: read_csv / load_*() / head / info</td></tr>
+          <tr><td>データを理解する</td><td>Ch.1・2</td><td>describe / isnull / ヒストグラム / 箱ひげ図</td></tr>
+          <tr><td>仮説を立てる</td><td>Ch.2</td><td>散布図 / 相関ヒートマップ / 言語化</td></tr>
+          <tr><td>モデルを作る</td><td>Ch.4</td><td>train_test_split / StandardScaler / RandomForest</td></tr>
+          <tr><td>結果を解釈する</td><td>Ch.4・5</td><td>混同行列 / 特徴量重要度 / ビジネス示唆</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- S4: AI活用まとめ -->
+  <div class="slide type-content">
+    <div class="slide-header">まとめ・振り返り</div>
+    <div class="slide-body">
+      <h2 class="slide-title">生成AI活用の整理</h2>
+      <div class="two-col">
+        <div class="col-box" style="background:#EBF5FB; border:2px solid #4A90D9;">
+          <h3 style="color:#2471A3;">🤖 生成AIの役割</h3>
+          <ul>
+            <li>コードの書き方を教える</li>
+            <li>エラーメッセージを修正する</li>
+            <li>ライブラリのオプションを調べる</li>
+            <li>グラフの見た目を整える</li>
+            <li>ボイラープレートを自動生成する</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FEF9E7; border:2px solid #E8A838;">
+          <h3 style="color:#9A7D0A;">⚡ あなた（DS）の役割</h3>
+          <ul>
+            <li>何を分析するかを決める</li>
+            <li>グラフから仮説を立てる</li>
+            <li>欠損値の処理方針を判断する</li>
+            <li>結果の数値を解釈する</li>
+            <li>ビジネス上の示唆を導き出す</li>
+          </ul>
+        </div>
+      </div>
+      <div class="highlight-box success" style="margin-top:20px; font-size:1.2em;">
+        🔑 AIは「コーディングの補助ツール」<br>
+        <strong>分析の目的・設定と結果の解釈は、データサイエンティスト（あなた）の仕事</strong>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: 今日の気づきチェック -->
+  <div class="slide type-content">
+    <div class="slide-header">まとめ・振り返り</div>
+    <div class="slide-body">
+      <h2 class="slide-title">今日の「気づき」チェック（クリックで確認済みに）</h2>
+      <div class="check-group">
+        <h3 style="color:#4A90D9;">📊 Ch.1 データ分析</h3>
+        <div class="check-items">
+          <div class="check-item" onclick="this.classList.toggle('done')">df.info() で型と欠損を確認できる</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">欠損値は削除か補完で対処する</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">groupby でグループごとに集計できる</div>
+        </div>
+      </div>
+      <div class="check-group">
+        <h3 style="color:#5BA85A;">🖼️ Ch.2 可視化</h3>
+        <div class="check-items">
+          <div class="check-item" onclick="this.classList.toggle('done')">EDAの目的は仮説を立てること</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">相関 ≠ 因果（アイスと溺死の例）</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">グラフから気づきを言語化できる</div>
+        </div>
+      </div>
+      <div class="check-group">
+        <h3 style="color:#E8A838;">🖼️ Ch.3 画像処理</h3>
+        <div class="check-items">
+          <div class="check-item" onclick="this.classList.toggle('done')">画像 = 数値の2次元配列</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">グレースケール = 色情報を失う</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">PIL Image ↔ numpy を変換できる</div>
+        </div>
+      </div>
+      <div class="check-group">
+        <h3 style="color:#C0392B;">🤖 Ch.4 機械学習</h3>
+        <div class="check-items">
+          <div class="check-item" onclick="this.classList.toggle('done')">scaler.fit は訓練データのみ</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">混同行列で誤分類のパターンを確認</div>
+          <div class="check-item" onclick="this.classList.toggle('done')">正解率99%でも使えないモデルがある</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S6: 次のステップ -->
+  <div class="slide type-content">
+    <div class="slide-header">まとめ・振り返り</div>
+    <div class="slide-body">
+      <h2 class="slide-title">次のステップ：今日の先にあること</h2>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; flex:1;">
+        <div class="col-box" style="background:#EBF5FB; border:2px solid #4A90D9;">
+          <h3 style="color:#2471A3;">📚 実践力の強化（近い将来）</h3>
+          <ul>
+            <li>より多くのデータで練習（Kaggle）</li>
+            <li>SQL でデータ取得を学ぶ</li>
+            <li>統計学の基礎を補強する</li>
+            <li>自分の業務データで分析してみる</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#EAFAF1; border:2px solid #5BA85A;">
+          <h3 style="color:#1E8449;">🚀 専門スキルの深化（将来的に）</h3>
+          <ul>
+            <li>深層学習（画像・テキスト処理）</li>
+            <li>時系列分析</li>
+            <li>A/Bテスト設計</li>
+            <li>MLOps・本番環境への展開</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FEF9E7; border:2px solid #E8A838;">
+          <h3 style="color:#9A7D0A;">🎯 今すぐできること</h3>
+          <ul>
+            <li>今日のNotebookをもう一度手を動かして実行する</li>
+            <li>気になった特徴量・変数を深掘りしてみる</li>
+            <li>別のパラメータでモデルを試す</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FDEDEC; border:2px solid #C0392B;">
+          <h3 style="color:#922B21;">💡 学習のコツ</h3>
+          <ul>
+            <li>「完全に理解してから」より「使いながら理解する」</li>
+            <li>AIをうまく使って実装スピードを上げる</li>
+            <li>コードより「解釈」の練習に時間をかける</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: クロージング -->
+  <div class="slide type-content" style="background:linear-gradient(135deg, #1a0a2e 0%, #4a1a6e 50%, #8E44AD 100%);">
+    <div class="slide-header" style="background:rgba(0,0,0,0.3);">まとめ・振り返り</div>
+    <div class="slide-body" style="align-items:center; justify-content:center; text-align:center;">
+      <div style="font-size:2.5em; font-weight:800; color:#fff; margin-bottom:28px; line-height:1.3;">
+        おつかれさまでした！
+      </div>
+      <div style="display:flex; flex-direction:column; gap:20px; max-width:700px; margin:0 auto;">
+        <div style="background:rgba(255,255,255,0.15); border-radius:14px; padding:20px 28px; text-align:left; border:1px solid rgba(255,255,255,0.2);">
+          <div style="font-size:1.25em; color:#fff; font-weight:700; margin-bottom:8px;">🔑 今日覚えてほしい3つのこと</div>
+          <ul style="list-style:none; color:rgba(255,255,255,0.9); font-size:1.1em; line-height:1.7; padding-left:0.5em;">
+            <li>① DSの仕事の大半はEDA（データ理解）</li>
+            <li>② 生成AIはコードを書く「道具」、解釈はあなたの仕事</li>
+            <li>③ 「使いながら理解する」で十分です</li>
+          </ul>
+        </div>
+        <div style="background:rgba(255,255,255,0.1); border-radius:14px; padding:16px 24px; border:1px solid rgba(255,255,255,0.15);">
+          <div style="font-size:1.15em; color:rgba(255,255,255,0.85);">
+            アンケートへのご回答をお願いします（5分）<br>
+            <span style="font-size:0.85em; color:rgba(255,255,255,0.6);">正直な声が研修改善に直結します</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+<div id="nav">
+  <button onclick="prev()">&#9664;</button>
+  <span id="counter">1 / 7</span>
+  <button onclick="next()">&#9654;</button>
+</div>
+</div>
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+function show(n) {
+  slides[current].classList.remove('active');
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+}
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+document.addEventListener('click', e => {
+  if (!e.target.closest('#nav') && !e.target.classList.contains('check-item')) next();
+});
+show(0);
+
+function scaleSlides() {
+  const pres = document.querySelector('.presentation');
+  const scaleX = window.innerWidth  / 960;
+  const scaleY = window.innerHeight / 540;
+  const scale  = Math.min(scaleX, scaleY) * 0.96;
+  pres.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', scaleSlides);
+scaleSlides();
+</script>
+<div id="hint">← → キー / クリック でスライド移動　｜　F11 でフルスクリーン</div>
+</body>
+</html>

@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Ch.3 画像処理入門 | データサイエンス実践コース</title>
+<link rel="stylesheet" href="_base.css">
+<style>
+  :root { --accent: #E8A838; }
+  .slide-header { background: var(--accent); }
+  #progress-bar { background: #fdcb6e; }
+  ul.points li::before { color: var(--accent); }
+  .step-num { background: var(--accent); }
+  .slide.type-title { background: linear-gradient(135deg, #4a3000 0%, #d68910 60%, #fdcb6e 100%); }
+
+  /* ピクセルグリッド表示 */
+  .pixel-grid {
+    display: inline-grid;
+    grid-template-columns: repeat(8, 1fr);
+    gap: 2px;
+    border: 2px solid #E8A838;
+    border-radius: 6px;
+    padding: 6px;
+    background: #1e1e2e;
+  }
+  .pixel-cell {
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 3px;
+    font-size: 0.75em;
+    font-family: monospace;
+    font-weight: 600;
+  }
+</style>
+</head>
+<body>
+<div class="presentation">
+<div id="progress-bar"></div>
+
+  <!-- S1: タイトル -->
+  <div class="slide type-title active">
+    <div class="title-wrap">
+      <div class="title-badge">Ch.3 ／ 11:30〜12:30</div>
+      <div class="title-main">画像処理入門</div>
+      <div class="title-sub">Pillow × NumPy で学ぶ<br>「画像 ＝ 数値の配列」</div>
+      <div class="title-meta">座学 20分 ＋ 演習 40分</div>
+    </div>
+  </div>
+
+  <!-- S2: なぜ画像処理を学ぶか -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">なぜ画像処理を学ぶのか</h2>
+      <div style="font-size:1.2em; color:#7f8c8d; margin-bottom:20px;">
+        画像はデータの一種 → Python で扱える → 実務で広く使われている
+      </div>
+      <div style="display:grid; grid-template-columns:1fr 1fr 1fr; gap:16px; flex:1;">
+        <div class="col-box" style="background:#FEF9E7; border:2px solid #E8A838;">
+          <h3 style="color:#9A7D0A;">🏭 製造業</h3>
+          <ul>
+            <li>製品の傷・欠陥を自動検出</li>
+            <li>外観検査の自動化</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#EBF5FB; border:2px solid #4A90D9;">
+          <h3 style="color:#2471A3;">🏥 医療</h3>
+          <ul>
+            <li>レントゲン・MRI画像の解析</li>
+            <li>疾患の自動検出支援</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#EAFAF1; border:2px solid #5BA85A;">
+          <h3 style="color:#1E8449;">🏪 小売・物流</h3>
+          <ul>
+            <li>商品の棚卸し確認</li>
+            <li>バーコード・QR読み取り</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#F4ECF7; border:2px solid #8E44AD;">
+          <h3 style="color:#7D3C98;">🏦 金融</h3>
+          <ul>
+            <li>書類・帳票の文字認識（OCR）</li>
+            <li>本人確認書類の処理</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FDEDEC; border:2px solid #C0392B;">
+          <h3 style="color:#922B21;">🌾 農業</h3>
+          <ul>
+            <li>衛星画像で生育状況を分析</li>
+            <li>ドローン映像での病害虫検知</li>
+          </ul>
+        </div>
+        <div class="col-box" style="background:#FDFEFE; border:2px solid #BDC3C7;">
+          <h3 style="color:#555;">今日学ぶこと</h3>
+          <ul>
+            <li>画像の正体（数値配列）</li>
+            <li>Pillow での基本操作</li>
+            <li>フィルタ処理</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S3: 画像の正体 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">画像の正体：数値の2次元配列</h2>
+      <div class="two-col" style="align-items:center;">
+        <div>
+          <div style="font-size:1.2em; font-weight:700; color:#E8A838; margin-bottom:16px;">
+            「画像を見る」＝「数値の表を見る」
+          </div>
+          <div class="pixel-grid" id="grid"></div>
+          <div style="font-size:0.95em; color:#7f8c8d; margin-top:12px;">
+            手書き数字「0」の8×8ピクセル（値：0〜16）
+          </div>
+          <div class="highlight-box warn" style="margin-top:16px; font-size:1.1em;">
+            値が大きい（16に近い）= 明るい（白）<br>
+            値が小さい（0に近い）= 暗い（黒）
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="kw">from</span> sklearn.datasets <span class="kw">import</span> load_digits
+<span class="kw">import</span> numpy <span class="kw">as</span> np
+
+digits = <span class="fn">load_digits</span>()
+
+<span class="cm"># 1枚目の画像（数字「0」）</span>
+img = digits.images[<span class="nm">0</span>]
+<span class="fn">print</span>(img.shape)
+<span class="cm"># → (8, 8)  ← 8×8ピクセル</span>
+
+<span class="fn">print</span>(img.<span class="fn">astype</span>(<span class="fn">int</span>))
+<span class="cm"># → 数値の配列が表示される</span>
+
+<span class="cm"># 画像として表示</span>
+plt.<span class="fn">imshow</span>(img, cmap=<span class="st">'gray_r'</span>)
+plt.<span class="fn">show</span>()</pre>
+          <div class="highlight-box success" style="margin-top:12px; font-size:1.1em;">
+            🔑 画像 ＝ 数値の2次元配列<br>
+            だから NumPy で計算・統計処理できる！
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: グレースケールとRGB -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">グレースケールとカラー（RGB）の違い</h2>
+      <div class="two-col">
+        <div>
+          <div class="col-box" style="background:#f8f8f8; border:2px solid #BDC3C7; margin-bottom:16px;">
+            <h3 style="color:#555;">🔲 グレースケール</h3>
+            <ul>
+              <li>1チャンネル（明るさのみ）</li>
+              <li>配列の形：(縦, 横)</li>
+              <li>値の範囲：0〜255</li>
+              <li>色情報なし</li>
+            </ul>
+          </div>
+          <div class="col-box" style="background:#FFF3E0; border:2px solid #E8A838;">
+            <h3 style="color:#9A7D0A;">🌈 カラー（RGB）</h3>
+            <ul>
+              <li>3チャンネル（赤・緑・青）</li>
+              <li>配列の形：(縦, 横, 3)</li>
+              <li>各チャンネルの値：0〜255</li>
+              <li>3つの数値の組み合わせで色を表現</li>
+            </ul>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:1.15em; font-weight:700; color:#E8A838; margin-bottom:12px;">グレースケール変換とは？</div>
+          <div class="highlight-box danger" style="margin-bottom:16px; font-size:1.1em;">
+            色情報（RGB）を捨てて、<strong>明るさだけ</strong>を残す処理
+          </div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="kw">from</span> PIL <span class="kw">import</span> Image
+
+<span class="cm"># カラー画像を読み込み</span>
+img = Image.<span class="fn">open</span>(<span class="st">'photo.jpg'</span>)
+<span class="fn">print</span>(img.mode)  <span class="cm"># → 'RGB'</span>
+
+<span class="cm"># グレースケールに変換</span>
+img_gray = img.<span class="fn">convert</span>(<span class="st">'L'</span>)
+<span class="fn">print</span>(img_gray.mode)  <span class="cm"># → 'L'</span></pre>
+          <div class="highlight-box warn" style="margin-top:12px; font-size:1.1em;">
+            💡 グレースケール変換後は<br>「赤いリンゴ」と「緑のリンゴ」が<br>同じ明るさなら区別できなくなる
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: Pillowの基本操作 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">Pillow（PIL）の基本操作</h2>
+      <div style="font-size:1.1em; color:#7f8c8d; margin-bottom:16px;">numpy array ↔ PIL Image の変換が基本</div>
+      <div class="flow-row" style="margin-bottom:24px; gap:4px;">
+        <div class="flow-box" style="background:#4A90D9; font-size:0.95em;">numpy array<br>(数値の配列)</div>
+        <div style="display:flex;flex-direction:column;align-items:center;padding:0 4px;">
+          <div style="color:#5BA85A;font-size:0.9em;">→ Image.fromarray()</div>
+          <div style="color:#C0392B;font-size:0.9em;">← np.array()</div>
+        </div>
+        <div class="flow-box" style="background:#E8A838; font-size:0.95em;">PIL Image<br>(画像オブジェクト)</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#5BA85A; font-size:0.95em;">resize()<br>filter()<br>convert()</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#8E44AD; font-size:0.95em;">処理後の<br>PIL Image</div>
+      </div>
+      <pre class="code-block" style="font-size:1.05em;"><span class="cm"># numpy array → PIL Image</span>
+arr_scaled = (digits.images[<span class="nm">0</span>] / <span class="nm">16.0</span> * <span class="nm">255</span>).<span class="fn">astype</span>(np.uint8)
+img = Image.<span class="fn">fromarray</span>(arr_scaled, mode=<span class="st">'L'</span>)
+
+<span class="cm"># リサイズ（8×8 → 80×80）</span>
+img_large = img.<span class="fn">resize</span>((<span class="nm">80</span>, <span class="nm">80</span>), Image.NEAREST)
+
+<span class="cm"># PIL Image → numpy array（元に戻す）</span>
+arr_back = np.<span class="fn">array</span>(img_large)
+<span class="fn">print</span>(arr_back.shape)  <span class="cm"># → (80, 80)</span></pre>
+    </div>
+  </div>
+
+  <!-- S6: フィルタ処理 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">フィルタ処理：画像の見え方を変える</h2>
+      <div class="two-col">
+        <div>
+          <table class="slide-table">
+            <thead><tr><th style="background:#E8A838; width:180px;">フィルタ名</th><th style="background:#E8A838;">効果</th></tr></thead>
+            <tbody>
+              <tr><td><code>BLUR</code></td><td>周辺ピクセルの平均 → エッジがなめらかに（ぼかし）</td></tr>
+              <tr><td><code>SHARPEN</code></td><td>中心を強調 → エッジが際立つ（シャープ化）</td></tr>
+              <tr><td><code>CONTOUR</code></td><td>差分を抽出 → 境界線（輪郭）だけが残る</td></tr>
+              <tr><td><code>EMBOSS</code></td><td>凹凸感を表現（浮き彫り）</td></tr>
+              <tr><td><code>SMOOTH</code></td><td>BLURより弱いなめらかさ</td></tr>
+            </tbody>
+          </table>
+          <div class="highlight-box info" style="margin-top:16px; font-size:1.1em;">
+            フィルタの仕組み：周辺ピクセルの値を使った計算（畳み込み演算）
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="kw">from</span> PIL <span class="kw">import</span> Image, ImageFilter
+
+img_base = <span class="cm"># （画像の準備）</span>
+
+<span class="cm"># フィルタを適用</span>
+img_blur = img_base.<span class="fn">filter</span>(
+    ImageFilter.BLUR
+)
+img_contour = img_base.<span class="fn">filter</span>(
+    ImageFilter.CONTOUR
+)
+img_sharp = img_base.<span class="fn">filter</span>(
+    ImageFilter.SHARPEN
+)
+
+<span class="cm"># 並べて表示（subplot）</span>
+fig, axes = plt.<span class="fn">subplots</span>(<span class="nm">1</span>, <span class="nm">3</span>)
+<span class="kw">for</span> ax, img <span class="kw">in</span> <span class="fn">zip</span>(axes,
+    [img_base, img_blur, img_contour]):
+    ax.<span class="fn">imshow</span>(img, cmap=<span class="st">'gray_r'</span>)
+plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: ピクセル値の統計 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">画像データの統計分析</h2>
+      <div class="highlight-box success" style="font-size:1.3em; margin-bottom:20px;">
+        画像 ＝ 数値 → 統計量を計算できる → 機械学習の<strong>特徴量</strong>として使える！
+      </div>
+      <div class="two-col">
+        <div>
+          <ul class="points">
+            <li>平均ピクセル値 → 画像の「明るさ」を数値化</li>
+            <li>標準偏差 → 明暗のばらつき（コントラスト）</li>
+            <li>最大・最小 → 最も明るい/暗い箇所</li>
+            <li>0超のピクセル数 → 「描かれている量」</li>
+          </ul>
+          <div class="highlight-box info" style="margin-top:20px; font-size:1.1em;">
+            💡 実務では画像の特徴量（平均輝度・エッジ量など）を計算して機械学習モデルに入力します
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="cm"># PIL Image → numpy array</span>
+arr = np.<span class="fn">array</span>(img_large)
+
+<span class="cm"># 統計量の計算</span>
+<span class="fn">print</span>(<span class="st">'明るさ（平均）:'</span>, arr.<span class="fn">mean</span>())
+<span class="fn">print</span>(<span class="st">'コントラスト:'</span>, arr.<span class="fn">std</span>())
+<span class="fn">print</span>(<span class="st">'最大値:'</span>, arr.<span class="fn">max</span>())
+<span class="fn">print</span>(<span class="st">'最小値:'</span>, arr.<span class="fn">min</span>())
+
+<span class="cm"># 描かれているピクセルの割合</span>
+drawn = (arr > <span class="nm">0</span>).<span class="fn">mean</span>() * <span class="nm">100</span>
+<span class="fn">print</span>(<span class="st">f'描画率: {drawn:.1f}%'</span>)</pre>
+          <div class="highlight-box warn" style="margin-top:12px; font-size:1.05em;">
+            数字「1」は細くてピクセルが少ない<br>→ 平均が低い（暗い）
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S8: 演習の進め方 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">演習の進め方（40分）</h2>
+      <div style="font-size:1.1em; color:#7f8c8d; margin-bottom:16px;">
+        <code>notebooks/ch3_image_processing.ipynb</code> の演習セクション
+      </div>
+      <div class="step-list">
+        <div class="step-item">
+          <div class="step-num">問1</div>
+          <div class="step-text">好きな数字（0〜9）を選んで、フィルタ処理の前後を並べて表示する
+            <small>ヒント：prepare_digit_image(idx) 関数を使います</small></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">問2</div>
+          <div class="step-text">同じ数字の複数枚を並べて表示し、手書きのばらつきを確認する
+            <small>→ AIにとって「なぜ難しいか」を体感する</small></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">問3</div>
+          <div class="step-text">フィルタ前後でピクセル値の統計（平均・標準偏差）がどう変わるか確認する
+            <small>→ なぜ変化するか理由を考えてみましょう</small></div>
+        </div>
+        <div class="step-item">
+          <div class="step-num">問4</div>
+          <div class="step-text">（発展）NumPyで2値化処理（閾値でモノクロに変換）を実装する
+            <small>ヒント：np.where(条件, 255, 0)</small></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9: まとめ -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.3 画像処理入門</div>
+    <div class="slide-body">
+      <h2 class="slide-title">Ch.3 まとめ</h2>
+      <table class="slide-table" style="margin-bottom:20px;">
+        <thead><tr><th style="background:#E8A838; width:260px;">操作</th><th style="background:#E8A838;">コード</th></tr></thead>
+        <tbody>
+          <tr><td>numpy → PIL Image</td><td><code>Image.fromarray(arr, mode='L')</code></td></tr>
+          <tr><td>PIL Image → numpy</td><td><code>np.array(img)</code></td></tr>
+          <tr><td>リサイズ</td><td><code>img.resize((幅, 高さ), Image.NEAREST)</code></td></tr>
+          <tr><td>グレースケール変換</td><td><code>img.convert('L')</code></td></tr>
+          <tr><td>フィルタ適用</td><td><code>img.filter(ImageFilter.BLUR)</code></td></tr>
+          <tr><td>ピクセル統計</td><td><code>np.array(img).mean() / .std()</code></td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box success" style="font-size:1.2em; margin-bottom:12px;">
+        🔑 <strong>画像 ＝ 数値の2次元配列</strong>。だから NumPy で統計処理・機械学習に活用できる
+      </div>
+      <div class="highlight-box info" style="font-size:1.2em;">
+        ➡️ 午後は <strong>Ch.4 機械学習モデル構築</strong>。いよいよモデルを作ります！
+      </div>
+    </div>
+  </div>
+
+<div id="nav">
+  <button onclick="prev()">&#9664;</button>
+  <span id="counter">1 / 9</span>
+  <button onclick="next()">&#9654;</button>
+</div>
+</div>
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+function show(n) {
+  slides[current].classList.remove('active');
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+}
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+document.addEventListener('click', e => { if (!e.target.closest('#nav')) next(); });
+
+// ピクセルグリッド描画
+const sampleDigit = [
+  [0,0,5,13,9,1,0,0],
+  [0,0,13,15,10,15,5,0],
+  [0,3,15,2,0,11,8,0],
+  [0,4,12,0,0,8,8,0],
+  [0,5,8,0,0,9,8,0],
+  [0,4,11,0,1,12,7,0],
+  [0,2,14,5,10,12,0,0],
+  [0,0,6,13,10,0,0,0]
+];
+const grid = document.getElementById('grid');
+if (grid) {
+  sampleDigit.forEach(row => {
+    row.forEach(val => {
+      const cell = document.createElement('div');
+      cell.className = 'pixel-cell';
+      cell.textContent = val;
+      const g = Math.round((1 - val / 16) * 255);
+      cell.style.background = `rgb(${g},${g},${g})`;
+      cell.style.color = val > 8 ? '#333' : '#eee';
+      grid.appendChild(cell);
+    });
+  });
+}
+show(0);
+
+function scaleSlides() {
+  const pres = document.querySelector('.presentation');
+  const scaleX = window.innerWidth  / 960;
+  const scaleY = window.innerHeight / 540;
+  const scale  = Math.min(scaleX, scaleY) * 0.96;
+  pres.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', scaleSlides);
+scaleSlides();
+</script>
+<div id="hint">← → キー / クリック でスライド移動　｜　F11 でフルスクリーン</div>
+</body>
+</html>

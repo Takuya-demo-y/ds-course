@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<title>Ch.4 機械学習モデル構築 | データサイエンス実践コース</title>
+<link rel="stylesheet" href="_base.css">
+<style>
+  :root { --accent: #C0392B; }
+  .slide-header { background: var(--accent); }
+  #progress-bar { background: #e17055; }
+  ul.points li::before { color: var(--accent); }
+  .step-num { background: var(--accent); }
+  .slide.type-title { background: linear-gradient(135deg, #4a0000 0%, #922B21 60%, #e17055 100%); }
+
+  /* 混同行列 */
+  .cm-grid {
+    display: grid;
+    grid-template-columns: 160px 1fr 1fr;
+    grid-template-rows: 40px 1fr 1fr;
+    gap: 3px;
+    max-width: 500px;
+    margin: 0 auto;
+  }
+  .cm-header { display:flex; align-items:center; justify-content:center; font-weight:700; font-size:1.05em; color:#555; }
+  .cm-cell { display:flex; align-items:center; justify-content:center; border-radius:8px; padding:14px; text-align:center; font-size:1.0em; line-height:1.4; font-weight:600; }
+</style>
+</head>
+<body>
+<div class="presentation">
+<div id="progress-bar"></div>
+
+  <!-- S1: タイトル -->
+  <div class="slide type-title active">
+    <div class="title-wrap">
+      <div class="title-badge">Ch.4 ／ 13:30〜14:30</div>
+      <div class="title-main">機械学習モデル構築</div>
+      <div class="title-sub">scikit-learn で学ぶ<br>データ → 学習 → 評価の流れ</div>
+      <div class="title-meta">座学 20分 ＋ 演習 40分</div>
+    </div>
+  </div>
+
+  <!-- S2: ワークフロー -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">機械学習の全体ワークフロー</h2>
+      <div class="flow-row" style="margin:16px 0 20px; gap:3px;">
+        <div class="flow-box" style="background:#4A90D9; font-size:0.95em;">① データ準備<br>・分割</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#5BA85A; font-size:0.95em;">② 前処理<br>スケーリング</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#E8A838; font-size:0.95em;">③ モデル<br>学習</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#C0392B; font-size:0.95em;">④ 予測</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#8E44AD; font-size:0.95em;">⑤ 評価</div>
+      </div>
+      <table class="slide-table">
+        <thead><tr><th style="background:#C0392B; width:60px;">ステップ</th><th style="background:#C0392B; width:220px;">コード</th><th style="background:#C0392B;">目的</th></tr></thead>
+        <tbody>
+          <tr><td>①</td><td><code>train_test_split()</code></td><td>学習用データとテスト用データを分ける</td></tr>
+          <tr><td>②</td><td><code>StandardScaler()</code></td><td>変数のスケール（大きさ）を揃える</td></tr>
+          <tr><td>③</td><td><code>model.fit(X_train, y_train)</code></td><td>訓練データでモデルを学習する</td></tr>
+          <tr><td>④</td><td><code>model.predict(X_test)</code></td><td>テストデータで予測値を出力する</td></tr>
+          <tr><td>⑤</td><td><code>accuracy_score() / confusion_matrix()</code></td><td>予測の正確さを測る</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- S3: データ分割 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">なぜデータを「分割」するのか</h2>
+      <div style="background:#f8f9fa; border-radius:12px; padding:20px; margin-bottom:20px;">
+        <div style="font-size:1.1em; color:#7f8c8d; margin-bottom:12px; text-align:center;">全データ（178件）</div>
+        <div style="display:flex; gap:6px; height:64px; border-radius:8px; overflow:hidden;">
+          <div style="flex:8; background:#4A90D9; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:1.1em; border-radius:8px 0 0 8px;">訓練データ（80% = 142件）<br><span style="font-size:0.8em; font-weight:400;">model.fit() で使う</span></div>
+          <div style="flex:2; background:#E8A838; display:flex; align-items:center; justify-content:center; color:white; font-weight:700; font-size:1.0em; text-align:center; border-radius:0 8px 8px 0;">テスト<br>（20%）<br>評価専用</div>
+        </div>
+      </div>
+      <div class="two-col">
+        <div>
+          <div class="highlight-box danger" style="font-size:1.15em; margin-bottom:12px;">
+            ❌ なぜ「覚えたデータで答え合わせ」はダメか？<br>
+            → 丸暗記のように見えて実力がわからない（過学習）
+          </div>
+          <div class="highlight-box success" style="font-size:1.15em;">
+            ✅ テストデータ ＝「未知のデータ」<br>
+            → 本番環境での性能を事前に確認できる
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="fn">X_train, X_test,
+y_train, y_test</span> = train_test_split(
+    X, y,
+    test_size=<span class="nm">0.2</span>,
+    random_state=<span class="nm">42</span>,
+    stratify=y  <span class="cm"># 品種比率を保つ</span>
+)
+
+<span class="fn">print</span>(<span class="st">'訓練:'</span>, X_train.shape)
+<span class="fn">print</span>(<span class="st">'テスト:'</span>, X_test.shape)</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S4: スケーリング -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">なぜスケーリングが必要か</h2>
+      <div class="highlight-box danger" style="font-size:1.2em; margin-bottom:20px;">
+        ⚠️ アルコール度数（約12〜15）とプロリン含有量（約278〜1680）<br>→ スケールが全く違う！ → <strong>大きい値の変数が不当に影響力を持つ</strong>
+      </div>
+      <div class="two-col">
+        <div>
+          <div style="font-size:1.15em; font-weight:700; color:#C0392B; margin-bottom:12px;">StandardScaler の仕組み</div>
+          <div class="highlight-box info" style="font-size:1.1em; margin-bottom:12px;">
+            各変数を <strong>平均0・標準偏差1</strong> になるよう変換<br>
+            → すべての変数のスケールが揃う
+          </div>
+          <div class="highlight-box danger" style="font-size:1.15em;">
+            🔑 <strong>最重要ルール</strong><br>
+            <code>scaler.fit()</code> は<strong>訓練データのみ</strong><br>
+            テストデータには <code>transform()</code> だけ！
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="kw">from</span> sklearn.preprocessing <span class="kw">import</span> StandardScaler
+
+scaler = <span class="fn">StandardScaler</span>()
+
+<span class="cm"># fit は訓練データのみ！</span>
+X_train_scaled = scaler.<span class="fn">fit_transform</span>(X_train)
+
+<span class="cm"># テストデータは transform のみ</span>
+X_test_scaled = scaler.<span class="fn">transform</span>(X_test)
+
+<span class="cm"># ❌ 絶対にやってはいけない：</span>
+<span class="cm"># X_test_scaled = scaler.fit_transform(X_test)</span>
+<span class="cm"># ← テストデータの情報でfitするとデータリーク！</span></pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S5: ランダムフォレスト -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">ランダムフォレストとは</h2>
+      <div style="text-align:center; font-size:1.3em; font-weight:700; color:#C0392B; margin-bottom:20px;">
+        「たくさんの決定木の 多数決」
+      </div>
+      <div style="display:flex; justify-content:center; align-items:center; gap:16px; margin-bottom:20px;">
+        <div style="text-align:center; background:#EBF5FB; border-radius:10px; padding:16px 20px; border:2px solid #4A90D9;">
+          <div style="font-size:1.1em; font-weight:700; color:#4A90D9;">決定木 1</div>
+          <div style="font-size:1.5em; margin:8px 0;">🌳</div>
+          <div style="color:#4A90D9; font-weight:700;">Barolo</div>
+        </div>
+        <div style="text-align:center; background:#EAFAF1; border-radius:10px; padding:16px 20px; border:2px solid #5BA85A;">
+          <div style="font-size:1.1em; font-weight:700; color:#5BA85A;">決定木 2</div>
+          <div style="font-size:1.5em; margin:8px 0;">🌳</div>
+          <div style="color:#5BA85A; font-weight:700;">Barolo</div>
+        </div>
+        <div style="text-align:center; background:#FEF9E7; border-radius:10px; padding:16px 20px; border:2px solid #E8A838;">
+          <div style="font-size:1.1em; font-weight:700; color:#E8A838;">決定木 3</div>
+          <div style="font-size:1.5em; margin:8px 0;">🌳</div>
+          <div style="color:#E8A838; font-weight:700;">Grignolino</div>
+        </div>
+        <div style="font-size:2em; color:#555;">→</div>
+        <div style="text-align:center; background:#F4ECF7; border-radius:10px; padding:16px 24px; border:2px solid #8E44AD;">
+          <div style="font-size:1.1em; font-weight:700; color:#8E44AD;">多数決</div>
+          <div style="font-size:1.5em; margin:8px 0;">🗳️</div>
+          <div style="color:#8E44AD; font-weight:700;">Barolo（2:1）</div>
+        </div>
+      </div>
+      <pre class="code-block" style="font-size:1.05em;"><span class="kw">from</span> sklearn.ensemble <span class="kw">import</span> RandomForestClassifier
+
+model = <span class="fn">RandomForestClassifier</span>(
+    n_estimators=<span class="nm">100</span>,  <span class="cm"># 決定木の本数（多いほど安定）</span>
+    random_state=<span class="nm">42</span>
+)
+model.<span class="fn">fit</span>(X_train_scaled, y_train)
+y_pred = model.<span class="fn">predict</span>(X_test_scaled)</pre>
+      <ul class="points" style="margin-top:12px;">
+        <li>各決定木がバラバラなデータ・特徴量で学習する → 多様性が生まれる</li>
+        <li>多数決で最終結果 → 一つの木のミスをカバーできる（過学習しにくい）</li>
+      </ul>
+    </div>
+  </div>
+
+  <!-- S6: 混同行列 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">混同行列（Confusion Matrix）の読み方</h2>
+      <div class="two-col" style="align-items:start;">
+        <div>
+          <div class="cm-grid">
+            <div></div>
+            <div class="cm-header">予測: 陽性</div>
+            <div class="cm-header">予測: 陰性</div>
+            <div class="cm-header">実際: 陽性</div>
+            <div class="cm-cell" style="background:#D5F5E3; color:#1E8449;">TP（正解）<br>陽性→陽性と予測<br>✅</div>
+            <div class="cm-cell" style="background:#FDEDEC; color:#922B21;">FN（見逃し）<br>陽性→陰性と予測<br>⚠️</div>
+            <div class="cm-header">実際: 陰性</div>
+            <div class="cm-cell" style="background:#FEF9E7; color:#9A7D0A;">FP（誤検知）<br>陰性→陽性と予測<br>⚠️</div>
+            <div class="cm-cell" style="background:#D5F5E3; color:#1E8449;">TN（正解）<br>陰性→陰性と予測<br>✅</div>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:1.1em; font-weight:700; color:#C0392B; margin-bottom:12px;">重要な評価指標</div>
+          <table class="slide-table" style="font-size:1.05em;">
+            <tbody>
+              <tr><td><strong>Accuracy</strong></td><td>全体の正解率 ＝ (TP+TN) / 全体</td></tr>
+              <tr><td><strong>Precision</strong></td><td>予測が正解だった割合 ＝ TP / (TP+FP)<br><small>誤検知を減らしたい場合に重視</small></td></tr>
+              <tr><td><strong>Recall</strong></td><td>実際の陽性を拾えた割合 ＝ TP / (TP+FN)<br><small>見逃しを防ぎたい場合に重視</small></td></tr>
+            </tbody>
+          </table>
+          <div class="highlight-box warn" style="margin-top:14px; font-size:1.1em;">
+            対角成分（TP + TN）= 正解した件数<br>
+            対角以外 = 誤分類 → <strong>どう間違えたか</strong>が重要
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S7: 正解率の落とし穴 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">正解率（Accuracy）だけでは不十分な場合</h2>
+      <div class="highlight-box info" style="font-size:1.2em; margin-bottom:20px;">
+        📊 例：1,000件中 990件が「陰性」、10件が「陽性」のデータ
+      </div>
+      <div class="flow-row" style="gap:4px; margin-bottom:20px;">
+        <div class="flow-box" style="background:#4A90D9; font-size:0.9em;">「全部陰性」と<br>予測するモデル</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#5BA85A; font-size:0.9em;">正解率 = 99%<br>（高い！）</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#C0392B; font-size:0.9em;">陽性10件を<br>全部見逃している！</div>
+        <div class="flow-arrow">→</div>
+        <div class="flow-box" style="background:#8E44AD; font-size:0.9em;">Recall = 0%<br>使えないモデル</div>
+      </div>
+      <table class="slide-table">
+        <thead><tr><th style="background:#C0392B; width:200px;">業務シーン</th><th style="background:#C0392B;">重視する指標</th><th style="background:#C0392B;">理由</th></tr></thead>
+        <tbody>
+          <tr><td>医療検査（がん検診）</td><td><strong>Recall（再現率）</strong></td><td>陽性の見逃しが命取り（FN を減らす）</td></tr>
+          <tr><td>迷惑メールフィルタ</td><td><strong>Precision（適合率）</strong></td><td>正常メールを誤削除したくない（FP を減らす）</td></tr>
+          <tr><td>不良品検査</td><td><strong>Recall（再現率）</strong></td><td>不良品の見逃しはクレームに直結</td></tr>
+        </tbody>
+      </table>
+      <div class="highlight-box success" style="margin-top:16px; font-size:1.15em;">
+        🔑 正解率は「必ず見る指標」だが、<strong>混同行列と合わせて</strong>評価することが重要
+      </div>
+    </div>
+  </div>
+
+  <!-- S8: 特徴量重要度 -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">特徴量重要度：何が予測に効いているか</h2>
+      <div class="two-col">
+        <div>
+          <div style="font-size:1.15em; font-weight:700; color:#C0392B; margin-bottom:12px;">特徴量重要度とは</div>
+          <ul class="points">
+            <li>ランダムフォレストが自動的に計算する</li>
+            <li>どの特徴量が予測に貢献しているか</li>
+            <li>値の合計 = 1.0</li>
+            <li>大きいほど「予測に効いている」</li>
+          </ul>
+          <div class="highlight-box success" style="margin-top:20px; font-size:1.15em;">
+            💡 Ch.2のEDAで「プロリンが重要そう」と仮説を立てた<br>→ 特徴量重要度で仮説を検証できる！
+          </div>
+        </div>
+        <div>
+          <pre class="code-block" style="font-size:1.0em;"><span class="kw">import</span> pandas <span class="kw">as</span> pd
+
+<span class="cm"># 特徴量重要度を取得</span>
+importances = pd.<span class="fn">Series</span>(
+    model.feature_importances_,
+    index=wine.feature_names
+)
+
+<span class="cm"># 重要度の高い順にソート</span>
+importances = importances.<span class="fn">sort_values</span>(
+    ascending=<span class="kw">True</span>
+)
+
+<span class="cm"># 棒グラフで可視化</span>
+importances.<span class="fn">plot</span>(kind=<span class="st">'barh'</span>)
+plt.<span class="fn">title</span>(<span class="st">'特徴量重要度'</span>)
+plt.<span class="fn">show</span>()</pre>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- S9: まとめ -->
+  <div class="slide type-content">
+    <div class="slide-header">Ch.4 機械学習モデル構築</div>
+    <div class="slide-body">
+      <h2 class="slide-title">Ch.4 まとめ</h2>
+      <table class="slide-table" style="margin-bottom:16px;">
+        <thead><tr><th style="background:#C0392B; width:200px;">ステップ</th><th style="background:#C0392B;">コード</th><th style="background:#C0392B; width:220px;">重要な注意点</th></tr></thead>
+        <tbody>
+          <tr><td>データ分割</td><td><code>train_test_split(..., stratify=y)</code></td><td>stratify でクラス比を保つ</td></tr>
+          <tr><td>スケーリング（学習）</td><td><code>scaler.fit_transform(X_train)</code></td><td>fit は訓練データのみ！</td></tr>
+          <tr><td>スケーリング（テスト）</td><td><code>scaler.transform(X_test)</code></td><td>fit_transform は使わない</td></tr>
+          <tr><td>モデル学習</td><td><code>model.fit(X_train_scaled, y_train)</code></td><td>—</td></tr>
+          <tr><td>評価</td><td><code>accuracy_score + confusion_matrix</code></td><td>必ずセットで確認</td></tr>
+        </tbody>
+      </table>
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px;">
+        <div class="highlight-box danger" style="font-size:1.1em;">
+          🔑 <strong>最重要ポイント①</strong><br>
+          <code>scaler.fit</code> は<strong>訓練データのみ</strong><br>（データリーク防止）
+        </div>
+        <div class="highlight-box danger" style="font-size:1.1em;">
+          🔑 <strong>最重要ポイント②</strong><br>
+          正解率だけでなく<strong>混同行列も必ず確認</strong><br>（誤分類のパターンが重要）
+        </div>
+      </div>
+      <div class="highlight-box info" style="margin-top:14px; font-size:1.2em;">
+        ➡️ 次は <strong>Ch.5 総合演習</strong>。新しいデータで Ch.1〜4 の流れを自力で実施！
+      </div>
+    </div>
+  </div>
+
+<div id="nav">
+  <button onclick="prev()">&#9664;</button>
+  <span id="counter">1 / 9</span>
+  <button onclick="next()">&#9654;</button>
+</div>
+</div>
+<script>
+let current = 0;
+const slides = document.querySelectorAll('.slide');
+const total = slides.length;
+function show(n) {
+  slides[current].classList.remove('active');
+  current = (n + total) % total;
+  slides[current].classList.add('active');
+  document.getElementById('counter').textContent = `${current + 1} / ${total}`;
+  document.getElementById('progress-bar').style.width = `${((current + 1) / total) * 100}%`;
+}
+function next() { show(current + 1); }
+function prev() { show(current - 1); }
+document.addEventListener('keydown', e => {
+  if (e.key === 'ArrowRight' || e.key === 'ArrowDown' || e.key === ' ') { e.preventDefault(); next(); }
+  if (e.key === 'ArrowLeft'  || e.key === 'ArrowUp') { e.preventDefault(); prev(); }
+});
+document.addEventListener('click', e => { if (!e.target.closest('#nav')) next(); });
+show(0);
+
+function scaleSlides() {
+  const pres = document.querySelector('.presentation');
+  const scaleX = window.innerWidth  / 960;
+  const scaleY = window.innerHeight / 540;
+  const scale  = Math.min(scaleX, scaleY) * 0.96;
+  pres.style.transform = `scale(${scale})`;
+}
+window.addEventListener('resize', scaleSlides);
+scaleSlides();
+</script>
+<div id="hint">← → キー / クリック でスライド移動　｜　F11 でフルスクリーン</div>
+</body>
+</html>

@@ -1,0 +1,352 @@
+/* =====================================================
+   共通スタイル - PowerPoint 16:9 サイズ（960×540px）
+   ===================================================== */
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+/* ---- ページ全体：スライドを中央に浮かせる ---- */
+body {
+  font-family: 'Hiragino Sans', 'Meiryo', 'Yu Gothic UI', 'Noto Sans JP', sans-serif;
+  font-size: 16px;
+  background: #242424;  /* PowerPoint背景のグレー */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100vw;
+  height: 100vh;
+  overflow: hidden;
+  user-select: none;
+}
+
+/* ---- スライドコンテナ：960×540px固定（16:9） ---- */
+.presentation {
+  width: 960px;
+  height: 540px;
+  position: relative;
+  flex-shrink: 0;
+  transform-origin: center center;
+  box-shadow: 0 12px 60px rgba(0, 0, 0, 0.7);
+  border-radius: 2px;
+}
+
+/* ===== スライド共通 ===== */
+.slide {
+  position: absolute;
+  inset: 0;
+  display: none;
+  flex-direction: column;
+  background: #ffffff;
+  overflow: hidden;
+}
+.slide.active { display: flex; }
+
+/* ===== タイプ別 ===== */
+.slide.type-title {
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+}
+.slide.type-content { padding: 0; }
+
+/* ===== ヘッダー ===== */
+.slide-header {
+  padding: 10px 32px;
+  font-size: 0.78em;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  color: #fff;
+  flex-shrink: 0;
+}
+
+/* ===== コンテンツエリア ===== */
+.slide-body {
+  flex: 1;
+  padding: 20px 48px 14px;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  overflow: hidden;
+}
+
+.slide-title {
+  font-size: 1.7em;
+  font-weight: 700;
+  margin-bottom: 16px;
+  line-height: 1.2;
+  color: #1a1a2e;
+}
+
+/* ===== 箇条書き ===== */
+ul.points {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+ul.points li {
+  font-size: 1.1em;
+  line-height: 1.45;
+  color: #2c3e50;
+  padding-left: 1.2em;
+  position: relative;
+}
+ul.points li::before {
+  content: '▸';
+  position: absolute;
+  left: 0;
+  font-size: 0.85em;
+  top: 0.1em;
+}
+ul.points li.good::before  { content: '✅'; font-size: 0.9em; }
+ul.points li.bad::before   { content: '❌'; font-size: 0.9em; }
+ul.points li.star::before  { content: '⭐'; font-size: 0.9em; }
+ul.points li.warn::before  { content: '⚠️'; font-size: 0.9em; }
+ul.points li.key::before   { content: '🔑'; font-size: 0.9em; }
+ul.points li sub {
+  display: block;
+  font-size: 0.72em;
+  color: #7f8c8d;
+  margin-top: 2px;
+  padding-left: 0.2em;
+}
+
+/* ===== 2カラムレイアウト ===== */
+.two-col {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  flex: 1;
+}
+.col-box {
+  border-radius: 10px;
+  padding: 16px 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.col-box h3 {
+  font-size: 1.0em;
+  font-weight: 700;
+  margin-bottom: 6px;
+}
+.col-box ul {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+}
+.col-box ul li {
+  font-size: 0.92em;
+  line-height: 1.4;
+  padding-left: 1.1em;
+  position: relative;
+}
+.col-box ul li::before { content: '・'; position: absolute; left: 0; }
+
+/* ===== テーブル ===== */
+table.slide-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 1.0em;
+}
+table.slide-table th {
+  padding: 9px 14px;
+  text-align: left;
+  font-weight: 700;
+  color: #fff;
+  font-size: 0.95em;
+}
+table.slide-table td {
+  padding: 8px 14px;
+  border-bottom: 1px solid #ecf0f1;
+  line-height: 1.4;
+  color: #2c3e50;
+  font-size: 0.95em;
+}
+table.slide-table tr:nth-child(even) td { background: #f8f9fa; }
+
+/* ===== コードブロック ===== */
+pre.code-block {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  padding: 13px 18px;
+  border-radius: 8px;
+  font-family: 'Consolas', 'SF Mono', 'Fira Code', monospace;
+  font-size: 0.83em;
+  line-height: 1.6;
+  overflow-x: auto;
+  flex-shrink: 0;
+}
+pre.code-block .kw  { color: #cba6f7; }
+pre.code-block .fn  { color: #89b4fa; }
+pre.code-block .st  { color: #a6e3a1; }
+pre.code-block .cm  { color: #6c7086; font-style: italic; }
+pre.code-block .nm  { color: #fab387; }
+
+/* ===== 強調ボックス ===== */
+.highlight-box {
+  border-radius: 8px;
+  padding: 12px 18px;
+  margin-top: 10px;
+  font-size: 1.0em;
+  line-height: 1.5;
+}
+.highlight-box.info   { background: #EBF5FB; border-left: 4px solid #4A90D9; color: #1A5276; }
+.highlight-box.warn   { background: #FEF9E7; border-left: 4px solid #E8A838; color: #7D6608; }
+.highlight-box.danger { background: #FDEDEC; border-left: 4px solid #C0392B; color: #922B21; }
+.highlight-box.success{ background: #EAFAF1; border-left: 4px solid #5BA85A; color: #1E8449; }
+
+/* ===== フロー図 ===== */
+.flow-row {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: nowrap;
+  margin-top: 6px;
+}
+.flow-box {
+  border-radius: 8px;
+  padding: 10px 14px;
+  text-align: center;
+  font-size: 0.88em;
+  font-weight: 600;
+  color: #fff;
+  line-height: 1.35;
+  min-width: 80px;
+  flex: 1;
+}
+.flow-arrow {
+  font-size: 1.3em;
+  color: #95a5a6;
+  flex-shrink: 0;
+  padding: 0 5px;
+}
+
+/* ===== ステップリスト ===== */
+.step-list {
+  display: flex;
+  flex-direction: column;
+  gap: 11px;
+}
+.step-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+}
+.step-num {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.0em;
+  font-weight: 700;
+  color: #fff;
+  flex-shrink: 0;
+}
+.step-text {
+  flex: 1;
+  font-size: 1.05em;
+  line-height: 1.45;
+  color: #2c3e50;
+  padding-top: 6px;
+}
+.step-text small {
+  display: block;
+  font-size: 0.73em;
+  color: #7f8c8d;
+  margin-top: 2px;
+}
+
+/* ===== ナビゲーション（スライド内部に配置） ===== */
+#nav {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 32px;
+  background: rgba(13, 17, 23, 0.85);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  z-index: 1000;
+}
+#nav button {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.18);
+  color: #fff;
+  width: 28px;
+  height: 20px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 0.8em;
+  transition: background 0.15s;
+}
+#nav button:hover { background: rgba(255,255,255,0.24); }
+#counter {
+  color: #aaa;
+  font-size: 0.82em;
+  min-width: 52px;
+  text-align: center;
+}
+#progress-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 3px;
+  transition: width 0.3s ease;
+  z-index: 1001;
+}
+
+/* ===== タイトルスライド ===== */
+.title-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  gap: 16px;
+  padding: 40px;
+}
+.title-main {
+  font-size: 2.3em;
+  font-weight: 800;
+  color: #fff;
+  line-height: 1.2;
+  text-align: center;
+}
+.title-sub {
+  font-size: 1.25em;
+  color: rgba(255,255,255,0.82);
+  text-align: center;
+  line-height: 1.4;
+}
+.title-meta {
+  font-size: 0.9em;
+  color: rgba(255,255,255,0.55);
+  text-align: center;
+  margin-top: 8px;
+}
+.title-badge {
+  background: rgba(255,255,255,0.15);
+  border: 1px solid rgba(255,255,255,0.3);
+  color: #fff;
+  padding: 6px 18px;
+  border-radius: 20px;
+  font-size: 0.85em;
+  font-weight: 600;
+}
+
+/* ===== ヒントテキスト（スライド外・ブラウザ下部） ===== */
+#hint {
+  position: fixed;
+  bottom: 8px;
+  left: 50%;
+  transform: translateX(-50%);
+  font-size: 11px;
+  color: rgba(255,255,255,0.3);
+  pointer-events: none;
+  letter-spacing: 0.05em;
+}
