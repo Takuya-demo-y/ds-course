@@ -5,6 +5,11 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 
 ---
 
+> ⛔ **このガイドを使わないセクション（AI 禁止）**
+> 各問の「気づきメモ」・**STEP3（考察・振り返り）** は自分の言葉で書きます。Copilot は使いません。
+
+---
+
 ## 質問の型（毎回この5点を揃える）
 
 ```
@@ -14,6 +19,9 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】〇〇の書き方がわからない
 ```
+> 💡 **【困っていること】に何を書けばよいかわからない場合は、「どう書けばよいかわからない」とそのまま書いて OK です。**  
+> Copilot はそれでも十分に答えてくれます。
+
 
 ---
 
@@ -37,9 +45,9 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 
 ---
 
-## STEP 1｜X と y を作る
+## STEP 1｜X と y を作る・データを分割する
 
-### 品種名列を除いた DataFrame を作る
+### Q1-1：品種名列を除いた DataFrame を作る
 
 ```
 【やりたいこと】df から「品種名」列だけ除いた DataFrame を作りたい
@@ -49,7 +57,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 【困っていること】特定の列を除く df.drop() の書き方がわからない
 ```
 
-### 特定の列だけ取り出す
+### Q1-1（b）：品種名列だけ取り出して y に入れる
 
 ```
 【やりたいこと】df の「品種名」列だけを取り出して y という変数に入れたい
@@ -59,26 +67,22 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 【困っていること】1列だけ取り出す書き方がわからない
 ```
 
----
-
-## STEP 2｜訓練/テスト分割
-
-### train_test_split の使い方
+### Q1-2：train_test_split でデータを分割する
 
 ```
-【やりたいこと】X と y を 7:3 の割合で訓練用とテスト用に分割したい
+【やりたいこと】X と y を 8:2 の割合で訓練用とテスト用に分割したい
 【使うライブラリ】scikit-learn の train_test_split
 【データの形】X は DataFrame（178行×13列）、y は Series（178件）
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】train_test_split の引数（test_size と random_state）の意味と書き方がわからない
+【困っていること】train_test_split の引数（test_size=0.2 と random_state）の意味と書き方がわからない
 ```
 
-### 分割後の件数確認
+### Q1-2：分割後の件数を確認する
 
 ```
 【やりたいこと】train_test_split で分割後の X_train と X_test の件数を確認したい
 【使うライブラリ】pandas
-【データの形】X_train と X_test は DataFrame
+【データの形】X_train は 142行×13列、X_test は 36行×13列の DataFrame
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】DataFrame の行数を確認する方法がわからない
 ```
@@ -102,7 +106,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】RandomForestClassifier に訓練データを学習させたい
 【使うライブラリ】scikit-learn
-【データの形】X_train は 124行×13列の DataFrame、y_train は 124件の Series
+【データの形】X_train は 142行×13列の DataFrame、y_train は 142件の Series
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】model.fit() に渡す引数の順番がわからない
 ```
@@ -112,7 +116,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】学習済みの model でテストデータの品種を予測したい
 【使うライブラリ】scikit-learn
-【データの形】X_test は 54行×13列の DataFrame。model.fit() は完了している
+【データの形】X_test は 36行×13列の DataFrame。model.fit() は完了している
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】predict() に渡すのは X_test か X_train か迷っている
 ```
@@ -126,7 +130,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】y_test（正解）と y_pred（予測）を比べて正解率を計算したい
 【使うライブラリ】scikit-learn の accuracy_score
-【データの形】y_test と y_pred はどちらも 54件の品種名（文字列）
+【データの形】y_test と y_pred はどちらも 36件の品種名（文字列）
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】accuracy_score() の引数の順番がわからない
 ```
@@ -150,7 +154,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】confusion_matrix で品種ごとの正解・不正解を確認したい
 【使うライブラリ】scikit-learn の confusion_matrix
-【データの形】y_test と y_pred はどちらも 54件の品種名（文字列）
+【データの形】y_test と y_pred はどちらも 36件の品種名（文字列）
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】confusion_matrix() の引数の順番がわからない
 ```
@@ -167,28 +171,28 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 
 > 💡 scikit-learn 0.23.2 では `ConfusionMatrixDisplay` は使えません。`sns.heatmap()` を使ってください。
 
----
-
-## 問4（発展）｜特徴量重要度
-
-### feature_importances_ を取り出す
+### Q3-2：特徴量重要度を取り出して棒グラフで表示する
 
 ```
-【やりたいこと】RandomForest の特徴量重要度を列名とセットで取り出したい
-【使うライブラリ】scikit-learn + pandas
+【やりたいこと】RandomForest の特徴量重要度を列名とセットで取り出し、重要度が高い順に横棒グラフで表示したい
+【使うライブラリ】scikit-learn + pandas + matplotlib
 【データの形】model は学習済み RandomForestClassifier。X.columns で列名が取得できる
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】model.feature_importances_ を DataFrame や Series にまとめる方法がわからない
+【困っていること】model.feature_importances_ を DataFrame にまとめて barh() で表示する方法がわからない
 ```
 
-### 特徴量重要度を棒グラフで表示する
+---
+
+## 問4（発展）｜Precision / Recall
+
+### 品種ごとの Precision・Recall を計算する
 
 ```
-【やりたいこと】特徴量重要度を値が大きい順に横棒グラフで表示したい
-【使うライブラリ】pandas の plot + matplotlib
-【データの形】importances は特徴量名がインデックスの Series（重要度の降順にソート済み）
+【やりたいこと】品種ごとの Precision（適合率）と Recall（再現率）を計算して表示したい
+【使うライブラリ】scikit-learn の precision_score、recall_score
+【データの形】y_test と y_pred はどちらも 36件の品種名（文字列）、3クラス
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】Series を横棒グラフ（barh）で描く書き方がわからない
+【困っていること】precision_score と recall_score のインポート方法と、average=None の意味がわからない
 ```
 
 ---

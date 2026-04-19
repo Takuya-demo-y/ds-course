@@ -8,6 +8,11 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 
 ---
 
+> ⛔ **このガイドを使わないセクション（AI 禁止）**
+> 各 Step の「気づきメモ」・**考察セクション** は自分の言葉で書きます。Copilot は使いません。
+
+---
+
 ## 質問の型（毎回この5点を揃える）
 
 ```
@@ -17,29 +22,44 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】〇〇の書き方がわからない
 ```
+> 💡 **【困っていること】に何を書けばよいかわからない場合は、「どう書けばよいかわからない」とそのまま書いて OK です。**  
+> Copilot はそれでも十分に答えてくれます。
+
 
 ---
 
 ## Step 1｜データ読み込み・確認（Ch.1 の復習）
 
-### データを DataFrame に変換する
+### Q1-1：データを DataFrame に変換する
 
 ```
 【やりたいこと】load_breast_cancer() で読み込んだデータを pandas の DataFrame に変換したい
 【使うライブラリ】pandas、scikit-learn の load_breast_cancer
-【データの形】cancer.data が特徴量（569行×30列）、cancer.target がラベル（0=悪性, 1=良性）
+【データの形】cancer.data が特徴量（569行×30列）、cancer.target がラベル（0=悪性, 1=良性）の numpy 配列
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】cancer.feature_names を列名に指定して DataFrame を作り、末尾に「診断」列を追加する方法がわからない
+【困っていること】cancer.feature_names を列名に指定して DataFrame を作り、末尾に「診断結果」列（malignant / benign）を追加する方法がわからない
 ```
 
-### info() と value_counts() で確認する
+### Q1-1（補足）：データの型と欠損値を確認する
 
 ```
-【やりたいこと】DataFrame の列名・型・欠損値を確認して、診断ラベルの件数も確認したい
+【やりたいこと】DataFrame の列の型・欠損値の有無を確認したい
 【使うライブラリ】pandas
 【データの形】df は 569行×31列（30特徴量 + 診断列）の DataFrame
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】df.info() と df["診断"].value_counts() の使い方と表示の見方がわからない
+【困っていること】df.info() と df.isnull().sum() の使い方と見方がわからない
+```
+
+> 💡 Ch.1 で学んだ「最初に必ずやる」習慣です。`df.info()` → `df.isnull().sum()` の順に実行してください。
+
+### Q1-2：件数と基本統計量を確認する
+
+```
+【やりたいこと】診断ラベルごとの件数と、主要な特徴量の平均・最大・最小を確認したい
+【使うライブラリ】pandas
+【データの形】df は 569行×31列（30特徴量 + 診断列）の DataFrame
+【環境】Python 3.8.6、Windows、JupyterLab
+【困っていること】df["診断結果"].value_counts() と df.describe() の使い方がわからない
 ```
 
 ---
@@ -51,7 +71,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】df の「mean radius」列を、診断ラベル（0=悪性, 1=良性）で分けてヒストグラムを重ねて表示したい
 【使うライブラリ】matplotlib
-【データの形】df["診断"] == 0 が悪性、df["診断"] == 1 が良性の DataFrame
+【データの形】df["診断結果"] == "malignant" が悪性、"benign" が良性の DataFrame
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】2つの hist() を同じグラフに重ねる書き方と、alpha（透明度）の使い方がわからない
 ```
@@ -61,7 +81,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】seaborn の boxplot で「mean radius」を 診断ラベルごとに比較する箱ひげ図を描きたい
 【使うライブラリ】seaborn
-【データの形】df は 569行×31列。x="診断"、y="mean radius" を指定する
+【データの形】df は 569行×31列。x="診断結果"、y="mean radius" を指定する
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】sns.boxplot() の x・y・data の指定方法がわからない
 ```
@@ -83,11 +103,11 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ### train_test_split で分割する
 
 ```
-【やりたいこと】cancer.data と cancer.target を train_test_split でテスト 30%・訓練 70% に分割したい
+【やりたいこと】X と y を train_test_split でテスト 20%・訓練 80% に分割したい
 【使うライブラリ】scikit-learn の train_test_split
-【データの形】X = cancer.data（569行×30列の numpy array）、y = cancer.target（長さ569の配列）
+【データの形】X は 569行×30列の DataFrame（診断結果列を除く）、y は 569件の診断結果 Series
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】test_size と random_state の指定方法がわからない
+【困っていること】test_size=0.2 と random_state の指定方法がわからない
 ```
 
 ### RandomForest で学習・予測する
@@ -111,7 +131,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】y_test（正解）と y_pred（予測）から正解率を計算したい
 【使うライブラリ】scikit-learn の accuracy_score
-【データの形】y_test・y_pred はどちらも長さ 171 の numpy 配列
+【データの形】y_test・y_pred はどちらも長さ 114 の Series または配列
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】accuracy_score の引数の順番（正解 vs 予測）がわからない
 ```
@@ -121,7 +141,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】y_test と y_pred で混同行列を計算し、seaborn のヒートマップで表示したい
 【使うライブラリ】scikit-learn の confusion_matrix、seaborn、pandas
-【データの形】y_test・y_pred はどちらも長さ 171。ラベルは 0=悪性、1=良性
+【データの形】y_test・y_pred はどちらも長さ 114。ラベルは malignant / benign
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】confusion_matrix の結果を DataFrame に変換してヒートマップで表示する方法がわからない
 ```
@@ -131,7 +151,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】model.feature_importances_ を使い、重要度の高い上位10特徴量を横棒グラフで表示したい
 【使うライブラリ】pandas、matplotlib
-【データの形】cancer.feature_names は長さ30の配列、model.feature_importances_ も長さ30
+【データの形】X.columns は 30特徴量の列名、model.feature_importances_ も長さ30
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】sort_values() で降順にして tail() で上位10件を取り出し、barh() で横棒グラフを描く方法がわからない
 ```
@@ -145,7 +165,7 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】y_test と y_pred から Precision（適合率）と Recall（再現率）を計算したい
 【使うライブラリ】scikit-learn の precision_score、recall_score
-【データの形】y_test・y_pred はどちらも長さ 171。ラベルは 0=悪性、1=良性
+【データの形】y_test・y_pred はどちらも長さ 114。ラベルは malignant / benign
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】precision_score と recall_score のインポート方法と引数の意味がわからない
 ```

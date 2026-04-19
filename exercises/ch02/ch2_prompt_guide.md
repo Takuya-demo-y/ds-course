@@ -10,10 +10,15 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ```
 【やりたいこと】〇〇したい
 【使うライブラリ】matplotlib / seaborn
-【データの形】DataFrame。列名は〇〇、178件
+【データの形】df という DataFrame、178行×14列（数値13列 + 品種名列）
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】〇〇の書き方がわからない
 ```
+> 💡 **【困っていること】に何を書けばよいかわからない場合は、「どう書けばよいかわからない」とそのまま書いて OK です。**  
+> Copilot はそれでも十分に答えてくれます。
+
+> ⛔ **このガイドを使わないセクション（AI 禁止）**  
+> 各 STEP の「気づきメモ」・**問3（仮説の言語化）** は自分の言葉で書きます。Copilot は使いません。
 
 ---
 
@@ -28,11 +33,11 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 ### ✅ 文脈を伝えると精度が上がる
 
 ```
-【やりたいこと】品種ごとのアルコール度数を棒グラフで比較したい
+【やりたいこと】alcohol と proline の散布図を品種ごとに色分けして描きたい
 【使うライブラリ】matplotlib
-【データの形】df という DataFrame。「品種名」列に Barolo/Grignolino/Barbera、「alcohol」列に float値、178件
+【データの形】df という DataFrame。「品種名」列に wine_0/wine_1/wine_2、「alcohol」「proline」列に float値、178件
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】groupby で計算した平均を棒グラフにする書き方がわからない
+【困っていること】for ループで品種ごとに scatter() を繰り返す書き方がわからない
 ```
 
 ---
@@ -51,108 +56,60 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 
 ## STEP 1｜ヒストグラム
 
-### 別の列でヒストグラムを描く
+### alcohol のヒストグラムを描く（Q1-1）
 
 ```
-【やりたいこと】「proline」列のヒストグラムを描きたい
+【やりたいこと】「alcohol」列のヒストグラムを描きたい
 【使うライブラリ】matplotlib
-【データの形】df という DataFrame。「proline」列は float型、178件
+【データの形】df という DataFrame。「alcohol」列は float型、178件
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】plt.hist() の基本的な書き方と、タイトル・軸ラベルの付け方がわからない
 ```
 
-### bins の数を変えたい
+### 別の列でヒストグラムを試したい
 
 ```
-【やりたいこと】ヒストグラムのバーの数を 10・20・30 と変えて見た目がどう変わるか確認したい
+【やりたいこと】「proline」列のヒストグラムを描きたい
 【使うライブラリ】matplotlib
-【データの形】plt.hist(df["proline"], bins=20) は動いている
+【データの形】plt.hist(df["alcohol"], bins=20) はすでに動いている
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】bins の数を変えるだけで良いか、他に変えるべき引数があるか知りたい
+【困っていること】列名と bins の数を変えるだけでよいか確認したい
 ```
 
 ---
 
-## STEP 2｜ボックスプロット
+## STEP 2｜箱ひげ図（品種別比較）
 
-### 品種別ボックスプロットを描く
+### 品種別箱ひげ図を描く（Q2-1）
 
 ```
-【やりたいこと】「flavanoids」列を品種ごとに比較するボックスプロットを描きたい
+【やりたいこと】「alcohol」列を品種ごとに比較する箱ひげ図を描きたい
 【使うライブラリ】matplotlib の df.boxplot()
-【データの形】df という DataFrame。「品種名」列に Barolo/Grignolino/Barbera、「flavanoids」列に float値
+【データの形】df という DataFrame。「品種名」列に wine_0/wine_1/wine_2、「alcohol」列に float値
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】df.boxplot(column="...", by="...") の書き方と、タイトルが2行出てしまうのを消す方法がわからない
 ```
 
 > 💡 タイトルが2行出るときは `plt.suptitle("")` を追加すると消えます。
 
-### ボックスプロットを横向きにしたい
+### 別の変数で箱ひげ図を試したい
 
 ```
-【やりたいこと】ボックスプロットを横向き（vert=False）にしたい
+【やりたいこと】「proline」列を品種別に比較する箱ひげ図を描きたい
 【使うライブラリ】matplotlib
-【データの形】df.boxplot(column="proline", by="品種名") は動いている
+【データの形】df.boxplot(column="alcohol", by="品種名") はすでに動いている
 【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】縦向きを横向きにするオプションがわからない
+【困っていること】column の列名を変えるだけでよいか確認したい
 ```
 
 ---
 
-## STEP 3｜相関ヒートマップ
-
-### ヒートマップを描く
-
-```
-【やりたいこと】DataFrame の相関ヒートマップを描きたい。数値を各セルに表示したい
-【使うライブラリ】seaborn の heatmap
-【データの形】corr = df.corr() で相関行列が計算されている。df は 178行×13列の float型
-【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】sns.heatmap() の annot・fmt・cmap の引数の意味と書き方がわからない
-```
-
-### 相関係数が強いペアだけ抜き出したい
-
-```
-【やりたいこと】corr.abs().unstack() で全ペアの相関係数を取り出し、0.5 以上のペアだけ表示したい
-【使うライブラリ】pandas
-【データの形】corr は df.corr() の結果（DataFrame）
-【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】自分自身との相関（=1.0）を除いて、絶対値が 0.5 以上のペアだけ取り出すコードがわからない
-```
-
----
-
-## 問1｜棒グラフ
-
-### groupby の結果を棒グラフにする
-
-```
-【やりたいこと】df.groupby("品種名")["alcohol"].mean() の結果を棒グラフにしたい
-【使うライブラリ】matplotlib（pandas の plot）
-【データの形】mean_alcohol = df.groupby("品種名")["alcohol"].mean() は動いている（Series型）
-【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】Series を棒グラフにする .plot(kind="bar") の書き方と、X軸ラベルを傾けずに表示する方法がわからない
-```
-
-### 3品種に別々の色をつけたい
-
-```
-【やりたいこと】棒グラフの各棒（3品種）に異なる色をつけたい
-【使うライブラリ】matplotlib
-【データの形】mean_alcohol.plot(kind="bar") は動いている
-【環境】Python 3.8.6、Windows、JupyterLab
-【困っていること】color=["色1", "色2", "色3"] のように指定する書き方がわからない
-```
-
----
-
-## 問2｜散布図（品種別色分け）
+## 問1｜散布図（品種別色分け）
 
 ### for ループで品種別散布図を描く
 
 ```
-【やりたいこと】品種ごとに色を変えた散布図を描きたい。Barolo=赤、Grignolino=青、Barbera=緑
+【やりたいこと】品種ごとに色を変えた散布図を描きたい。wine_0=赤、wine_1=青、wine_2=緑
 【使うライブラリ】matplotlib
 【データの形】df という DataFrame。「品種名」列でグループ化し、「alcohol」と「proline」を X・Y軸にする
 【環境】Python 3.8.6、Windows、JupyterLab
@@ -177,6 +134,30 @@ JupyterLab（左）・Copilot（右）を並べて作業してください。
 【データの形】alcohol vs proline の散布図コードはすでにある。変数名だけ変えればよいか確認したい
 【環境】Python 3.8.6、Windows、JupyterLab
 【困っていること】コードのどこを変えればよいか教えてほしい
+```
+
+---
+
+## 問2｜相関ヒートマップ
+
+### ヒートマップを描く
+
+```
+【やりたいこと】DataFrame の全数値列の相関ヒートマップを描きたい。数値を各セルに表示したい
+【使うライブラリ】seaborn の heatmap
+【データの形】df は 178行×14列。数値列だけを select_dtypes で取り出してから corr() を計算する
+【環境】Python 3.8.6、Windows、JupyterLab
+【困っていること】sns.heatmap() の annot・fmt・cmap の引数の意味と書き方がわからない
+```
+
+### 相関係数が強いペアだけ抜き出したい
+
+```
+【やりたいこと】corr.abs().unstack() で全ペアの相関係数を取り出し、0.7 以上のペアだけ表示したい
+【使うライブラリ】pandas
+【データの形】corr は df.select_dtypes(include="number").corr() の結果（DataFrame）
+【環境】Python 3.8.6、Windows、JupyterLab
+【困っていること】自分自身との相関（=1.0）を除いて、絶対値が 0.7 以上のペアだけ取り出すコードがわからない
 ```
 
 ---
