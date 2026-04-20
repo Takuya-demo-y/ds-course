@@ -1,0 +1,1029 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>機械学習入門 | 3つの学習パラダイム</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --wrap: max(20px, calc(50% - 490px));
+      --text: #0f172a; --muted: #64748b; --border: #e2e8f0; --bg: #f1f5f9;
+      --blue: #1a73e8;   --blue-lt: #e8f0fe;
+      --purple: #7b1fa2; --purple-lt: #f3e5f5;
+      --amber: #d97706;  --amber-lt: #fef3c7;
+      --green: #1e8a3c;  --green-lt: #e6f4ea;
+      --red: #c62828;
+    }
+
+    body {
+      font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',-apple-system,sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+
+    /* ── HERO ── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 55%, #0f172a 100%);
+      padding: 50px var(--wrap) 42px; text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% -10%, rgba(139,92,246,.28) 0%, transparent 65%);
+    }
+    .hero-badge {
+      display: inline-block; padding: 4px 14px; border-radius: 20px;
+      background: rgba(139,92,246,.2); border: 1px solid rgba(139,92,246,.4);
+      font-size: 10px; font-weight: 700; color: #c4b5fd; letter-spacing: 2px;
+      text-transform: uppercase; margin-bottom: 14px; position: relative;
+    }
+    .hero h1 {
+      font-size: clamp(22px,4vw,40px); font-weight: 900; color: #f1f5f9;
+      margin-bottom: 8px; position: relative; line-height: 1.2;
+    }
+    .hero h1 span { color: #a78bfa; }
+    .hero-sub { font-size: 13px; color: #94a3b8; margin-bottom: 24px; position: relative; }
+    .hero-chips { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; position: relative; }
+    .hero-chip {
+      padding: 6px 16px; border-radius: 100px; border: 1.5px solid rgba(255,255,255,.15);
+      font-size: 12px; font-weight: 700; color: #e2e8f0;
+      background: rgba(255,255,255,.07); cursor: pointer;
+      transition: all .2s; -webkit-tap-highlight-color: transparent;
+      text-decoration: none; display: inline-flex; align-items: center; gap: 6px;
+    }
+    .hero-chip:hover { background: rgba(255,255,255,.14); transform: translateY(-1px); }
+    .hero-chip[data-c="blue"]   { border-color: rgba(26,115,232,.5);  color: #93c5fd; }
+    .hero-chip[data-c="purple"] { border-color: rgba(139,92,246,.5);  color: #c4b5fd; }
+    .hero-chip[data-c="amber"]  { border-color: rgba(217,119,6,.5);   color: #fcd34d; }
+
+    /* ── SECTIONS ── */
+    .ml-sec { padding: 40px var(--wrap) 36px; }
+    .ml-sec:nth-child(odd)  { background: #fff; }
+    .ml-sec:nth-child(even) { background: var(--bg); }
+    .ml-sec { border-top: 3px solid var(--sc, var(--blue)); }
+
+    .sec-top { display: flex; align-items: flex-start; gap: 12px; margin-bottom: 22px; }
+    .sec-num {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 20px; font-weight: 900; color: #fff;
+      background: var(--sc, var(--blue));
+    }
+    .sec-en   { font-size: 10px; font-weight: 700; letter-spacing: 2px; text-transform: uppercase; color: var(--sc, var(--blue)); margin-bottom: 2px; }
+    .sec-ja   { font-size: clamp(17px,3vw,23px); font-weight: 800; margin-bottom: 3px; }
+    .sec-desc { font-size: 12px; color: var(--muted); }
+
+    /* ── TWO COLUMN LAYOUT ── */
+    .sec-inner {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 22px; align-items: start;
+    }
+
+    /* ── LEFT: CONCEPT ── */
+    .concept-col { display: flex; flex-direction: column; gap: 12px; }
+    .analogy-box {
+      background: var(--scbg, var(--blue-lt)); border-radius: 12px; padding: 14px 16px;
+      border-left: 4px solid var(--sc, var(--blue));
+    }
+    .analogy-box .a-tag {
+      font-size: 9px; font-weight: 700; letter-spacing: 1px; text-transform: uppercase;
+      color: var(--sc, var(--blue)); margin-bottom: 5px;
+    }
+    .analogy-box p { font-size: 12px; line-height: 1.65; color: var(--text); }
+    .analogy-box strong { color: var(--sc, var(--blue)); }
+
+    .flow-list { display: flex; flex-direction: column; gap: 6px; }
+    .flow-item {
+      display: flex; align-items: flex-start; gap: 10px;
+      background: #fff; border: 1.5px solid var(--border); border-radius: 10px; padding: 9px 12px;
+    }
+    .ml-sec:nth-child(even) .flow-item { background: var(--scbg, var(--blue-lt)); border-color: transparent; }
+    .fl-num {
+      width: 22px; height: 22px; border-radius: 50%; flex-shrink: 0;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; font-weight: 800; color: #fff; background: var(--sc, var(--blue));
+    }
+    .fl-text { font-size: 11px; line-height: 1.5; }
+    .fl-text strong { display: block; font-size: 12px; margin-bottom: 1px; font-weight: 700; }
+
+    /* ── RIGHT: DEMO ── */
+    .demo-panel {
+      background: #fff; border-radius: 16px; border: 1.5px solid var(--border);
+      overflow: hidden; box-shadow: 0 2px 14px rgba(0,0,0,.06);
+    }
+    .demo-hd {
+      background: var(--sc, var(--blue)); color: #fff;
+      padding: 10px 14px; font-size: 12px; font-weight: 700;
+      display: flex; align-items: center; justify-content: space-between;
+    }
+    .demo-status { font-size: 10px; opacity: .8; }
+    .demo-bd { padding: 14px; }
+    canvas { width: 100%; display: block; border-radius: 8px; background: #f8fafc; }
+    .demo-btns { display: flex; gap: 7px; margin-top: 10px; flex-wrap: wrap; }
+    .dbtn {
+      padding: 6px 14px; border-radius: 8px; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all .2s; font-family: inherit;
+      border: 1.5px solid var(--sc, var(--blue)); -webkit-tap-highlight-color: transparent;
+    }
+    .dbtn.pri  { background: var(--sc, var(--blue)); color: #fff; }
+    .dbtn.pri:hover:not(:disabled) { filter: brightness(1.1); }
+    .dbtn.sec  { background: #fff; color: var(--sc, var(--blue)); }
+    .dbtn.sec:hover:not(:disabled) { background: var(--scbg, var(--blue-lt)); }
+    .dbtn:disabled { opacity: .38; cursor: not-allowed; }
+    .demo-info { font-size: 10px; color: var(--muted); margin-top: 8px; line-height: 1.5; min-height: 30px; }
+
+    /* ── RL GRID ── */
+    .rl-grid-wrap { width: 100%; max-width: 260px; margin: 0 auto; aspect-ratio: 1; }
+    .rl-grid {
+      display: grid; grid-template-columns: repeat(5,1fr); gap: 3px;
+      background: #0f172a; border-radius: 10px; padding: 5px;
+      width: 100%; height: 100%;
+    }
+    .rl-cell {
+      border-radius: 5px; display: flex; align-items: center; justify-content: center;
+      font-size: clamp(14px,2.5vw,20px); background: #1e293b;
+      transition: background .25s; min-height: 36px;
+    }
+    .rl-cell.wall  { background: #334155 !important; }
+    .rl-cell.goal  { background: rgba(253,224,71,.18) !important; }
+    .rl-cell.agent { background: rgba(26,115,232,.28) !important; }
+    .rl-cell.trail { background: rgba(26,115,232,.1) !important; }
+    .rl-stats {
+      display: grid; grid-template-columns: repeat(3,1fr); gap: 7px; margin-top: 10px;
+    }
+    .rl-stat {
+      background: #0f172a; border-radius: 8px; padding: 7px 4px; text-align: center;
+    }
+    .rl-stat-val { font-size: 17px; font-weight: 800; color: #fcd34d; }
+    .rl-stat-lbl { font-size: 9px; color: #64748b; font-weight: 600; }
+
+    /* ── ALGO + USE CARDS ── */
+    .info-row {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 20px;
+    }
+    .info-card {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 14px 16px;
+    }
+    .ml-sec:nth-child(even) .info-card { background: #fff; }
+    .ic-title {
+      font-size: 10px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px;
+      color: var(--sc, var(--blue)); margin-bottom: 10px;
+    }
+    .chip-row { display: flex; flex-wrap: wrap; gap: 6px; }
+    .chip {
+      padding: 3px 10px; border-radius: 6px; font-size: 11px; font-weight: 700;
+      background: var(--scbg, var(--blue-lt)); color: var(--sc, var(--blue));
+    }
+    .use-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+    .use-list li { font-size: 12px; display: flex; align-items: flex-start; gap: 7px; }
+    .use-list li::before { content: '→'; color: var(--sc, var(--blue)); font-weight: 700; flex-shrink: 0; }
+
+    /* ── COMPARE ── */
+    .compare-sec { padding: 40px var(--wrap); background: #fff; border-top: 3px solid var(--border); }
+    .cmp-title { font-size: clamp(17px,3vw,22px); font-weight: 800; margin-bottom: 20px; text-align: center; }
+    .cmp-wrap  { overflow-x: auto; }
+    .cmp-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .cmp-table th {
+      background: #0f172a; color: #f1f5f9; padding: 10px 14px;
+      font-size: 11px; font-weight: 700; text-align: left; white-space: nowrap;
+    }
+    .cmp-table .th-b { background: #1a73e8; }
+    .cmp-table .th-p { background: #7b1fa2; }
+    .cmp-table .th-a { background: #d97706; }
+    .cmp-table td { padding: 10px 14px; border-bottom: 1px solid var(--border); vertical-align: top; }
+    .cmp-table tr:last-child td { border-bottom: none; }
+    .cmp-table .rh { font-size: 10px; font-weight: 700; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; background: var(--bg); white-space: nowrap; }
+    .cmp-table tr:hover td:not(.rh) { background: #f8fafc; }
+
+    .footer { text-align: center; padding: 22px; font-size: 11px; color: var(--muted); border-top: 1px solid var(--border); }
+
+    @media (max-width: 720px) {
+      .sec-inner { grid-template-columns: 1fr; }
+      .info-row  { grid-template-columns: 1fr; }
+      .cmp-table th, .cmp-table td { padding: 8px 10px; font-size: 11px; }
+    }
+    @media (max-width: 420px) {
+      .hero-chip { font-size: 11px; padding: 5px 11px; }
+    }
+
+    @keyframes pop  { 0%{transform:scale(0);opacity:0} 70%{transform:scale(1.12)} 100%{transform:scale(1);opacity:1} }
+    @keyframes pulse{ 0%,100%{transform:scale(1)} 50%{transform:scale(1.08)} }
+  </style>
+</head>
+<body>
+
+<!-- ★ HERO -->
+<header class="hero">
+  <div style="position:relative">
+    <div class="hero-badge">Machine Learning</div>
+    <h1>機械学習の<span>3つの学習パラダイム</span></h1>
+    <p class="hero-sub">アニメーションで直感的に理解する ─ 教師あり・教師なし・強化学習</p>
+    <div class="hero-chips">
+      <a class="hero-chip" data-c="blue"   href="#supervised">📚 教師あり学習</a>
+      <a class="hero-chip" data-c="purple" href="#unsupervised">🔍 教師なし学習</a>
+      <a class="hero-chip" data-c="amber"  href="#rl">🎮 強化学習</a>
+    </div>
+  </div>
+</header>
+
+<main>
+
+<!-- ═══ SECTION 1: 教師あり学習 ═══ -->
+<section class="ml-sec" id="supervised" style="--sc:var(--blue);--scbg:var(--blue-lt)">
+  <div class="sec-top">
+    <div class="sec-num">1</div>
+    <div>
+      <div class="sec-en">Supervised Learning</div>
+      <div class="sec-ja">教師あり学習</div>
+      <div class="sec-desc">正解ラベルつきのデータを使ってモデルを訓練し、未知のデータを予測する</div>
+    </div>
+  </div>
+
+  <div class="sec-inner">
+    <div class="concept-col">
+      <div class="analogy-box">
+        <div class="a-tag">💡 たとえで理解する</div>
+        <p><strong>答えつきの問題集で勉強する</strong>イメージ。数学の試験前に「問題→答え」のセットを大量に解くように、AIは「入力データ→正解ラベル」のペアを繰り返し学習し、パターンを習得する。</p>
+      </div>
+      <div class="flow-list">
+        <div class="flow-item">
+          <div class="fl-num">1</div>
+          <div class="fl-text"><strong>データ収集</strong>入力データ（特徴量）と正解ラベルをセットで大量に用意する</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">2</div>
+          <div class="fl-text"><strong>モデルの訓練</strong>モデルが予測 → 正解と比較 → 誤差（損失）を計算 → パラメータを更新する</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">3</div>
+          <div class="fl-text"><strong>未知データで予測</strong>学習済みモデルに新しいデータを入力し、クラスや値を出力する</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel">
+      <div class="demo-hd">
+        <span>🟦 クラス分類デモ（2クラス）</span>
+        <span class="demo-status" id="svSt">待機中</span>
+      </div>
+      <div class="demo-bd">
+        <canvas id="svCvs"></canvas>
+        <div class="demo-btns">
+          <button class="dbtn pri" onclick="SV.train()">① 学習開始</button>
+          <button class="dbtn pri" id="svPBtn" onclick="SV.predict()" disabled>② 予測する</button>
+          <button class="dbtn sec" onclick="SV.reset()">リセット</button>
+        </div>
+        <div class="demo-info" id="svInf">🔵 Class A と 🔴 Class B のラベル付きデータを学習させます。「① 学習開始」を押してください。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="ic-title">代表的なアルゴリズム</div>
+      <div class="chip-row">
+        <span class="chip">線形回帰</span>
+        <span class="chip">ロジスティック回帰</span>
+        <span class="chip">決定木</span>
+        <span class="chip">SVM</span>
+        <span class="chip">ランダムフォレスト</span>
+        <span class="chip">ニューラルネットワーク</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">主な使いどころ</div>
+      <ul class="use-list">
+        <li>迷惑メール（スパム）の自動判定</li>
+        <li>医療画像から病変を診断</li>
+        <li>機械翻訳・音声認識</li>
+        <li>株価・需要予測</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 2: 教師なし学習 ═══ -->
+<section class="ml-sec" id="unsupervised" style="--sc:var(--purple);--scbg:var(--purple-lt)">
+  <div class="sec-top">
+    <div class="sec-num">2</div>
+    <div>
+      <div class="sec-en">Unsupervised Learning</div>
+      <div class="sec-ja">教師なし学習</div>
+      <div class="sec-desc">正解ラベルなしのデータから、隠れたパターンや構造を自動で発見する</div>
+    </div>
+  </div>
+
+  <div class="sec-inner">
+    <div class="concept-col">
+      <div class="analogy-box">
+        <div class="a-tag">💡 たとえで理解する</div>
+        <p>図書館の本を<strong>誰かに教わらず自分でジャンル別に整理する</strong>イメージ。「これは小説っぽい、これは参考書っぽい」と似たものを集め、自然とグループができあがる。答えがなくてもデータ自体に構造がある。</p>
+      </div>
+      <div class="flow-list">
+        <div class="flow-item">
+          <div class="fl-num">1</div>
+          <div class="fl-text"><strong>ラベルなしデータを用意</strong>正解なしでデータだけを大量に集める</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">2</div>
+          <div class="fl-text"><strong>パターン・構造を発見</strong>データの類似度を分析し、グループ（クラスタ）や圧縮表現を自動形成する</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">3</div>
+          <div class="fl-text"><strong>結果を活用</strong>発見したグループやパターンをビジネスや分析に適用する</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel">
+      <div class="demo-hd">
+        <span>🟣 k-Means クラスタリングデモ</span>
+        <span class="demo-status" id="usSt">待機中</span>
+      </div>
+      <div class="demo-bd">
+        <canvas id="usCvs"></canvas>
+        <div class="demo-btns">
+          <button class="dbtn pri" id="usBtn" onclick="US.start()">① クラスタリング開始</button>
+          <button class="dbtn sec" onclick="US.reset()">リセット</button>
+        </div>
+        <div class="demo-info" id="usInf">グレーの点はラベルなしデータ。アルゴリズムが自動で3グループを発見します。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="ic-title">代表的なアルゴリズム</div>
+      <div class="chip-row">
+        <span class="chip">k-Means クラスタリング</span>
+        <span class="chip">階層的クラスタリング</span>
+        <span class="chip">DBSCAN</span>
+        <span class="chip">主成分分析 (PCA)</span>
+        <span class="chip">オートエンコーダー</span>
+        <span class="chip">t-SNE</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">主な使いどころ</div>
+      <ul class="use-list">
+        <li>顧客を購買傾向でグループ化（セグメンテーション）</li>
+        <li>不正アクセス・異常取引の検知</li>
+        <li>膨大なデータを少ない次元に圧縮</li>
+        <li>ニュース記事を話題ごとにまとめる</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ SECTION 3: 強化学習 ═══ -->
+<section class="ml-sec" id="rl" style="--sc:var(--amber);--scbg:var(--amber-lt)">
+  <div class="sec-top">
+    <div class="sec-num">3</div>
+    <div>
+      <div class="sec-en">Reinforcement Learning</div>
+      <div class="sec-ja">強化学習</div>
+      <div class="sec-desc">環境と相互作用しながら試行錯誤し、報酬を最大化する行動方策を学ぶ</div>
+    </div>
+  </div>
+
+  <div class="sec-inner">
+    <div class="concept-col">
+      <div class="analogy-box">
+        <div class="a-tag">💡 たとえで理解する</div>
+        <p>犬の<strong>しつけ</strong>のイメージ。「お手」ができたらご褒美（＋報酬）、噛んだら叱られる（－報酬）を繰り返すうち、エージェント（犬）は「どう行動すれば報酬が最大になるか」を自然に学習する。正解データは不要。</p>
+      </div>
+      <div class="flow-list">
+        <div class="flow-item">
+          <div class="fl-num">1</div>
+          <div class="fl-text"><strong>状態を観測</strong>エージェントが環境の現在の状態（State）を観測する</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">2</div>
+          <div class="fl-text"><strong>行動を選択・実行</strong>価値関数（Q値）に基づき行動を選ぶ。最初はランダム、徐々に最適化される</div>
+        </div>
+        <div class="flow-item">
+          <div class="fl-num">3</div>
+          <div class="fl-text"><strong>報酬を受け取り更新</strong>結果に応じた報酬（Reward）をもとにQ値テーブルを更新し、方策を改善する</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="demo-panel">
+      <div class="demo-hd">
+        <span>🟡 迷路ナビゲーション（Q学習）</span>
+        <span class="demo-status" id="rlSt">待機中</span>
+      </div>
+      <div class="demo-bd">
+        <div class="rl-grid-wrap">
+          <div class="rl-grid" id="rlGrid"></div>
+        </div>
+        <div class="rl-stats">
+          <div class="rl-stat"><div class="rl-stat-val" id="rlEp">0</div><div class="rl-stat-lbl">エピソード</div></div>
+          <div class="rl-stat"><div class="rl-stat-val" id="rlSt2">—</div><div class="rl-stat-lbl">ステップ数</div></div>
+          <div class="rl-stat"><div class="rl-stat-val" id="rlRw">—</div><div class="rl-stat-lbl">累計報酬</div></div>
+        </div>
+        <div class="demo-btns">
+          <button class="dbtn pri" id="rlTBtn" onclick="RL.train()">① 学習（500回）</button>
+          <button class="dbtn pri" id="rlSBtn" onclick="RL.showPath()" disabled>② 最適経路を見る</button>
+          <button class="dbtn sec" onclick="RL.reset()">リセット</button>
+        </div>
+        <div class="demo-info" id="rlInf">🤖 = エージェント &nbsp;⭐ = ゴール &nbsp;🧱 = 壁。Q学習で最短経路を自動発見します。</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="info-row">
+    <div class="info-card">
+      <div class="ic-title">代表的なアルゴリズム</div>
+      <div class="chip-row">
+        <span class="chip">Q 学習</span>
+        <span class="chip">DQN（Deep Q-Network）</span>
+        <span class="chip">Policy Gradient</span>
+        <span class="chip">PPO</span>
+        <span class="chip">Actor-Critic</span>
+        <span class="chip">AlphaZero</span>
+      </div>
+    </div>
+    <div class="info-card">
+      <div class="ic-title">主な使いどころ</div>
+      <ul class="use-list">
+        <li>ゲームAI（囲碁・チェス・ビデオゲーム）</li>
+        <li>ロボットの歩行・アーム制御</li>
+        <li>自動運転の経路計画</li>
+        <li>広告入札・在庫補充の自動最適化</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ COMPARE ═══ -->
+<section class="compare-sec">
+  <div class="cmp-title">📊 3つの学習パラダイムを比較する</div>
+  <div class="cmp-wrap">
+    <table class="cmp-table">
+      <thead>
+        <tr>
+          <th>比較項目</th>
+          <th class="th-b">📚 教師あり学習</th>
+          <th class="th-p">🔍 教師なし学習</th>
+          <th class="th-a">🎮 強化学習</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr>
+          <td class="rh">必要なもの</td>
+          <td>入力＋<strong>正解ラベル</strong>のペア</td>
+          <td><strong>ラベルなし</strong>データのみ</td>
+          <td>エージェントが動く<strong>環境</strong>（シミュレータ等）</td>
+        </tr>
+        <tr>
+          <td class="rh">何を学ぶか</td>
+          <td>入力→出力の<strong>マッピング</strong></td>
+          <td>データの<strong>潜在的な構造</strong></td>
+          <td>状態→行動の<strong>方策（Policy）</strong></td>
+        </tr>
+        <tr>
+          <td class="rh">学習のヒント</td>
+          <td><strong>正解ラベル</strong>（教師信号）</td>
+          <td>なし（データ自体から学ぶ）</td>
+          <td><strong>報酬シグナル</strong>（行動後に受け取る）</td>
+        </tr>
+        <tr>
+          <td class="rh">代表タスク</td>
+          <td>分類・回帰・翻訳・検出</td>
+          <td>クラスタリング・次元削減・生成</td>
+          <td>ゲーム攻略・ロボット制御</td>
+        </tr>
+        <tr>
+          <td class="rh">難しさの目安</td>
+          <td>⭐⭐<br><span style="font-size:10px;color:#64748b">データ収集コストが課題</span></td>
+          <td>⭐⭐⭐<br><span style="font-size:10px;color:#64748b">評価基準が曖昧になりやすい</span></td>
+          <td>⭐⭐⭐⭐<br><span style="font-size:10px;color:#64748b">環境・報酬設計が難しい</span></td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+</main>
+
+<footer class="footer">
+  機械学習入門 ─ 3つの学習パラダイム | 教師あり学習・教師なし学習・強化学習
+</footer>
+
+<script>
+/* ═══════════════════════════════════════════
+   UTILITY
+═══════════════════════════════════════════ */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+
+/* ═══════════════════════════════════════════
+   SUPERVISED LEARNING — Canvas Classification
+═══════════════════════════════════════════ */
+const SV = (() => {
+  let cvs, ctx, W, H;
+  let state = 'idle';
+  let raf   = null;
+  let dotN  = 0;   // dots shown so far (0..18)
+  let bProg = 0;   // boundary draw progress (0..1)
+  let tp    = null; // test point
+  let tProg = 0;   // test point reveal progress (0..1)
+
+  /* Boundary line endpoints */
+  const BX1 = 22, BY1 = 248, BX2 = 278, BY2 = 48;
+
+  /* Which side of the boundary: negative = Class A, positive = Class B */
+  const side = (x, y) => (BX2 - BX1) * (y - BY1) - (BY2 - BY1) * (x - BX1);
+
+  /* Training data: Class A (blue) top-left of boundary */
+  const A = [{x:55,y:42},{x:90,y:65},{x:66,y:100},{x:112,y:50},{x:128,y:86},
+             {x:78,y:132},{x:104,y:112},{x:48,y:80},{x:145,y:108}];
+
+  /* Training data: Class B (red) bottom-right of boundary */
+  const B = [{x:214,y:178},{x:244,y:196},{x:220,y:230},{x:258,y:170},{x:236,y:215},
+             {x:266,y:205},{x:244,y:243},{x:192,y:208},{x:258,y:160}];
+
+  function draw() {
+    ctx.fillStyle = '#f8fafc'; ctx.fillRect(0, 0, W, H);
+
+    /* Grid */
+    ctx.strokeStyle = '#e8edf2'; ctx.lineWidth = 0.5;
+    for (let x = 0; x < W; x += 40) { ctx.beginPath(); ctx.moveTo(x,0); ctx.lineTo(x,H); ctx.stroke(); }
+    for (let y = 0; y < H; y += 40) { ctx.beginPath(); ctx.moveTo(0,y); ctx.lineTo(W,y); ctx.stroke(); }
+
+    /* Axis labels */
+    ctx.fillStyle = '#cbd5e1'; ctx.font = '10px sans-serif';
+    ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+    ctx.fillText('特徴量 X →', W - 4, H - 4);
+    ctx.save(); ctx.translate(13, H - 38); ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'left'; ctx.textBaseline = 'middle';
+    ctx.fillText('特徴量 Y →', 0, 0); ctx.restore();
+
+    /* Dots */
+    const showA = Math.min(A.length, dotN);
+    const showB = Math.min(B.length, Math.max(0, dotN - A.length));
+    [...A.slice(0, showA).map(p => ({...p, c:'A'})),
+     ...B.slice(0, showB).map(p => ({...p, c:'B'}))
+    ].forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 7, 0, Math.PI * 2);
+      ctx.fillStyle = p.c === 'A' ? '#1a73e8' : '#c62828';
+      ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 2; ctx.stroke();
+      ctx.fillStyle = '#fff'; ctx.font = 'bold 9px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(p.c, p.x, p.y);
+    });
+
+    /* Decision boundary */
+    if (bProg > 0) {
+      const ex = BX1 + (BX2 - BX1) * bProg;
+      const ey = BY1 + (BY2 - BY1) * bProg;
+      ctx.beginPath(); ctx.setLineDash([7, 5]);
+      ctx.strokeStyle = '#1e8a3c'; ctx.lineWidth = 2.5;
+      ctx.moveTo(BX1, BY1); ctx.lineTo(ex, ey);
+      ctx.stroke(); ctx.setLineDash([]);
+      if (bProg >= 1) {
+        ctx.font = 'bold 11px sans-serif';
+        ctx.fillStyle = 'rgba(26,115,232,.5)'; ctx.textAlign = 'left'; ctx.textBaseline = 'top';
+        ctx.fillText('Class A', 18, 14);
+        ctx.fillStyle = 'rgba(198,40,40,.5)'; ctx.textAlign = 'right'; ctx.textBaseline = 'bottom';
+        ctx.fillText('Class B', W - 14, H - 14);
+      }
+    }
+
+    /* Test point */
+    if (tp && tProg > 0) {
+      const isA   = side(tp.x, tp.y) < 0;
+      const col   = isA ? '#1a73e8' : '#c62828';
+      const lbl   = isA ? 'A' : 'B';
+      const shown = tProg >= 1;
+      /* Pulse ring */
+      ctx.beginPath(); ctx.arc(tp.x, tp.y, 14 + (1 - tProg) * 8, 0, Math.PI * 2);
+      ctx.strokeStyle = shown ? col : '#94a3b8'; ctx.lineWidth = 1.5;
+      ctx.globalAlpha = tProg * 0.45; ctx.setLineDash([4,3]);
+      ctx.stroke(); ctx.setLineDash([]); ctx.globalAlpha = 1;
+      /* Dot */
+      ctx.beginPath(); ctx.arc(tp.x, tp.y, 9, 0, Math.PI * 2);
+      ctx.fillStyle = shown ? col + '33' : '#94a3b822';
+      ctx.fill(); ctx.strokeStyle = shown ? col : '#94a3b8'; ctx.lineWidth = 2.5; ctx.stroke();
+      ctx.fillStyle = shown ? col : '#64748b';
+      ctx.font = 'bold 11px sans-serif'; ctx.textAlign = 'center'; ctx.textBaseline = 'middle';
+      ctx.fillText(shown ? lbl : '?', tp.x, tp.y);
+    }
+
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  function init() {
+    cvs = document.getElementById('svCvs');
+    ctx = cvs.getContext('2d');
+    cvs.width = 310; cvs.height = 260;
+    W = cvs.width; H = cvs.height;
+    draw();
+  }
+
+  function train() {
+    if (state !== 'idle') return;
+    state = 'training';
+    set('svSt', '学習中...'); set('svInf', '訓練データを読み込んでいます...');
+    document.getElementById('svPBtn').disabled = true;
+
+    const TOTAL = A.length + B.length;
+    const DOT_TIME = 1800, GAP = 300, BOUND_TIME = 750;
+    let t0 = null;
+
+    function tick(ts) {
+      if (!t0) t0 = ts;
+      const el = ts - t0;
+      if (el < DOT_TIME) {
+        dotN = Math.floor((el / DOT_TIME) * TOTAL);
+        const n = Math.min(TOTAL, dotN);
+        set('svInf', n <= A.length
+          ? `Class A サンプル読み込み中... (${n}/${A.length})`
+          : `Class B サンプル読み込み中... (${n - A.length}/${B.length})`);
+      } else if (el < DOT_TIME + GAP) {
+        dotN = TOTAL;
+        set('svInf', 'パターンを学習しています...');
+      } else {
+        dotN = TOTAL;
+        bProg = Math.min(1, (el - DOT_TIME - GAP) / BOUND_TIME);
+        state = 'trained';
+        if (bProg >= 1) {
+          set('svSt', '学習完了');
+          set('svInf', '✅ 決定境界の学習が完了しました。「② 予測する」を押してください。');
+          document.getElementById('svPBtn').disabled = false;
+          draw(); return;
+        }
+      }
+      draw(); raf = requestAnimationFrame(tick);
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function predict() {
+    if (state !== 'trained') return;
+    state = 'predicting';
+    document.getElementById('svPBtn').disabled = true;
+    set('svSt', '予測中...');
+    tp = {x: 178, y: 148}; // Class B side
+    tProg = 0;
+    let t0 = null;
+    const DUR = 900;
+
+    function tick(ts) {
+      if (!t0) t0 = ts;
+      tProg = Math.min(1, (ts - t0) / DUR);
+      if (tProg < 0.5) {
+        set('svInf', '未知のデータポイントを入力... ラベルは「?」');
+      } else {
+        const isA = side(tp.x, tp.y) < 0;
+        set('svInf', `モデルの判定: → Class ${isA ? 'A 🔵' : 'B 🔴'} （決定境界のどちら側かで分類）`);
+        set('svSt', `予測: Class ${isA ? 'A' : 'B'}`);
+      }
+      draw();
+      if (tProg < 1) raf = requestAnimationFrame(tick);
+      else state = 'done';
+    }
+    raf = requestAnimationFrame(tick);
+  }
+
+  function reset() {
+    if (raf) cancelAnimationFrame(raf);
+    state = 'idle'; dotN = 0; bProg = 0; tp = null; tProg = 0;
+    set('svSt', '待機中');
+    set('svInf', '🔵 Class A と 🔴 Class B のラベル付きデータを学習させます。「① 学習開始」を押してください。');
+    document.getElementById('svPBtn').disabled = true;
+    draw();
+  }
+
+  return { init, train, predict, reset };
+})();
+
+/* ═══════════════════════════════════════════
+   UNSUPERVISED LEARNING — K-Means
+═══════════════════════════════════════════ */
+const US = (() => {
+  const COLORS  = ['#1a73e8', '#7b1fa2', '#1e8a3c'];
+  const K = 3;
+  let cvs, ctx, W, H;
+  let pts = [], cens = [];
+  let running = false;
+
+  function genPts() {
+    const hubs = [{cx:74,cy:68},{cx:220,cy:63},{cx:152,cy:196}];
+    pts = [];
+    hubs.forEach((h, i) => {
+      const n = 8 + Math.floor(Math.random() * 3);
+      for (let j = 0; j < n; j++) {
+        const a = Math.random() * Math.PI * 2;
+        const r = Math.random() * 40;
+        pts.push({ x: h.cx + Math.cos(a)*r, y: h.cy + Math.sin(a)*r, k: -1 });
+      }
+    });
+    pts.sort(() => Math.random() - .5);
+  }
+
+  function initCens() {
+    cens = [
+      {x: 50 + Math.random()*60,  y: 42 + Math.random()*50},
+      {x: 185 + Math.random()*55, y: 38 + Math.random()*50},
+      {x: 118 + Math.random()*55, y: 175 + Math.random()*50},
+    ];
+  }
+
+  function assign() {
+    pts.forEach(p => {
+      let mi = 0, md = Infinity;
+      cens.forEach((c, i) => { const d = Math.hypot(p.x-c.x, p.y-c.y); if (d < md) { md = d; mi = i; } });
+      p.k = mi;
+    });
+  }
+
+  function updateCens() {
+    let moved = false;
+    cens.forEach((c, i) => {
+      const g = pts.filter(p => p.k === i);
+      if (!g.length) return;
+      const nx = g.reduce((s,p)=>s+p.x,0)/g.length;
+      const ny = g.reduce((s,p)=>s+p.y,0)/g.length;
+      if (Math.hypot(c.x-nx, c.y-ny) > 0.5) moved = true;
+      c.x = nx; c.y = ny;
+    });
+    return moved;
+  }
+
+  function drawStar(x, y, r, col) {
+    ctx.beginPath();
+    for (let i = 0; i < 5; i++) {
+      const a1 = (i * 4 * Math.PI / 5) - Math.PI / 2;
+      const a2 = (i * 4 * Math.PI / 5 + 2 * Math.PI / 5) - Math.PI / 2;
+      ctx[i === 0 ? 'moveTo' : 'lineTo'](x + Math.cos(a1)*r, y + Math.sin(a1)*r);
+      ctx.lineTo(x + Math.cos(a2)*(r*0.42), y + Math.sin(a2)*(r*0.42));
+    }
+    ctx.closePath();
+    ctx.fillStyle = col; ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+
+  function draw() {
+    ctx.fillStyle = '#f8fafc'; ctx.fillRect(0,0,W,H);
+    ctx.strokeStyle = '#e8edf2'; ctx.lineWidth = 0.5;
+    for (let x=0;x<W;x+=40){ctx.beginPath();ctx.moveTo(x,0);ctx.lineTo(x,H);ctx.stroke();}
+    for (let y=0;y<H;y+=40){ctx.beginPath();ctx.moveTo(0,y);ctx.lineTo(W,y);ctx.stroke();}
+
+    pts.forEach(p => {
+      ctx.beginPath(); ctx.arc(p.x, p.y, 6, 0, Math.PI*2);
+      ctx.fillStyle = p.k >= 0 ? COLORS[p.k] : '#94a3b8';
+      ctx.fill(); ctx.strokeStyle = '#fff'; ctx.lineWidth = 1.5; ctx.stroke();
+    });
+
+    cens.forEach((c, i) => {
+      drawStar(c.x, c.y, 11, COLORS[i]);
+      ctx.fillStyle = COLORS[i]; ctx.font = 'bold 10px sans-serif';
+      ctx.textAlign = 'center'; ctx.textBaseline = 'bottom';
+      ctx.fillText(`C${i+1}`, c.x, c.y - 14);
+    });
+
+    ctx.textAlign = 'left'; ctx.textBaseline = 'alphabetic';
+  }
+
+  function init() {
+    cvs = document.getElementById('usCvs');
+    ctx = cvs.getContext('2d');
+    cvs.width = 310; cvs.height = 260;
+    W = cvs.width; H = cvs.height;
+    genPts(); draw();
+  }
+
+  async function start() {
+    if (running) return;
+    running = true;
+    document.getElementById('usBtn').disabled = true;
+    set('usSt', '実行中...');
+
+    set('usInf', 'ステップ 1: ラベルなしデータ（グレー）を準備完了');
+    await sleep(600);
+
+    set('usInf', 'ステップ 2: k=3 の初期重心（★）をランダムに配置...');
+    initCens(); draw();
+    await sleep(900);
+
+    for (let it = 1; it <= 6; it++) {
+      set('usInf', `イテレーション ${it}: 各点を最近傍の重心に割り当て中...`);
+      set('usSt', `割り当て ${it} 回目`);
+      assign(); draw();
+      await sleep(650);
+
+      set('usInf', `イテレーション ${it}: 重心をクラスタの平均位置に移動中...`);
+      set('usSt', `更新 ${it} 回目`);
+      const moved = updateCens(); draw();
+      await sleep(650);
+
+      if (!moved) {
+        set('usSt', '収束完了 ✅'); 
+        set('usInf', `✅ ${it} 回で収束。3つのグループが自動で発見されました！重心★がクラスタの中心を示しています。`);
+        break;
+      }
+      if (it === 6) {
+        set('usSt', '完了');
+        set('usInf', '✅ クラスタリング完了！3グループに自動分類されました。');
+      }
+    }
+    running = false;
+    document.getElementById('usBtn').disabled = false;
+  }
+
+  function reset() {
+    running = false;
+    cens = [];
+    genPts(); draw();
+    set('usSt', '待機中');
+    set('usInf', 'グレーの点はラベルなしデータ。アルゴリズムが自動で3グループを発見します。');
+    document.getElementById('usBtn').disabled = false;
+  }
+
+  return { init, start, reset };
+})();
+
+/* ═══════════════════════════════════════════
+   REINFORCEMENT LEARNING — Q-Learning Grid
+═══════════════════════════════════════════ */
+const RL = (() => {
+  const SZ = 5;
+  const WALLS = new Set(['0,2','1,4','2,1','3,3','4,1']);
+  const GOAL  = {r:4, c:4};
+  const ACTS  = [{dr:-1,dc:0},{dr:1,dc:0},{dr:0,dc:-1},{dr:0,dc:1}]; // up down left right
+
+  let Q = {}, trained = false;
+
+  function initQ() {
+    Q = {};
+    for (let r = 0; r < SZ; r++)
+      for (let c = 0; c < SZ; c++)
+        Q[`${r},${c}`] = [0, 0, 0, 0];
+  }
+
+  const isWall  = (r,c) => WALLS.has(`${r},${c}`);
+  const isGoal  = (r,c) => r === GOAL.r && c === GOAL.c;
+  const inBound = (r,c) => r >= 0 && r < SZ && c >= 0 && c < SZ;
+
+  function step(r, c, ai) {
+    const {dr,dc} = ACTS[ai];
+    const nr = r+dr, nc = c+dc;
+    if (!inBound(nr,nc) || isWall(nr,nc)) return {r, c, reward:-0.5, done:false};
+    if (isGoal(nr,nc)) return {r:nr, c:nc, reward:100, done:true};
+    return {r:nr, c:nc, reward:-0.1, done:false};
+  }
+
+  function trainQ(episodes = 500) {
+    initQ();
+    const alpha = 0.15, gamma = 0.9;
+    for (let ep = 0; ep < episodes; ep++) {
+      let r = 0, c = 0;
+      let eps = Math.max(0.05, 1 - ep / episodes * 1.6);
+      for (let s = 0; s < 120; s++) {
+        const key = `${r},${c}`;
+        const ai  = Math.random() < eps ? Math.floor(Math.random()*4) : Q[key].indexOf(Math.max(...Q[key]));
+        const {r:nr, c:nc, reward, done} = step(r, c, ai);
+        const maxN = Math.max(...Q[`${nr},${nc}`]);
+        Q[key][ai] += alpha * (reward + gamma * maxN - Q[key][ai]);
+        r = nr; c = nc;
+        if (done) break;
+      }
+    }
+  }
+
+  function getPath() {
+    let r = 0, c = 0;
+    const path = [{r,c}], seen = new Set();
+    for (let i = 0; i < 40; i++) {
+      if (isGoal(r,c)) break;
+      const key = `${r},${c}`;
+      if (seen.has(key)) break; seen.add(key);
+      const ai = Q[key].indexOf(Math.max(...Q[key]));
+      const res = step(r, c, ai);
+      if (res.r === r && res.c === c) break;
+      r = res.r; c = res.c; path.push({r,c});
+    }
+    return path;
+  }
+
+  function renderGrid(agentPos = null, trail = []) {
+    const grid = document.getElementById('rlGrid');
+    grid.innerHTML = '';
+    for (let r = 0; r < SZ; r++) {
+      for (let c = 0; c < SZ; c++) {
+        const cell = document.createElement('div');
+        cell.className = 'rl-cell';
+        const key = `${r},${c}`;
+        if (isWall(r,c)) {
+          cell.classList.add('wall'); cell.textContent = '🧱';
+        } else if (isGoal(r,c)) {
+          cell.classList.add('goal'); cell.textContent = '⭐';
+        } else if (agentPos && agentPos.r===r && agentPos.c===c) {
+          cell.classList.add('agent'); cell.textContent = '🤖';
+        } else if (trail.some(t => t.r===r && t.c===c)) {
+          cell.classList.add('trail'); cell.textContent = '·';
+        } else {
+          /* Q-value heatmap */
+          if (trained) {
+            const qv = Q[key];
+            const mx = Math.max(...qv);
+            const allMax = Math.max(...Object.values(Q).map(v => Math.max(...v)));
+            const intensity = allMax > 0 ? Math.max(0, mx / allMax) : 0;
+            cell.style.background = `rgba(217,119,6,${(intensity * 0.38).toFixed(2)})`;
+          }
+        }
+        grid.appendChild(cell);
+      }
+    }
+  }
+
+  function setStats(ep, st, rw) {
+    document.getElementById('rlEp').textContent  = ep;
+    document.getElementById('rlSt2').textContent = st;
+    document.getElementById('rlRw').textContent  = rw;
+  }
+
+  async function train() {
+    document.getElementById('rlTBtn').disabled = true;
+    set('rlSt', '学習中...');
+    set('rlInf', 'バックグラウンドで500エピソード学習しています...');
+
+    /* Run synchronously (fast) */
+    trainQ(500);
+    trained = true;
+
+    /* Animate episode counter */
+    const t0 = Date.now();
+    const DUR = 1800;
+    while (true) {
+      const p = Math.min(1, (Date.now() - t0) / DUR);
+      const ep = Math.floor(p * 500);
+      setStats(ep, '—', '—');
+      renderGrid(null);
+      if (p >= 1) break;
+      await sleep(50);
+    }
+    setStats(500, '—', '—');
+    set('rlSt', '学習完了 ✅');
+    set('rlInf', '✅ 500エピソード学習完了。Q値テーブル（色の濃さ）が更新されました。「② 最適経路を見る」を押してください。');
+    document.getElementById('rlSBtn').disabled = false;
+  }
+
+  async function showPath() {
+    document.getElementById('rlSBtn').disabled = true;
+    const path = getPath();
+    set('rlSt', '最適経路を再生中...');
+    set('rlInf', '学習後の最適経路を再生します。壁を避けて最短でゴールへ向かいます！');
+    let reward = 0;
+    for (let i = 0; i < path.length; i++) {
+      const trail = path.slice(0, i);
+      renderGrid(path[i], trail);
+      if (isGoal(path[i].r, path[i].c)) reward += 100; else reward -= 0.1;
+      setStats(500, i, Math.round(reward));
+      await sleep(380);
+    }
+    set('rlSt', '🏆 ゴール達成！');
+    set('rlInf', `✅ ゴール到達！ ${path.length - 1} ステップ。試行錯誤なしに最短ルートを発見しました。`);
+    document.getElementById('rlSBtn').disabled = false;
+  }
+
+  function reset() {
+    trained = false;
+    initQ();
+    setStats(0, '—', '—');
+    renderGrid(null);
+    set('rlSt', '待機中');
+    set('rlInf', '🤖 = エージェント &nbsp;⭐ = ゴール &nbsp;🧱 = 壁。Q学習で最短経路を自動発見します。');
+    document.getElementById('rlTBtn').disabled = false;
+    document.getElementById('rlSBtn').disabled = true;
+  }
+
+  return { train, showPath, reset, _init: () => { initQ(); renderGrid(null); } };
+})();
+
+/* ═══════════════════════════════════════════
+   HELPERS
+═══════════════════════════════════════════ */
+function set(id, txt) {
+  const el = document.getElementById(id);
+  if (el) el.textContent = txt;
+}
+
+/* ═══════════════════════════════════════════
+   INIT
+═══════════════════════════════════════════ */
+SV.init();
+US.init();
+RL._init();
+
+/* Smooth scroll for hero chips */
+document.querySelectorAll('.hero-chip').forEach(a => {
+  a.addEventListener('click', e => {
+    e.preventDefault();
+    const target = document.querySelector(a.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+</body>
+</html>

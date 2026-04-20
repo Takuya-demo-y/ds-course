@@ -1,0 +1,1033 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Copilot 活用デモ：プロンプトの工夫で出力はどう変わるか</title>
+  <style>
+    :root {
+      --blue: #1a73e8;
+      --blue-dk: #1557b0;
+      --blue-bg: #e8f0fe;
+      --green: #1e8a3c;
+      --green-bg: #e6f4ea;
+      --purple: #7b1fa2;
+      --purple-bg: #f3e5f5;
+      --amber: #b45309;
+      --amber-bg: #fef3c7;
+      --red: #c62828;
+      --g50: #f8f9fa;
+      --g100: #f1f3f4;
+      --g200: #e8eaed;
+      --g300: #dadce0;
+      --g400: #bdc1c6;
+      --g500: #9aa0a6;
+      --g600: #80868b;
+      --g700: #5f6368;
+      --g900: #202124;
+      --border: #dadce0;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.04);
+      --shadow: 0 2px 8px rgba(0,0,0,.09),0 1px 3px rgba(0,0,0,.05);
+    }
+
+    *,*::before,*::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    body {
+      background: #fff;
+      color: var(--g900);
+      font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN','YuGothic','Yu Gothic','Meiryo',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+      font-size: 15px;
+      line-height: 1.7;
+    }
+
+    /* ── Header ── */
+    header {
+      padding: 52px 24px 44px;
+      text-align: center;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .logo-mark {
+      width: 52px; height: 52px;
+      border-radius: 14px;
+      background: linear-gradient(135deg,#7c3aed,#1a73e8);
+      display: flex; align-items: center; justify-content: center;
+      margin: 0 auto 20px;
+      font-size: 24px;
+      box-shadow: var(--shadow);
+    }
+
+    header h1 {
+      font-size: clamp(20px,4vw,30px);
+      font-weight: 700;
+      letter-spacing: -.3px;
+      margin-bottom: 10px;
+    }
+
+    header h1 em { color: var(--blue); font-style: normal; }
+
+    .chip {
+      display: inline-flex; align-items: center; gap: 4px;
+      background: var(--g100); border: 1px solid var(--border);
+      border-radius: 100px; padding: 4px 14px;
+      font-size: 13px; color: var(--g700);
+    }
+
+    /* ── Layout ── */
+    .container { max-width: 980px; margin: 0 auto; padding: 0 24px; }
+
+    .section { padding: 56px 0; }
+    .section + .section { border-top: 1px solid var(--border); }
+
+    .eyebrow {
+      font-size: 11px; font-weight: 700; letter-spacing: 1.8px;
+      text-transform: uppercase; color: var(--blue); margin-bottom: 6px;
+    }
+
+    .sec-title { font-size: 22px; font-weight: 700; margin-bottom: 8px; }
+    .sec-desc { font-size: 14px; color: var(--g600); margin-bottom: 28px; }
+
+    /* ── Flow cards ── */
+    .flow-row { display: flex; align-items: stretch; gap: 0; }
+
+    .flow-card {
+      flex: 1;
+      background: var(--g50); border: 1px solid var(--border);
+      border-radius: 12px; padding: 28px 20px; text-align: center;
+    }
+
+    .flow-sep {
+      display: flex; align-items: center; justify-content: center;
+      padding: 0 10px; color: var(--g400); font-size: 22px; flex-shrink: 0;
+    }
+
+    .flow-icon { font-size: 30px; margin-bottom: 10px; }
+    .flow-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+    .flow-card p { font-size: 13px; color: var(--g600); }
+
+    .tips-row {
+      display: grid; grid-template-columns: repeat(3,1fr);
+      gap: 12px; margin-top: 20px;
+    }
+
+    .tip {
+      background: var(--g50); border: 1px solid var(--border);
+      border-radius: 10px; padding: 14px 16px;
+      font-size: 13px; color: var(--g700);
+      display: flex; gap: 10px; align-items: flex-start;
+    }
+
+    .tip-dot {
+      width: 7px; height: 7px; border-radius: 50%;
+      flex-shrink: 0; margin-top: 7px;
+    }
+
+    /* ── Demo steps ── */
+    .demo-steps { display: flex; flex-direction: column; gap: 48px; }
+
+    .step-label-row {
+      display: flex; align-items: center; gap: 12px; margin-bottom: 18px;
+    }
+
+    .step-badge {
+      width: 36px; height: 36px; border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 15px; font-weight: 700; flex-shrink: 0;
+    }
+    .b1 { background:var(--g100); color:var(--g700); border:2px solid var(--g300); }
+    .b2 { background:var(--blue-bg); color:var(--blue); border:2px solid var(--blue); }
+    .b3 { background:var(--purple-bg); color:var(--purple); border:2px solid var(--purple); }
+    .b4 { background:var(--amber-bg); color:var(--amber); border:2px solid var(--amber); }
+
+    .step-tag { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 2px; }
+    .t1 { color:var(--g500); } .t2 { color:var(--blue); } .t3 { color:var(--purple); } .t4 { color:var(--amber); }
+    .step-name { font-size: 19px; font-weight: 700; }
+
+    .step-grid {
+      display: grid; grid-template-columns: 56% 44%;
+      gap: 16px; align-items: start;
+    }
+
+    /* ── Chat panel ── */
+    .chat-panel {
+      border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: var(--shadow-sm);
+    }
+
+    .panel-bar {
+      background: var(--g50); border-bottom: 1px solid var(--border);
+      padding: 9px 14px;
+      display: flex; align-items: center; gap: 6px;
+      font-size: 12px; color: var(--g600);
+    }
+
+    .win-dot { width: 10px; height: 10px; border-radius: 50%; }
+    .wd-r { background: #ff5f57; }
+    .wd-y { background: #febc2e; }
+    .wd-g { background: #28c840; }
+    .bar-title { margin-left: 4px; font-weight: 600; }
+
+    .chat-body {
+      padding: 14px; display: flex; flex-direction: column;
+      gap: 10px; min-height: 130px;
+    }
+
+    .msg-user {
+      align-self: flex-end;
+      background: var(--blue); color: #fff;
+      border-radius: 16px 16px 3px 16px;
+      padding: 9px 13px; font-size: 12.5px;
+      max-width: 88%; white-space: pre-wrap; line-height: 1.55;
+    }
+
+    .msg-ai {
+      align-self: flex-start;
+      background: var(--g100); color: var(--g700);
+      border-radius: 3px 16px 16px 16px;
+      padding: 9px 13px; font-size: 12.5px;
+      max-width: 88%; white-space: pre-wrap; line-height: 1.55;
+      display: none;
+    }
+    .msg-ai.vis { display: block; animation: msgIn .35s ease; }
+
+    .typing {
+      align-self: flex-start;
+      background: var(--g100); border-radius: 3px 16px 16px 16px;
+      padding: 10px 14px; display: none;
+    }
+    .typing.vis { display: block; }
+
+    .tdots { display: flex; gap: 4px; align-items: center; }
+    .tdot {
+      width: 7px; height: 7px; border-radius: 50%;
+      background: var(--g400); animation: bounce 1.3s infinite;
+    }
+    .tdot:nth-child(2) { animation-delay: .2s; }
+    .tdot:nth-child(3) { animation-delay: .4s; }
+
+    .chat-footer { padding: 10px 14px; border-top: 1px solid var(--border); }
+
+    .run-btn {
+      width: 100%; padding: 9px 18px; border-radius: 8px; border: none;
+      font-size: 13.5px; font-weight: 600; cursor: pointer;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+      transition: all .2s;
+      background: var(--blue); color: #fff;
+    }
+    .run-btn:hover:not(:disabled) { background: var(--blue-dk); }
+    .run-btn:disabled { opacity: .6; cursor: default; }
+    .run-btn.done { background: var(--green); }
+
+    /* ── Doc preview panel ── */
+    .doc-panel {
+      border: 1px solid var(--border); border-radius: 12px;
+      overflow: hidden; box-shadow: var(--shadow-sm);
+      position: sticky; top: 20px;
+    }
+
+    .doc-body {
+      padding: 18px 20px; min-height: 240px;
+      font-size: 11.5px; line-height: 1.7; color: var(--g700);
+    }
+
+    .doc-placeholder {
+      color: var(--g400); text-align: center;
+      padding: 56px 20px; font-size: 13px;
+    }
+
+    .doc-content { display: none; }
+    .doc-content.vis { display: block; animation: fadeIn .4s ease; }
+
+    .dh1 { font-size: 14px; font-weight: 700; color: var(--g900); border-bottom: 2px solid var(--border); padding-bottom: 7px; margin-bottom: 10px; }
+    .dh2 { font-size: 12.5px; font-weight: 700; color: var(--g900); margin: 14px 0 5px; }
+    .dh3 { font-size: 11.5px; font-weight: 600; color: var(--g700); margin: 10px 0 3px; }
+    .dp { margin-bottom: 5px; }
+    .dul { padding-left: 14px; margin-bottom: 7px; }
+    .dul li { margin-bottom: 2px; }
+    .dng { color: var(--red); }
+    .dok { color: var(--green); }
+    .dcb { color: var(--g500); }
+    .dnew { background: #fff9c4; border-radius: 2px; padding: 0 1px; }
+    .tag-new {
+      display: inline-block; background: #fff3cd; border: 1px solid #ffc107;
+      border-radius: 4px; padding: 0 5px; font-size: 9.5px; font-weight: 700;
+      color: #856404; margin-left: 4px; vertical-align: middle;
+    }
+    .dslack {
+      background: var(--g50); border: 1px solid var(--border); border-radius: 6px;
+      padding: 7px 10px; margin: 5px 0; font-size: 11px;
+    }
+
+    /* Step 3 dialogue panel */
+    .exchanges { display: flex; flex-direction: column; gap: 12px; padding: 14px; }
+
+    .exchange { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; }
+
+    .ex-q {
+      background: var(--blue); color: #fff;
+      padding: 9px 13px; font-size: 12px;
+      white-space: pre-wrap; line-height: 1.5;
+    }
+
+    .ex-a {
+      background: var(--g50); padding: 9px 13px;
+      font-size: 12px; color: var(--g700); display: none;
+    }
+    .ex-a.vis { display: block; animation: msgIn .3s ease; }
+
+    .ex-btn {
+      width: 100%; padding: 8px 14px;
+      background: #fff; border: none; border-top: 1px solid var(--border);
+      font-size: 12.5px; font-weight: 600; cursor: pointer;
+      color: var(--blue); display: flex; align-items: center;
+      justify-content: center; gap: 6px; transition: all .2s;
+    }
+    .ex-btn:hover:not(:disabled) { background: var(--blue-bg); }
+    .ex-btn:disabled { color: var(--green); background: var(--green-bg); cursor: default; }
+
+    /* ── Evolution section ── */
+    .evo-row {
+      display: grid; grid-template-columns: 1fr 24px 1fr 24px 1fr 24px 1fr;
+      gap: 0; align-items: start;
+    }
+
+    .evo-arrow {
+      display: flex; align-items: center; justify-content: center;
+      color: var(--g400); font-size: 18px; padding-top: 44px;
+    }
+
+    .evo-card { border: 1px solid var(--border); border-radius: 10px; overflow: hidden; box-shadow: var(--shadow-sm); }
+
+    .evo-head { padding: 10px 12px; font-size: 12px; font-weight: 700; border-bottom: 1px solid var(--border); }
+    .eh1 { background:var(--g100); color:var(--g700); }
+    .eh2 { background:var(--blue-bg); color:var(--blue); }
+    .eh3 { background:var(--purple-bg); color:var(--purple); }
+    .eh4 { background:var(--amber-bg); color:var(--amber); }
+
+    .evo-body {
+      padding: 12px; background: #fff;
+      font-size: 10.5px; line-height: 1.65; color: var(--g600);
+    }
+
+    .enew { color: var(--green); font-weight: 600; }
+    .egray { color: var(--g400); }
+    .ehighlight { background: #fff9c4; border-radius: 2px; }
+
+    .evo-legend {
+      display: flex; align-items: center; gap: 16px;
+      margin-bottom: 16px; font-size: 12px; color: var(--g600);
+    }
+    .legend-item { display: flex; align-items: center; gap: 5px; }
+    .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+    .ld-new { background: #d4edda; border: 1px solid var(--green); }
+    .ld-gray { background: var(--g100); border: 1px solid var(--g300); }
+    .ld-hi { background: #fff9c4; border: 1px solid #ffc107; }
+
+    /* ── Summary ── */
+    .sum-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 16px; }
+
+    .sum-card {
+      border: 1px solid var(--border); border-radius: 12px;
+      padding: 26px 20px; text-align: center;
+    }
+    .sum-card:nth-child(1) { border-top: 3px solid var(--blue); }
+    .sum-card:nth-child(2) { border-top: 3px solid var(--purple); }
+    .sum-card:nth-child(3) { border-top: 3px solid var(--amber); }
+
+    .sum-icon { font-size: 28px; margin-bottom: 10px; }
+    .sum-title { font-size: 15px; font-weight: 700; margin-bottom: 6px; }
+    .sum-desc { font-size: 13px; color: var(--g600); line-height: 1.65; }
+
+    .closing {
+      text-align: center; padding: 48px 24px 60px;
+      border-top: 1px solid var(--border);
+      color: var(--g600); font-size: 15px;
+    }
+    .closing strong { color: var(--g900); font-size: 17px; display: block; margin-bottom: 6px; }
+
+    /* ── Animations ── */
+    @keyframes msgIn { from { opacity:0; transform:translateY(6px); } to { opacity:1; transform:translateY(0); } }
+    @keyframes fadeIn { from { opacity:0; } to { opacity:1; } }
+    @keyframes bounce { 0%,60%,100% { transform:translateY(0); } 30% { transform:translateY(-5px); } }
+
+    /* ── Responsive ── */
+    @media (max-width: 720px) {
+      .step-grid { grid-template-columns: 1fr; }
+      .flow-row { flex-direction: column; gap: 8px; }
+      .flow-sep { display: none; }
+      .tips-row { grid-template-columns: 1fr; }
+      .sum-grid { grid-template-columns: 1fr; }
+      .evo-row { grid-template-columns: 1fr 1fr; }
+      .evo-arrow:nth-child(even) { display: none; }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ════ HEADER ════ -->
+<header>
+  <div class="logo-mark">✦</div>
+  <h1>プロンプトの工夫で<em>出力はどう変わるか</em></h1>
+  <p style="color:var(--g600);font-size:15px;margin-top:10px;">
+    お題：<span class="chip">📝 新入社員向け 報連相マニュアルを作る</span>
+  </p>
+</header>
+
+<!-- ════ SECTION 1: 3 STEPS ════ -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow">Copilot の基本</p>
+    <h2 class="sec-title">3ステップで回答を育てる</h2>
+    <p class="sec-desc">Copilot は一問一答ではなく、対話を重ねて出力を磨くツールです。</p>
+
+    <div class="flow-row">
+      <div class="flow-card">
+        <div class="flow-icon">💬</div>
+        <h3>① 質問</h3>
+        <p>プロンプトを入力する</p>
+      </div>
+      <div class="flow-sep">→</div>
+      <div class="flow-card">
+        <div class="flow-icon">✨</div>
+        <h3>② 回答</h3>
+        <p>Copilot が出力する</p>
+      </div>
+      <div class="flow-sep">→</div>
+      <div class="flow-card">
+        <div class="flow-icon">🔄</div>
+        <h3>③ 対話</h3>
+        <p>追加指示でブラッシュアップ</p>
+      </div>
+    </div>
+
+    <div class="tips-row">
+      <div class="tip">
+        <span class="tip-dot" style="background:var(--blue)"></span>
+        条件を具体的にするほど、求める回答に近づく
+      </div>
+      <div class="tip">
+        <span class="tip-dot" style="background:var(--purple)"></span>
+        対話を重ねることで出力を育てられる
+      </div>
+      <div class="tip">
+        <span class="tip-dot" style="background:var(--amber)"></span>
+        例を見せて出力をコントロールする = Few-Shot ラーニング
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ════ SECTION 2: DEMO ════ -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow">デモ</p>
+    <h2 class="sec-title">プロンプトを変えると出力はどう変わるか</h2>
+    <p class="sec-desc">各ステップの「▶ 実行する」ボタンを押して、出力の変化を確認してみてください。</p>
+
+    <div class="demo-steps">
+
+      <!-- ── STEP 1 ── -->
+      <div>
+        <div class="step-label-row">
+          <div class="step-badge b1">1</div>
+          <div>
+            <div class="step-tag t1">Step 1 — 質問</div>
+            <div class="step-name">曖昧な指示で投げてみる</div>
+          </div>
+        </div>
+        <div class="step-grid">
+          <!-- Chat -->
+          <div class="chat-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">GitHub Copilot Chat</span>
+            </div>
+            <div class="chat-body" id="chat1">
+              <div class="msg-user">報連相マニュアルを書いて</div>
+              <div class="typing" id="typing1">
+                <div class="tdots"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+              </div>
+              <div class="msg-ai" id="ai1"># 報連相について
+
+報告・連絡・相談を合わせて「報連相」と
+呼びます。
+
+■ 報告
+業務の進捗や結果を上司に伝えること。
+
+■ 連絡
+関係者に必要な情報を共有すること。
+
+■ 相談
+判断が難しい場合に上司へ相談すること。
+
+報連相を意識してチームで
+連携しましょう。</div>
+            </div>
+            <div class="chat-footer">
+              <button class="run-btn" id="btn1" onclick="runStep(1)">▶ 実行する</button>
+            </div>
+          </div>
+          <!-- Doc preview -->
+          <div class="doc-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">📄 出力プレビュー</span>
+            </div>
+            <div class="doc-body">
+              <div class="doc-placeholder" id="ph1">実行ボタンを押すと<br>出力が表示されます</div>
+              <div class="doc-content" id="dc1">
+                <div class="dh1">報連相について</div>
+                <p class="dp" style="font-size:11px;color:var(--g600);">報告・連絡・相談を合わせて「報連相」と呼びます。</p>
+                <div class="dh2">■ 報告</div>
+                <p class="dp">業務の進捗や結果を上司に伝えること。</p>
+                <div class="dh2">■ 連絡</div>
+                <p class="dp">関係者に必要な情報を共有すること。</p>
+                <div class="dh2">■ 相談</div>
+                <p class="dp">判断が難しい場合に上司へ相談すること。</p>
+                <p class="dp" style="margin-top:10px;color:var(--g500);font-size:11px;">報連相を意識してチームで連携しましょう。</p>
+
+                <div style="margin-top:16px;padding:10px 12px;background:var(--g50);border-radius:8px;border:1px solid var(--border);">
+                  <p style="font-size:11px;font-weight:700;color:var(--red);margin-bottom:6px;">⚠ このままでは使えない理由</p>
+                  <ul class="dul" style="color:var(--g600);">
+                    <li>対象が誰か不明（管理職？新人？）</li>
+                    <li>具体例・NG例がない</li>
+                    <li>構成が薄く実践的でない</li>
+                    <li>自社ルールが一切反映されない</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 2 ── -->
+      <div>
+        <div class="step-label-row">
+          <div class="step-badge b2">2</div>
+          <div>
+            <div class="step-tag t2">Step 2 — 条件を足す</div>
+            <div class="step-name">条件を具体的にする</div>
+          </div>
+        </div>
+        <div class="step-grid">
+          <!-- Chat -->
+          <div class="chat-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">GitHub Copilot Chat</span>
+            </div>
+            <div class="chat-body" id="chat2">
+              <div class="msg-user">新入社員向けの報連相マニュアルを
+Markdown 形式で書いて。
+
+条件：
+- 対象：入社1年目の社員
+- 報告・連絡・相談それぞれの定義と
+　具体的なシーン例を入れる
+- やりがちな NG 例と改善例をセットで
+- 読み終えたら即実践できるレベルで</div>
+              <div class="typing" id="typing2">
+                <div class="tdots"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+              </div>
+              <div class="msg-ai" id="ai2"># 新入社員向け 報連相マニュアル
+
+対象：入社1年目の社員
+
+## 1. 報告（ほうこく）
+いつする？ 業務完了時・問題発生時
+
+NG例：「終わりました」
+OK例：「〇〇の件、本日15時に完了。
+　　　結果は〜です」
+
+## 2. 連絡（れんらく）
+いつする？ 日程変更・情報共有が必要なとき
+
+NG例：「後で連絡します」
+OK例：「〇〇の件、明日10時に変更に
+　　　なりました。関係者へ共有済みです」
+
+## 3. 相談（そうだん）
+いつする？ 判断に迷ったとき
+
+NG例：「どうすればいいですか？」
+OK例：「〇〇の件、A案とB案で迷っています。
+　　　私はA案が良いと思いますが、いかがですか？」</div>
+            </div>
+            <div class="chat-footer">
+              <button class="run-btn" id="btn2" onclick="runStep(2)">▶ 実行する</button>
+            </div>
+          </div>
+          <!-- Doc preview -->
+          <div class="doc-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">📄 出力プレビュー</span>
+            </div>
+            <div class="doc-body">
+              <div class="doc-placeholder" id="ph2">実行ボタンを押すと<br>出力が表示されます</div>
+              <div class="doc-content" id="dc2">
+                <div class="dh1"><span class="dnew">新入社員向け 報連相マニュアル</span> <span class="tag-new">NEW</span></div>
+                <p class="dp" style="font-size:10.5px;color:var(--g600);">対象：入社1年目の社員 <span class="tag-new">NEW</span></p>
+
+                <div class="dh2">1. 報告（ほうこく）</div>
+                <p class="dp">いつする？ 業務完了時・問題発生時</p>
+                <p class="dng">❌ 「終わりました」<span class="tag-new">NEW</span></p>
+                <p class="dok">✅ 「〇〇の件、本日15時に完了。結果は〜です」</p>
+
+                <div class="dh2">2. 連絡（れんらく）</div>
+                <p class="dp">いつする？ 日程変更・情報共有が必要なとき</p>
+                <p class="dng">❌ 「後で連絡します」</p>
+                <p class="dok">✅ 「〇〇の件、明日10時に変更になりました」</p>
+
+                <div class="dh2">3. 相談（そうだん）</div>
+                <p class="dp">いつする？ 判断に迷ったとき</p>
+                <p class="dng">❌ 「どうすればいいですか？」</p>
+                <p class="dok">✅ 「A案とB案で迷っています。私はA案が…」</p>
+
+                <div style="margin-top:14px;padding:10px 12px;background:var(--green-bg);border-radius:8px;border:1px solid #a8d5b5;">
+                  <p style="font-size:11px;font-weight:700;color:var(--green);margin-bottom:4px;">✅ Step 1 からの改善点</p>
+                  <ul class="dul" style="color:var(--g700);">
+                    <li>対象読者が明確になった</li>
+                    <li>NG/OK 例が入り実践的に</li>
+                    <li>見出し構造がついた</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 3 ── -->
+      <div>
+        <div class="step-label-row">
+          <div class="step-badge b3">3</div>
+          <div>
+            <div class="step-tag t3">Step 3 — 対話</div>
+            <div class="step-name">対話でブラッシュアップ</div>
+          </div>
+        </div>
+        <div class="step-grid">
+          <!-- Dialogue panel -->
+          <div class="chat-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">GitHub Copilot Chat — 追加指示</span>
+            </div>
+            <div class="exchanges">
+
+              <!-- Exchange 1 -->
+              <div class="exchange" id="ex1">
+                <div class="ex-q">各セクションの最後に、自分でチェックできるリストを追加して</div>
+                <div class="ex-a" id="ea1">→ チェックボックスが追加されました
+
+□ いつ・何を・どうなったかが入っているか
+□ 次のアクションまで書いてあるか
+□ 相手が読んで判断できる情報量か</div>
+                <button class="ex-btn" id="exb1" onclick="runExchange(1)">▶ 追加指示を送る</button>
+              </div>
+
+              <!-- Exchange 2 -->
+              <div class="exchange" id="ex2" style="opacity:.4;pointer-events:none;">
+                <div class="ex-q">NG 例をもっとリアルにして。実際の Slack メッセージ風の会話例で見せて</div>
+                <div class="ex-a" id="ea2">→ Slack 風の会話例に差し替えました
+
+【Before】
+田中さん、終わりました。
+
+【After】
+田中さん、終わりました。
+→ 何が？いつ？どうなった？
+
+✅ 田中さん、〇〇の件 本日15時完了です。
+　　先方より承認いただきました。
+　　次アクション：来週月曜に納品予定です。</div>
+                <button class="ex-btn" id="exb2" onclick="runExchange(2)">▶ 追加指示を送る</button>
+              </div>
+
+              <!-- Exchange 3 -->
+              <div class="exchange" id="ex3" style="opacity:.4;pointer-events:none;">
+                <div class="ex-q">冒頭に「なぜ報連相が大切か」の導入を追加して。新入社員が前向きになれるトーンで</div>
+                <div class="ex-a" id="ea3">→ モチベーションを高める導入文を追加しました
+
+「報連相は、あなたとチームをつなぐ橋です。
+小さな一言が、周囲への安心感と信頼になります。
+難しく考えず、まずやってみましょう！」</div>
+                <button class="ex-btn" id="exb3" onclick="runExchange(3)">▶ 追加指示を送る</button>
+              </div>
+
+            </div>
+          </div>
+          <!-- Doc preview -->
+          <div class="doc-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">📄 出力プレビュー</span>
+            </div>
+            <div class="doc-body" id="doc3body">
+              <div class="doc-placeholder" id="ph3">追加指示を送ると<br>出力が更新されます</div>
+              <div class="doc-content" id="dc3a" style="display:none;">
+                <div class="dh1">新入社員向け 報連相マニュアル</div>
+                <div class="dh2">1. 報告</div>
+                <p class="dng" style="font-size:11px;">❌ 「終わりました」</p>
+                <p class="dok" style="font-size:11px;">✅ 「〇〇の件、本日15時に完了…」</p>
+                <div class="dh3 dnew">📋 チェックリスト <span class="tag-new">NEW</span></div>
+                <p class="dcb">□ いつ・何を・どうなったか</p>
+                <p class="dcb">□ 次のアクション</p>
+                <p class="dcb">□ 相手が判断できる情報量か</p>
+                <div class="dh2">2. 連絡 / 3. 相談</div>
+                <p class="dp" style="font-size:11px;color:var(--g500);">（同様にチェックリスト追加）</p>
+              </div>
+              <div class="doc-content" id="dc3b" style="display:none;">
+                <div class="dh1">新入社員向け 報連相マニュアル</div>
+                <div class="dh2">1. 報告</div>
+                <div class="dslack dnew">
+                  <span style="font-size:10px;font-weight:700;color:var(--g500);">Slack 会話例 <span class="tag-new">NEW</span></span><br>
+                  <span style="color:var(--g700);">田中さん、終わりました。</span><br>
+                  <span style="color:var(--red);">→ 何が？いつ？どうなった？</span><br>
+                  <span style="color:var(--green);">✅ 〇〇の件 本日15時完了。<br>　　次：来週月曜に納品予定です。</span>
+                </div>
+                <div class="dh3">📋 チェックリスト</div>
+                <p class="dcb">□ いつ・何を・どうなったか</p>
+                <p class="dcb">□ 次のアクション</p>
+              </div>
+              <div class="doc-content" id="dc3c" style="display:none;">
+                <div class="dh1">新入社員向け 報連相マニュアル</div>
+                <div style="background:var(--purple-bg);border-left:3px solid var(--purple);padding:8px 10px;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:11px;color:var(--purple);" class="dnew">
+                  💡 なぜ報連相が大切か？ <span class="tag-new">NEW</span><br>
+                  <span style="color:var(--g700);">報連相は、あなたとチームをつなぐ橋です。<br>小さな一言が、周囲への安心感と信頼になります。</span>
+                </div>
+                <div class="dh2">1. 報告</div>
+                <div class="dslack">
+                  <span style="color:var(--red);font-size:11px;">❌ 「終わりました」→ 何が？いつ？</span><br>
+                  <span style="color:var(--green);font-size:11px;">✅ 「〇〇の件 本日15時完了。次：来週月曜納品」</span>
+                </div>
+                <div class="dh3">📋 チェックリスト</div>
+                <p class="dcb">□ いつ・何を・どうなったか</p>
+                <p class="dcb">□ 次のアクション</p>
+                <div class="dh2" style="margin-top:10px;">2. 連絡 / 3. 相談</div>
+                <p class="dp" style="font-size:11px;color:var(--g500);">（同様の構成で完成）</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── STEP 4 ── -->
+      <div>
+        <div class="step-label-row">
+          <div class="step-badge b4">4</div>
+          <div>
+            <div class="step-tag t4">Step 4 — Few-Shot</div>
+            <div class="step-name">例を見せてフォーマットを揃える</div>
+          </div>
+        </div>
+        <div class="step-grid">
+          <!-- Chat -->
+          <div class="chat-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">GitHub Copilot Chat</span>
+            </div>
+            <div class="chat-body" id="chat4">
+              <div class="msg-user">以下のフォーマットで「連絡」「相談」も書いて。
+
+## 📣 報告
+### どんなときにする？
+仕事が完了したとき
+
+### Slack でのメッセージ例
+❌ 「終わりました」
+✅ 「〇〇の件、本日15時に完了。
+　　結果：先方承認済み。
+　　次：来週月曜に納品予定です。」
+
+### 送る前のチェックリスト
+- [ ] いつ・何を・どうなったか
+- [ ] 次のアクション
+- [ ] 相手が判断できる情報量か
+
+このフォーマットで「連絡」「相談」も書いて</div>
+              <div class="typing" id="typing4">
+                <div class="tdots"><span class="tdot"></span><span class="tdot"></span><span class="tdot"></span></div>
+              </div>
+              <div class="msg-ai" id="ai4">## 📢 連絡
+### どんなときにする？
+日程変更・情報共有が必要なとき
+
+### Slack でのメッセージ例
+❌ 「後で連絡します」
+✅ 「〇〇の件、明日10時に変更になりました。
+　　関係者へ共有済みです。
+　　確認よろしくお願いします。」
+
+### 送る前のチェックリスト
+- [ ] 誰に・何を・いつまで伝えるか
+- [ ] 確認が必要な場合は期限を明示
+- [ ] 漏れている関係者がいないか
+
+## 🙋 相談
+### どんなときにする？
+判断に迷ったとき・進め方を確認したいとき
+
+### Slack でのメッセージ例
+❌ 「どうすればいいですか？」
+✅ 「〇〇の件、A案とB案で迷っています。
+　　私はA案が良いと思いますが、いかがですか？」
+
+### 送る前のチェックリスト
+- [ ] 自分の案・意見を添えているか
+- [ ] 背景情報が十分か
+- [ ] 相談のゴール（決断？確認？）が明確か</div>
+            </div>
+            <div class="chat-footer">
+              <button class="run-btn" id="btn4" onclick="runStep(4)">▶ 実行する</button>
+            </div>
+          </div>
+          <!-- Doc preview -->
+          <div class="doc-panel">
+            <div class="panel-bar">
+              <span class="win-dot wd-r"></span><span class="win-dot wd-y"></span><span class="win-dot wd-g"></span>
+              <span class="bar-title">📄 出力プレビュー</span>
+            </div>
+            <div class="doc-body">
+              <div class="doc-placeholder" id="ph4">実行ボタンを押すと<br>出力が表示されます</div>
+              <div class="doc-content" id="dc4">
+                <div class="dh1">新入社員向け 報連相マニュアル</div>
+                <div style="background:var(--purple-bg);border-left:3px solid var(--purple);padding:7px 10px;border-radius:0 6px 6px 0;margin-bottom:10px;font-size:11px;color:var(--g700);">
+                  💡 報連相は、あなたとチームをつなぐ橋です。
+                </div>
+
+                <div class="dh2">📣 報告</div>
+                <div class="dslack">
+                  <span class="dng" style="font-size:11px;">❌ 「終わりました」</span><br>
+                  <span class="dok" style="font-size:11px;">✅ 「〇〇の件、本日15時完了。<br>　　次：来週月曜に納品予定です。」</span>
+                </div>
+                <p class="dcb" style="margin-top:4px;">□ いつ・何を・どうなったか</p>
+                <p class="dcb">□ 次のアクション</p>
+
+                <div class="dh2 dnew">📢 連絡 <span class="tag-new">NEW</span></div>
+                <div class="dslack dnew">
+                  <span class="dng" style="font-size:11px;">❌ 「後で連絡します」</span><br>
+                  <span class="dok" style="font-size:11px;">✅ 「〇〇の件、明日10時に変更。<br>　　関係者へ共有済みです。」</span>
+                </div>
+                <p class="dcb">□ 誰に・何を・いつまで</p>
+                <p class="dcb">□ 漏れている関係者がいないか</p>
+
+                <div class="dh2 dnew">🙋 相談 <span class="tag-new">NEW</span></div>
+                <div class="dslack dnew">
+                  <span class="dng" style="font-size:11px;">❌ 「どうすればいいですか？」</span><br>
+                  <span class="dok" style="font-size:11px;">✅ 「A案とB案で迷っています。<br>　　私はA案が良いと思いますが…」</span>
+                </div>
+                <p class="dcb">□ 自分の案・意見を添えているか</p>
+                <p class="dcb">□ 相談のゴールが明確か</p>
+
+                <div style="margin-top:14px;padding:10px 12px;background:var(--amber-bg);border-radius:8px;border:1px solid #f5c842;">
+                  <p style="font-size:11px;font-weight:700;color:var(--amber);margin-bottom:4px;">✦ Few-Shot の効果</p>
+                  <ul class="dul" style="color:var(--g700);">
+                    <li>絵文字・見出し・形式が揃った</li>
+                    <li>3セクションで読み心地が統一</li>
+                    <li>スタイルガイド不要で意図が伝わった</li>
+                  </ul>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div><!-- /demo-steps -->
+  </div>
+</section>
+
+<!-- ════ SECTION 3: EVOLUTION ════ -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow">出力の進化</p>
+    <h2 class="sec-title">資料はどのように変わっていったか</h2>
+    <p class="sec-desc">4つのステップを経て、報連相マニュアルはここまで進化します。</p>
+
+    <div class="evo-legend">
+      <div class="legend-item"><span class="legend-dot ld-new"></span>新しく追加された要素</div>
+      <div class="legend-item"><span class="legend-dot ld-hi"></span>フォーマットが統一された部分</div>
+      <div class="legend-item"><span class="legend-dot ld-gray"></span>Step 1 から変わらない基本構造</div>
+    </div>
+
+    <div class="evo-row">
+
+      <!-- Card 1 -->
+      <div class="evo-card">
+        <div class="evo-head eh1">Step 1：曖昧な指示</div>
+        <div class="evo-body">
+          <p style="font-weight:700;margin-bottom:6px;">報連相について</p>
+          <p class="egray" style="margin-bottom:8px;font-size:10px;">（対象の記載なし）</p>
+          <p style="font-weight:600;margin-bottom:3px;">■ 報告</p>
+          <p class="egray">業務の進捗や結果を上司に伝えること。</p>
+          <p style="font-weight:600;margin:6px 0 3px;">■ 連絡</p>
+          <p class="egray">関係者に情報を共有すること。</p>
+          <p style="font-weight:600;margin:6px 0 3px;">■ 相談</p>
+          <p class="egray">判断が難しい場合に上司へ相談すること。</p>
+          <p class="egray" style="margin-top:8px;font-size:10px;">例・チェックリストなし</p>
+        </div>
+      </div>
+
+      <div class="evo-arrow">→</div>
+
+      <!-- Card 2 -->
+      <div class="evo-card">
+        <div class="evo-head eh2">Step 2：条件を足す</div>
+        <div class="evo-body">
+          <p style="font-weight:700;margin-bottom:2px;" class="ehighlight">新入社員向け 報連相マニュアル</p>
+          <p class="enew" style="font-size:10px;margin-bottom:8px;">▲ 対象：入社1年目</p>
+          <p style="font-weight:600;margin-bottom:3px;">1. 報告（ほうこく）</p>
+          <p class="enew">❌ 「終わりました」</p>
+          <p class="enew">✅ 「〇〇の件、本日15時に完了…」</p>
+          <p style="font-weight:600;margin:6px 0 3px;">2. 連絡（れんらく）</p>
+          <p class="enew">❌ / ✅ 例あり</p>
+          <p style="font-weight:600;margin:6px 0 3px;">3. 相談（そうだん）</p>
+          <p class="enew">❌ / ✅ 例あり</p>
+          <p class="enew" style="font-size:10px;margin-top:8px;">▲ NG/OK 例を追加</p>
+        </div>
+      </div>
+
+      <div class="evo-arrow">→</div>
+
+      <!-- Card 3 -->
+      <div class="evo-card">
+        <div class="evo-head eh3">Step 3：対話で育てる</div>
+        <div class="evo-body">
+          <p style="font-weight:700;margin-bottom:4px;">新入社員向け 報連相マニュアル</p>
+          <p class="enew" style="font-size:10px;padding:3px 6px;background:var(--purple-bg);border-radius:3px;margin-bottom:6px;">▲ 導入文（前向きなトーン）</p>
+          <p style="font-weight:600;margin-bottom:3px;">1. 報告</p>
+          <p class="enew" style="font-size:10px;padding:3px 6px;background:var(--green-bg);border-radius:3px;margin-bottom:3px;">▲ Slack 会話例（リアルな表現）</p>
+          <p class="enew" style="font-size:10px;padding:3px 6px;background:var(--green-bg);border-radius:3px;">▲ チェックリスト □ × 3</p>
+          <p style="font-weight:600;margin:6px 0 3px;">2. 連絡 / 3. 相談</p>
+          <p class="enew" style="font-size:10px;">▲ 同様に追加</p>
+        </div>
+      </div>
+
+      <div class="evo-arrow">→</div>
+
+      <!-- Card 4 -->
+      <div class="evo-card">
+        <div class="evo-head eh4">Step 4：Few-Shot</div>
+        <div class="evo-body">
+          <p style="font-weight:700;margin-bottom:6px;">新入社員向け 報連相マニュアル</p>
+          <p class="ehighlight" style="font-weight:600;margin-bottom:3px;">📣 報告</p>
+          <p style="font-size:10px;margin-bottom:6px;">❌ / ✅ / □ チェックリスト</p>
+          <p class="ehighlight" style="font-weight:600;margin-bottom:3px;">📢 連絡</p>
+          <p style="font-size:10px;margin-bottom:6px;" class="enew">同じ形式で統一 ▲</p>
+          <p class="ehighlight" style="font-weight:600;margin-bottom:3px;">🙋 相談</p>
+          <p style="font-size:10px;" class="enew">同じ形式で統一 ▲</p>
+          <p class="enew" style="font-size:10px;margin-top:8px;padding:3px 6px;background:var(--amber-bg);border-radius:3px;">▲ 絵文字・フォーマット完全統一</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ════ SECTION 4: SUMMARY ════ -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow">まとめ</p>
+    <h2 class="sec-title" style="margin-bottom:28px;">3つのテクニック</h2>
+    <div class="sum-grid">
+      <div class="sum-card">
+        <div class="sum-icon">🎯</div>
+        <div class="sum-title">条件を具体的に</div>
+        <div class="sum-desc">対象・形式・含める要素を書くほど精度が上がる。レビューコストが下がる。</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-icon">🔄</div>
+        <div class="sum-title">対話で育てる</div>
+        <div class="sum-desc">一発完璧を目指さず、会話で積み上げる。小さい指示で確実に前進できる。</div>
+      </div>
+      <div class="sum-card">
+        <div class="sum-icon">📐</div>
+        <div class="sum-title">Few-Shot</div>
+        <div class="sum-desc">例を見せると、構造・文体・細部まで揃う。スタイルガイド不要で意図が伝わる。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<div class="closing">
+  <strong>指示は設計。具体的に、対話で、例を使って。</strong>
+  Copilot をうまく使うほど、あなたの仕事のスピードが上がります。
+</div>
+
+<script>
+  /* ── Step 1 & 2 & 4 run logic ── */
+  function runStep(n) {
+    const btn = document.getElementById('btn' + n);
+    const typing = document.getElementById('typing' + n);
+    const ai = document.getElementById('ai' + n);
+    const ph = document.getElementById('ph' + n);
+    const dc = document.getElementById('dc' + n);
+
+    btn.disabled = true;
+    btn.textContent = '生成中...';
+    typing.classList.add('vis');
+
+    setTimeout(() => {
+      typing.classList.remove('vis');
+      ai.classList.add('vis');
+
+      setTimeout(() => {
+        ph.style.display = 'none';
+        dc.classList.add('vis');
+        btn.classList.add('done');
+        btn.textContent = '✓ 実行済み';
+      }, 300);
+    }, 1600);
+  }
+
+  /* ── Step 3 dialogue logic ── */
+  let ex3State = 0;
+
+  function runExchange(num) {
+    const btn = document.getElementById('exb' + num);
+    const ans = document.getElementById('ea' + num);
+
+    btn.disabled = true;
+    btn.textContent = '送信中...';
+
+    setTimeout(() => {
+      ans.classList.add('vis');
+      btn.textContent = '✓ 送信済み';
+      ex3State = num;
+      updateDoc3(num);
+
+      /* unlock next */
+      if (num < 3) {
+        const next = document.getElementById('ex' + (num + 1));
+        next.style.opacity = '1';
+        next.style.pointerEvents = 'auto';
+      }
+    }, 1200);
+  }
+
+  function updateDoc3(state) {
+    const ph = document.getElementById('ph3');
+    ph.style.display = 'none';
+
+    /* hide all, show current */
+    ['dc3a','dc3b','dc3c'].forEach(id => {
+      document.getElementById(id).style.display = 'none';
+    });
+
+    const map = { 1: 'dc3a', 2: 'dc3b', 3: 'dc3c' };
+    const target = document.getElementById(map[state]);
+    target.style.display = 'block';
+    target.classList.add('vis');
+    target.style.animation = 'none';
+    void target.offsetWidth; /* reflow */
+    target.style.animation = 'fadeIn .4s ease';
+  }
+</script>
+</body>
+</html>

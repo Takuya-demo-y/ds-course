@@ -1,0 +1,599 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Windows ショートカット完全版 | PC初心者向け</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --blue:#1a73e8;   --blue-bg:#e8f0fe;
+      --purple:#7b1fa2; --purple-bg:#f3e5f5;
+      --teal:#00796b;   --teal-bg:#e0f2f1;
+      --amber:#b45309;  --amber-bg:#fef3c7;
+      --green:#1e8a3c;  --green-bg:#e6f4ea;
+      --red:#c62828;    --red-bg:#fce8e6;
+      --text:#0f172a; --muted:#64748b; --border:#e2e8f0; --bg:#f1f5f9;
+      --wrap: max(24px, calc(50% - 490px));
+    }
+
+    body {
+      font-family: 'Hiragino Sans','Hiragino Kaku Gothic ProN','Yu Gothic','Meiryo',-apple-system,sans-serif;
+      background: var(--bg); color: var(--text); line-height: 1.6;
+    }
+
+    /* ─── HERO ─── */
+    .hero {
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 60%, #0f172a 100%);
+      padding: 44px var(--wrap) 36px;
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .hero::before {
+      content: ''; position: absolute; inset: 0;
+      background: radial-gradient(ellipse at 50% -10%, rgba(26,115,232,.28) 0%, transparent 65%);
+    }
+    .hero-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: rgba(26,115,232,.2); border: 1px solid rgba(26,115,232,.4);
+      border-radius: 20px; padding: 4px 14px;
+      font-size: 10px; font-weight: 700; color: #93c5fd;
+      letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 12px;
+    }
+    .hero h1 {
+      font-size: clamp(22px, 4vw, 38px); font-weight: 900;
+      color: #f1f5f9; margin-bottom: 6px; line-height: 1.15;
+    }
+    .hero h1 span { color: #60a5fa; }
+    .hero-sub { font-size: 13px; color: #94a3b8; margin-bottom: 22px; }
+    .hero-keys {
+      display: flex; justify-content: center; gap: 8px;
+      flex-wrap: wrap; margin-bottom: 0; position: relative;
+    }
+    .hkey {
+      background: #1e293b; border: 1px solid #334155; border-bottom: 3px solid #0f172a;
+      border-radius: 7px; padding: 6px 14px;
+      font-size: 12px; font-weight: 700; color: #60a5fa;
+      font-family: 'SF Mono','Consolas',monospace;
+      animation: hfloat var(--d,3s) ease-in-out infinite;
+    }
+    .hkey-plus { font-size: 14px; color: #475569; line-height: 36px; }
+    @keyframes hfloat { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+
+    /* ─── STATS BAR ─── */
+    .stats-bar {
+      background: #fff; border-bottom: 1px solid var(--border);
+      padding: 10px var(--wrap);
+      display: flex; align-items: center; gap: 14px; flex-wrap: wrap;
+    }
+    .stat-chip { display: flex; align-items: center; gap: 5px; font-size: 11px; color: var(--muted); }
+    .stat-num  { font-size: 18px; font-weight: 800; color: var(--text); line-height: 1; }
+    .prog-wrap { flex: 1; min-width: 140px; display: flex; align-items: center; gap: 8px; }
+    .prog-bg   { flex: 1; height: 7px; background: var(--border); border-radius: 4px; overflow: hidden; }
+    .prog-fill { height: 100%; background: var(--green); border-radius: 4px; transition: width .5s ease; width: 0; }
+    .prog-lbl  { font-size: 11px; font-weight: 700; color: var(--green); white-space: nowrap; min-width: 32px; }
+    .reset-btn {
+      padding: 4px 12px; border-radius: 100px; border: 1.5px solid var(--border);
+      background: #fff; font-size: 10px; font-weight: 600; cursor: pointer;
+      color: var(--muted); transition: all .2s; -webkit-tap-highlight-color: transparent;
+    }
+    .reset-btn:hover { border-color: var(--red); color: var(--red); }
+
+    /* ─── CONTROLS (sticky) ─── */
+    .controls {
+      background: #fff; border-bottom: 2px solid var(--border);
+      padding: 10px var(--wrap);
+      display: flex; align-items: center; gap: 10px; flex-wrap: wrap;
+      position: sticky; top: 0; z-index: 200;
+      box-shadow: 0 2px 10px rgba(0,0,0,.06);
+    }
+    .search-box {
+      display: flex; align-items: center; gap: 8px;
+      background: var(--bg); border: 1.5px solid var(--border);
+      border-radius: 100px; padding: 7px 14px;
+      flex: 1; min-width: 160px; transition: border-color .2s;
+    }
+    .search-box:focus-within { border-color: var(--blue); }
+    .search-box input {
+      border: none; background: transparent; outline: none;
+      font-size: 13px; font-family: inherit; color: var(--text); width: 100%;
+    }
+    .filter-row { display: flex; gap: 5px; flex-wrap: wrap; }
+    .fbtn {
+      padding: 5px 12px; border-radius: 100px; border: 1.5px solid var(--border);
+      background: #fff; font-size: 11px; font-weight: 700; cursor: pointer;
+      transition: all .2s; -webkit-tap-highlight-color: transparent; white-space: nowrap;
+    }
+    .fbtn.active { background: var(--blue); border-color: var(--blue); color: #fff; }
+    .fbtn:hover:not(.active) { border-color: var(--blue); color: var(--blue); }
+
+    /* ─── MAIN ─── */
+    .main { padding: 24px var(--wrap) 40px; }
+
+    /* ─── PRIORITY STRIP ─── */
+    .priority-strip {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 16px; padding: 20px 22px; margin-bottom: 28px;
+    }
+    .strip-title {
+      font-size: 12px; font-weight: 700; color: #fcd34d;
+      margin-bottom: 14px; display: flex; align-items: center; gap: 6px;
+    }
+    .p-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 8px; }
+    .p-card {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 10px; padding: 10px 12px; cursor: pointer;
+      transition: background .2s; -webkit-tap-highlight-color: transparent;
+    }
+    .p-card:hover       { background: rgba(255,255,255,.13); }
+    .p-card.learned     { background: rgba(30,138,60,.22); border-color: rgba(30,138,60,.45); }
+    .p-keys { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; margin-bottom: 4px; }
+    .pk {
+      background: #334155; border: 1px solid #475569; border-bottom: 2px solid #0f172a;
+      border-radius: 5px; padding: 2px 7px; font-size: 10px; font-weight: 700;
+      color: #e2e8f0; font-family: 'SF Mono','Consolas',monospace;
+    }
+    .pk-plus { font-size: 9px; color: #64748b; }
+    .p-name  { font-size: 11px; font-weight: 700; color: #f1f5f9; margin-bottom: 1px; }
+    .p-desc  { font-size: 9px; color: #94a3b8; line-height: 1.3; }
+
+    /* ─── CATEGORY SECTION ─── */
+    .cat-section { margin-bottom: 28px; }
+    .cat-hd {
+      display: flex; align-items: center; gap: 8px; margin-bottom: 12px;
+      padding-bottom: 8px; border-bottom: 2px solid var(--border);
+    }
+    .cat-label { font-size: 15px; font-weight: 700; }
+    .cat-count {
+      font-size: 10px; color: var(--muted); background: var(--bg);
+      border-radius: 20px; padding: 2px 9px; font-weight: 600;
+    }
+
+    /* ─── SHORTCUT CARDS ─── */
+    .sc-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 9px; }
+    .sc-card {
+      background: #fff; border: 1.5px solid var(--border); border-radius: 12px;
+      padding: 11px 13px 11px 15px; display: flex; flex-direction: column; gap: 5px;
+      border-left: 4px solid var(--cc, var(--blue));
+      cursor: pointer; transition: box-shadow .2s, transform .15s;
+      position: relative; -webkit-tap-highlight-color: transparent;
+    }
+    .sc-card:hover { box-shadow: 0 4px 16px rgba(0,0,0,.09); transform: translateY(-1px); }
+    .sc-card.learned { background: #f0fdf4; border-left-color: var(--green) !important; }
+    .sc-card.hidden  { display: none; }
+
+    .sc-keys { display: flex; align-items: center; gap: 4px; flex-wrap: wrap; }
+    .k {
+      background: #1e293b; border: 1px solid #334155; border-bottom: 2px solid #0f172a;
+      border-radius: 5px; padding: 3px 8px;
+      font-size: 10px; font-weight: 700; color: #e2e8f0;
+      font-family: 'SF Mono','Consolas',monospace; white-space: nowrap;
+    }
+    .k-plus { font-size: 9px; color: var(--muted); }
+    .sc-name { font-size: 12px; font-weight: 700; line-height: 1.3; }
+    .sc-desc { font-size: 10px; color: var(--muted); line-height: 1.4; }
+    .sc-tag  {
+      display: inline-block; border-radius: 20px; padding: 1px 8px;
+      font-size: 9px; font-weight: 700;
+      background: var(--cbg, var(--blue-bg)); color: var(--cc, var(--blue));
+    }
+    .lbtn {
+      position: absolute; top: 8px; right: 8px;
+      width: 20px; height: 20px; border-radius: 50%;
+      border: 1.5px solid var(--border); background: #fff;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 10px; color: var(--muted); cursor: pointer;
+      transition: all .2s; -webkit-tap-highlight-color: transparent; flex-shrink: 0;
+    }
+    .sc-card.learned .lbtn { background: var(--green); border-color: var(--green); color: #fff; }
+
+    /* ─── EMPTY STATE ─── */
+    .empty { display: none; text-align: center; padding: 48px 0; color: var(--muted); font-size: 13px; }
+    .empty.show { display: block; }
+
+    /* ─── QUIZ ─── */
+    .quiz-wrap {
+      background: linear-gradient(135deg, #0f172a, #1e293b);
+      border-radius: 16px; padding: 22px 24px; margin-bottom: 28px;
+    }
+    .quiz-ttl { font-size: 14px; font-weight: 700; color: #fcd34d; margin-bottom: 3px; }
+    .quiz-sub { font-size: 11px; color: #94a3b8; margin-bottom: 14px; }
+    .quiz-box {
+      background: rgba(255,255,255,.07); border: 1px solid rgba(255,255,255,.12);
+      border-radius: 12px; padding: 16px 18px;
+    }
+    .quiz-q  { font-size: 12px; font-weight: 700; color: #f1f5f9; margin-bottom: 12px; line-height: 1.5; }
+    .quiz-opts { display: flex; flex-wrap: wrap; gap: 7px; }
+    .qopt {
+      padding: 6px 14px; border: 1.5px solid rgba(255,255,255,.15);
+      border-radius: 8px; background: rgba(255,255,255,.05);
+      color: #e2e8f0; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: all .2s; -webkit-tap-highlight-color: transparent;
+    }
+    .qopt:hover   { background: rgba(255,255,255,.13); }
+    .qopt.correct { background: rgba(30,138,60,.3);  border-color: #22c55e; color: #86efac; }
+    .qopt.wrong   { background: rgba(198,40,40,.3);  border-color: #ef4444; color: #fca5a5; }
+    .quiz-fb { font-size: 10px; font-weight: 600; margin-top: 10px; min-height: 16px; line-height: 1.5; color: #94a3b8; }
+    .quiz-foot { display: flex; justify-content: space-between; align-items: center; margin-top: 12px; }
+    .quiz-score { font-size: 12px; font-weight: 700; color: #64748b; }
+    .quiz-score span { color: #fcd34d; font-size: 15px; }
+    .q-next {
+      padding: 7px 18px; border-radius: 100px; border: none;
+      background: var(--blue); color: #fff; font-size: 11px; font-weight: 700;
+      cursor: pointer; transition: background .2s;
+    }
+    .q-next:hover { background: #1557b0; }
+
+    /* ─── FOOTER ─── */
+    .footer {
+      text-align: center; padding: 20px var(--wrap);
+      font-size: 11px; color: var(--muted);
+      border-top: 1px solid var(--border); background: #fff;
+    }
+
+    /* ─── RESPONSIVE ─── */
+    @media (max-width: 768px) {
+      .sc-grid { grid-template-columns: repeat(2,1fr); }
+      .p-grid  { grid-template-columns: repeat(3,1fr); }
+    }
+    @media (max-width: 480px) {
+      .sc-grid { grid-template-columns: 1fr; }
+      .p-grid  { grid-template-columns: repeat(2,1fr); }
+      .fbtn    { padding: 4px 9px; font-size: 10px; }
+    }
+
+    @keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.07)} }
+    @keyframes shake { 0%,100%{transform:translateX(0)} 25%{transform:translateX(-5px)} 75%{transform:translateX(5px)} }
+  </style>
+</head>
+<body>
+
+<!-- ★ HERO -->
+<header class="hero">
+  <div style="position:relative;">
+    <div class="hero-badge">🪟 Windows Shortcuts</div>
+    <h1>Windows <span>ショートカット</span><br>完全版</h1>
+    <p class="hero-sub" id="heroSub">PC初心者のための厳選 -- 種 ─ 覚えるほど作業が速くなる</p>
+    <div class="hero-keys">
+      <span class="hkey" style="--d:2.8s">Ctrl</span>
+      <span class="hkey-plus">+</span>
+      <span class="hkey" style="--d:3.2s">C</span>
+      <span class="hkey" style="--d:2.4s; margin-left:12px">Win</span>
+      <span class="hkey-plus">+</span>
+      <span class="hkey" style="--d:3.6s">L</span>
+      <span class="hkey" style="--d:3.0s; margin-left:12px">Alt</span>
+      <span class="hkey-plus">+</span>
+      <span class="hkey" style="--d:2.6s">Tab</span>
+    </div>
+  </div>
+</header>
+
+<!-- ★ STATS BAR -->
+<div class="stats-bar">
+  <div class="stat-chip"><span class="stat-num" id="totalNum">—</span>&nbsp;ショートカット</div>
+  <div style="color:var(--border)">|</div>
+  <div class="stat-chip"><span class="stat-num" id="learnedNum" style="color:var(--green)">0</span>&nbsp;覚えた！</div>
+  <div class="prog-wrap">
+    <div class="prog-bg"><div class="prog-fill" id="progFill"></div></div>
+    <span class="prog-lbl" id="progLbl">0%</span>
+  </div>
+  <button class="reset-btn" onclick="resetAll()">リセット</button>
+</div>
+
+<!-- ★ CONTROLS -->
+<div class="controls">
+  <div class="search-box">
+    <span style="font-size:13px;color:var(--muted);">🔍</span>
+    <input type="search" id="searchIn" placeholder="検索... (例: コピー、Ctrl+C、保存)" autocomplete="off" />
+  </div>
+  <div class="filter-row" id="filterRow">
+    <button class="fbtn active" data-cat="all">すべて</button>
+    <button class="fbtn" data-cat="basic">📋 基本</button>
+    <button class="fbtn" data-cat="win">🪟 Winキー</button>
+    <button class="fbtn" data-cat="window">🖥 ウィンドウ</button>
+    <button class="fbtn" data-cat="text">✏️ テキスト</button>
+    <button class="fbtn" data-cat="browser">🌐 ブラウザ</button>
+    <button class="fbtn" data-cat="file">📁 ファイル</button>
+  </div>
+</div>
+
+<main class="main">
+  <div class="priority-strip" id="priorityStrip">
+    <div class="strip-title">⭐ まずこれだけ覚えよう ─ 厳選 TOP 9</div>
+    <div class="p-grid" id="pGrid"></div>
+  </div>
+  <div id="mainSections"></div>
+  <div class="empty" id="emptyState">😔 該当するショートカットが見つかりませんでした</div>
+
+  <!-- ★ QUIZ -->
+  <div class="quiz-wrap" id="quizSection">
+    <div class="quiz-ttl">🎯 クイズモード ─ 本当に覚えたか試してみよう</div>
+    <div class="quiz-sub">キーの組み合わせを見て何の操作か答えよう。スラスラ答えられたら完璧！</div>
+    <div class="quiz-box">
+      <div class="quiz-q" id="quizQ"></div>
+      <div class="quiz-opts" id="quizOpts"></div>
+      <div class="quiz-fb" id="quizFb"></div>
+      <div class="quiz-foot">
+        <div class="quiz-score">スコア: <span id="quizScore">0 / 0</span></div>
+        <button class="q-next" onclick="nextQ()">次の問題 →</button>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  Windows ショートカット完全版 ─ PC基礎スキル研修 | 繰り返し練習すれば誰でも使えるようになります 💪
+</footer>
+
+<script>
+/* ═══════════════════════════════
+   DATA
+═══════════════════════════════ */
+const SC = [
+  // 基本操作
+  { id:'copy',     cat:'basic',   keys:[['Ctrl','C']],             name:'コピー',                 desc:'選択したテキスト・ファイルをコピー。元は残る',           priority:true  },
+  { id:'cut',      cat:'basic',   keys:[['Ctrl','X']],             name:'切り取り',               desc:'コピーして元を削除する。ファイルの移動に使う'                              },
+  { id:'paste',    cat:'basic',   keys:[['Ctrl','V']],             name:'貼り付け',               desc:'コピー・切り取りした内容を現在の場所に挿入',             priority:true  },
+  { id:'undo',     cat:'basic',   keys:[['Ctrl','Z']],             name:'元に戻す',               desc:'直前の操作を取り消す。ミスしたら反射的にこれ！',          priority:true  },
+  { id:'redo',     cat:'basic',   keys:[['Ctrl','Y']],             name:'やり直す',               desc:'「元に戻す」を取り消す。Ctrl+Z の逆操作'                                  },
+  { id:'save',     cat:'basic',   keys:[['Ctrl','S']],             name:'保存',                   desc:'ファイルを上書き保存。作業中はこまめに！',               priority:true  },
+  { id:'selall',   cat:'basic',   keys:[['Ctrl','A']],             name:'全選択',                 desc:'ページ・文書のすべてを一括選択する'                                       },
+  { id:'find',     cat:'basic',   keys:[['Ctrl','F']],             name:'検索',                   desc:'文書・Webページ内をキーワードで素早く探す'                                },
+  { id:'print',    cat:'basic',   keys:[['Ctrl','P']],             name:'印刷',                   desc:'印刷ダイアログを開く。プレビューで確認してから'                            },
+  { id:'newdoc',   cat:'basic',   keys:[['Ctrl','N']],             name:'新規作成',               desc:'アプリにより新しい文書・ウィンドウ・タブを開く'                           },
+  { id:'bold',     cat:'basic',   keys:[['Ctrl','B']],             name:'太字',                   desc:'選択テキストを太字にする。Word・Outlook などで使用'                       },
+  { id:'closetab', cat:'basic',   keys:[['Ctrl','W']],             name:'タブ・ファイルを閉じる', desc:'現在のタブやドキュメントを閉じる'                                         },
+
+  // Windowsキー
+  { id:'winmenu',  cat:'win',     keys:[['Win']],                  name:'スタートメニュー',       desc:'スタートを開く。アプリ名を打てばそのまま検索・起動',    priority:true  },
+  { id:'winlock',  cat:'win',     keys:[['Win','L']],              name:'画面ロック',             desc:'離席時に必ず！のぞき見・不正アクセスを5秒で防ぐ',       priority:true  },
+  { id:'windesk',  cat:'win',     keys:[['Win','D']],              name:'デスクトップ表示/非表示','desc':'全ウィンドウを一括最小化。もう一度押すと元に戻る'                           },
+  { id:'winexp',   cat:'win',     keys:[['Win','E']],              name:'エクスプローラー',       desc:'ファイルエクスプローラー（マイPC）を即座に開く'                           },
+  { id:'winsearch',cat:'win',     keys:[['Win','S']],              name:'検索',                   desc:'アプリ・ファイル・設定・Webをまとめて検索できる'                          },
+  { id:'winset',   cat:'win',     keys:[['Win','I']],              name:'設定',                   desc:'Wi-Fi・音量・更新など Windows 設定を開く'                                 },
+  { id:'winrun',   cat:'win',     keys:[['Win','R']],              name:'ファイル名を指定して実行','desc':'「cmd」「notepad」などを直接起動。管理者向けコマンドにも使う'               },
+  { id:'winss',    cat:'win',     keys:[['Win','Shift','S']],      name:'スクリーンショット（範囲）','desc':'ドラッグで範囲を指定してキャプチャ。クリップボードに保存', priority:true  },
+  { id:'winprtsc', cat:'win',     keys:[['Win','Print Screen']],   name:'スクリーンショット（全画面）','desc':'画面全体を画像ファイルとして「ピクチャ」フォルダに保存'                    },
+  { id:'winclip',  cat:'win',     keys:[['Win','V']],              name:'クリップボード履歴',     desc:'過去にコピーしたテキスト・画像の履歴を一覧表示できる'                     },
+  { id:'wintaskv', cat:'win',     keys:[['Win','Tab']],            name:'タスクビュー',           desc:'開いているウィンドウを一覧表示。仮想デスクトップも管理'                   },
+
+  // ウィンドウ操作
+  { id:'alttab',   cat:'window',  keys:[['Alt','Tab']],            name:'ウィンドウ切り替え',     desc:'開いているアプリを順に切り替える。Tab を押し続けて選択',priority:true  },
+  { id:'altf4',    cat:'window',  keys:[['Alt','F4']],             name:'ウィンドウを閉じる',     desc:'現在アクティブなアプリを終了。デスクトップでは電源オプション'                 },
+  { id:'snapleft', cat:'window',  keys:[['Win','←']],             name:'左にスナップ',           desc:'ウィンドウを画面左半分にぴったり貼り付ける'                               },
+  { id:'snapright',cat:'window',  keys:[['Win','→']],             name:'右にスナップ',           desc:'ウィンドウを画面右半分に。2アプリを並べて作業に便利'                      },
+  { id:'maximize', cat:'window',  keys:[['Win','↑']],             name:'最大化',                 desc:'ウィンドウを画面いっぱいに広げる'                                         },
+  { id:'minimize', cat:'window',  keys:[['Win','↓']],             name:'最小化 / 縮小',          desc:'最大化→通常→最小化の順に変化。タスクバーに格納される'                    },
+  { id:'taskmgr',  cat:'window',  keys:[['Ctrl','Shift','Esc']],   name:'タスクマネージャー',     desc:'フリーズアプリを強制終了。CPU・メモリ使用状況も確認'                      },
+  { id:'cad',      cat:'window',  keys:[['Ctrl','Alt','Delete']],  name:'セキュリティ画面',       desc:'ロック・サインアウト・タスクマネージャーへのショートカット'                 },
+
+  // テキスト編集
+  { id:'home',     cat:'text',    keys:[['Home']],                 name:'行頭に移動',             desc:'カーソルをその行の先頭に瞬時に移動する'                                   },
+  { id:'end',      cat:'text',    keys:[['End']],                  name:'行末に移動',             desc:'カーソルをその行の末尾に瞬時に移動する'                                   },
+  { id:'ctrlhome', cat:'text',    keys:[['Ctrl','Home']],          name:'文書の先頭へ',           desc:'どこにいても文書・ファイルの一番上（先頭）へジャンプ'                     },
+  { id:'ctrlend',  cat:'text',    keys:[['Ctrl','End']],           name:'文書の末尾へ',           desc:'どこにいても文書・ファイルの一番下（末尾）へジャンプ'                     },
+  { id:'wordright',cat:'text',    keys:[['Ctrl','→']],            name:'単語単位で右移動',       desc:'スペース・句読点を区切りとして右へ単語ごとに移動'                         },
+  { id:'wordleft', cat:'text',    keys:[['Ctrl','←']],            name:'単語単位で左移動',       desc:'単語ごとに左へ移動。長い文書の編集が格段に速くなる'                       },
+  { id:'selend',   cat:'text',    keys:[['Shift','End']],          name:'行末まで選択',           desc:'カーソル位置から行末まで一気に範囲選択する'                               },
+  { id:'selword',  cat:'text',    keys:[['Ctrl','Shift','→']],    name:'単語単位で選択',         desc:'右方向に単語ごとに選択範囲を広げる'                                       },
+
+  // ブラウザ (Edge/Chrome)
+  { id:'bnewtab',  cat:'browser', keys:[['Ctrl','T']],             name:'新しいタブ',             desc:'ブラウザに新しいタブを開く'                                               },
+  { id:'bclosetab',cat:'browser', keys:[['Ctrl','W']],             name:'タブを閉じる',           desc:'現在開いているタブを閉じる'                                               },
+  { id:'breopenb', cat:'browser', keys:[['Ctrl','Shift','T']],     name:'閉じたタブを復元',       desc:'誤って閉じたタブを元に戻せる。何度でも使える！',          priority:true  },
+  { id:'breload',  cat:'browser', keys:[['Ctrl','R']],             name:'ページを更新',           desc:'現在のページを再読み込みする。F5 でも同じ動作'                            },
+  { id:'baddr',    cat:'browser', keys:[['Ctrl','L']],             name:'アドレスバーへ',         desc:'URLバーをすぐに選択状態にする。そのまま URL を打てる'                     },
+  { id:'bbookmark',cat:'browser', keys:[['Ctrl','D']],             name:'ブックマーク追加',       desc:'現在のページをお気に入りに即座に登録する'                                 },
+  { id:'btab',     cat:'browser', keys:[['Ctrl','Tab']],           name:'次のタブへ切り替え',     desc:'右隣のタブに切り替える。Ctrl+Shift+Tab で逆方向'                         },
+  { id:'bdevtool', cat:'browser', keys:[['F12']],                  name:'開発者ツール',           desc:'HTMLやネットワーク通信を確認できる開発者ツール'                           },
+  { id:'bzoomin',  cat:'browser', keys:[['Ctrl','＋']],            name:'ページを拡大',           desc:'ページを拡大して見やすくする'                                             },
+  { id:'bzoom0',   cat:'browser', keys:[['Ctrl','0']],             name:'ズームをリセット',       desc:'表示倍率を 100% に戻す。拡大しすぎたときに便利'                          },
+
+  // ファイル操作
+  { id:'frename',  cat:'file',    keys:[['F2']],                   name:'名前変更',               desc:'選択したファイル・フォルダの名前を変更する'                               },
+  { id:'fdel',     cat:'file',    keys:[['Delete']],               name:'削除（ゴミ箱へ）',       desc:'選択ファイルをゴミ箱に移動。Ctrl+Z で元に戻せる'                          },
+  { id:'fperdel',  cat:'file',    keys:[['Shift','Delete']],       name:'完全削除',               desc:'ゴミ箱を経由せず即削除。取り消しが効かないので注意'                       },
+  { id:'fnewfol',  cat:'file',    keys:[['Ctrl','Shift','N']],     name:'新しいフォルダを作成',   desc:'現在の場所に新しいフォルダを即座に作成する'                               },
+  { id:'fprop',    cat:'file',    keys:[['Alt','Enter']],          name:'プロパティを開く',       desc:'ファイルのサイズ・作成日時・詳細情報を確認'                               },
+  { id:'fback',    cat:'file',    keys:[['Alt','←']],             name:'前のフォルダへ戻る',     desc:'エクスプローラーでひとつ前の場所に戻る'                                   },
+  { id:'ffwd',     cat:'file',    keys:[['Alt','→']],             name:'次のフォルダへ進む',     desc:'「戻る」した後に元の場所へ再び進む'                                       },
+  { id:'frefresh', cat:'file',    keys:[['F5']],                   name:'表示を更新',             desc:'エクスプローラーを更新。新ファイルが表示されないときに'                   },
+];
+
+const CATS = {
+  basic:   { label:'📋 基本操作',      color:'var(--blue)',   bg:'var(--blue-bg)'   },
+  win:     { label:'🪟 Windows キー',  color:'var(--purple)', bg:'var(--purple-bg)' },
+  window:  { label:'🖥 ウィンドウ操作', color:'var(--teal)',   bg:'var(--teal-bg)'   },
+  text:    { label:'✏️ テキスト編集',  color:'var(--amber)',  bg:'var(--amber-bg)'  },
+  browser: { label:'🌐 ブラウザ',      color:'var(--green)',  bg:'var(--green-bg)'  },
+  file:    { label:'📁 ファイル操作',  color:'var(--red)',    bg:'var(--red-bg)'    },
+};
+
+/* ═══════════════════════════════
+   STATE
+═══════════════════════════════ */
+let learned = new Set(JSON.parse(localStorage.getItem('wsc-learned') || '[]'));
+let activeCat = 'all';
+
+/* ═══════════════════════════════
+   KEY RENDERING
+═══════════════════════════════ */
+function keysHtml(keys, dark = false) {
+  const kCls   = dark ? 'pk'   : 'k';
+  const plusCls = dark ? 'pk-plus' : 'k-plus';
+  return keys.map(combo =>
+    combo.map((k, i) =>
+      (i > 0 ? `<span class="${plusCls}">+</span>` : '') +
+      `<span class="${kCls}">${k}</span>`
+    ).join('')
+  ).join(`<span class="${plusCls}" style="margin:0 3px">or</span>`);
+}
+
+/* ═══════════════════════════════
+   PRIORITY STRIP
+═══════════════════════════════ */
+function renderPriority() {
+  const items = SC.filter(s => s.priority);
+  document.getElementById('pGrid').innerHTML = items.map(s => `
+    <div class="p-card ${learned.has(s.id)?'learned':''}" data-scid="${s.id}" onclick="toggle('${s.id}')">
+      <div class="p-keys">${keysHtml(s.keys, true)}</div>
+      <div class="p-name">${s.name}</div>
+      <div class="p-desc">${s.desc.slice(0,36)}…</div>
+    </div>
+  `).join('');
+}
+
+/* ═══════════════════════════════
+   MAIN SECTIONS
+═══════════════════════════════ */
+function renderSections() {
+  const q   = document.getElementById('searchIn').value.toLowerCase().trim();
+  const cat = activeCat;
+  const container = document.getElementById('mainSections');
+  let totalVisible = 0;
+
+  // priority strip: hide when filtering by category or searching
+  document.getElementById('priorityStrip').style.display = (cat === 'all' && !q) ? '' : 'none';
+
+  const html = Object.entries(CATS).map(([key, meta]) => {
+    if (cat !== 'all' && cat !== key) return '';
+    const items = SC.filter(s => {
+      if (s.cat !== key) return false;
+      if (!q) return true;
+      return s.name.toLowerCase().includes(q) ||
+             s.desc.toLowerCase().includes(q) ||
+             s.keys.flat().join('+').toLowerCase().includes(q);
+    });
+    if (!items.length) return '';
+    totalVisible += items.length;
+    return `
+      <div class="cat-section">
+        <div class="cat-hd">
+          <span class="cat-label" style="color:${meta.color}">${meta.label}</span>
+          <span class="cat-count">${items.length} 種</span>
+        </div>
+        <div class="sc-grid">
+          ${items.map(s => cardHtml(s, meta)).join('')}
+        </div>
+      </div>`;
+  }).join('');
+
+  container.innerHTML = html;
+  document.getElementById('emptyState').classList.toggle('show', totalVisible === 0);
+  updateStats();
+}
+
+function cardHtml(s, meta) {
+  const isL = learned.has(s.id);
+  return `
+    <div class="sc-card ${isL?'learned':''}" style="--cc:${meta.color};--cbg:${meta.bg}"
+         data-scid="${s.id}" onclick="toggle('${s.id}')">
+      <button class="lbtn" onclick="event.stopPropagation();toggle('${s.id}')" title="覚えた！">${isL?'✓':''}</button>
+      <div class="sc-keys">${keysHtml(s.keys, false)}</div>
+      <div class="sc-name">${s.name}</div>
+      <div class="sc-desc">${s.desc}</div>
+      <span class="sc-tag">${meta.label.replace(/^[^\s]+\s/,'')}</span>
+    </div>`;
+}
+
+/* ═══════════════════════════════
+   TOGGLE LEARNED
+═══════════════════════════════ */
+function toggle(id) {
+  if (learned.has(id)) learned.delete(id); else learned.add(id);
+  localStorage.setItem('wsc-learned', JSON.stringify([...learned]));
+  const isL = learned.has(id);
+  document.querySelectorAll(`[data-scid="${id}"]`).forEach(el => {
+    el.classList.toggle('learned', isL);
+    const btn = el.querySelector('.lbtn');
+    if (btn) btn.textContent = isL ? '✓' : '';
+  });
+  updateStats();
+}
+
+function resetAll() {
+  if (!confirm('学習状況をリセットしますか？')) return;
+  learned.clear();
+  localStorage.removeItem('wsc-learned');
+  renderPriority();
+  renderSections();
+}
+
+/* ═══════════════════════════════
+   STATS
+═══════════════════════════════ */
+function updateStats() {
+  const total = SC.length;
+  const cnt   = SC.filter(s => learned.has(s.id)).length;
+  const pct   = total > 0 ? Math.round(cnt / total * 100) : 0;
+  document.getElementById('totalNum').textContent   = total;
+  document.getElementById('learnedNum').textContent = cnt;
+  document.getElementById('progFill').style.width   = pct + '%';
+  document.getElementById('progLbl').textContent    = pct + '%';
+}
+
+/* ═══════════════════════════════
+   EVENTS
+═══════════════════════════════ */
+document.getElementById('searchIn').addEventListener('input', renderSections);
+
+document.getElementById('filterRow').addEventListener('click', e => {
+  const btn = e.target.closest('.fbtn');
+  if (!btn) return;
+  document.querySelectorAll('.fbtn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  activeCat = btn.dataset.cat;
+  renderSections();
+});
+
+/* ═══════════════════════════════
+   QUIZ
+═══════════════════════════════ */
+const quizPool   = [...SC].sort(() => Math.random() - .5);
+let qIdx = 0, qScore = 0, qTotal = 0, qAnswered = false;
+
+function renderQuiz() {
+  const q = quizPool[qIdx % quizPool.length];
+  document.getElementById('quizQ').innerHTML =
+    `このキー操作は何をする？<div style="display:flex;gap:5px;flex-wrap:wrap;margin-top:8px;">${keysHtml(q.keys, true)}</div>`;
+
+  const wrongs = SC.filter(s => s.id !== q.id).sort(() => Math.random() - .5).slice(0, 3);
+  const opts   = [q, ...wrongs].sort(() => Math.random() - .5);
+
+  document.getElementById('quizOpts').innerHTML = opts.map(o =>
+    `<button class="qopt" data-ans="${o.id}" onclick="answerQ('${o.id}','${q.id}')">${o.name}</button>`
+  ).join('');
+  document.getElementById('quizFb').textContent = '';
+  qAnswered = false;
+}
+
+function answerQ(chosen, correct) {
+  if (qAnswered) return;
+  qAnswered = true; qTotal++;
+  const isRight = chosen === correct;
+  if (isRight) qScore++;
+  document.querySelectorAll('.qopt').forEach(btn => {
+    if (btn.dataset.ans === correct) { btn.classList.add('correct'); btn.style.animation = 'pulse .4s'; }
+    if (btn.dataset.ans === chosen && !isRight) { btn.classList.add('wrong'); btn.style.animation = 'shake .4s'; }
+  });
+  const cSC = SC.find(s => s.id === correct);
+  document.getElementById('quizFb').innerHTML = isRight
+    ? `<span style="color:#86efac">✅ 正解！</span> ${cSC.desc}`
+    : `<span style="color:#fca5a5">❌ 不正解。</span> 正解は「${cSC.name}」─ ${cSC.desc}`;
+  document.getElementById('quizScore').innerHTML = `${qScore} / ${qTotal}`;
+}
+
+function nextQ() { qIdx++; renderQuiz(); }
+
+/* ═══════════════════════════════
+   INIT
+═══════════════════════════════ */
+document.getElementById('heroSub').textContent =
+  `PC初心者のための厳選 ${SC.length} 種 ─ 覚えるほど作業が速くなる`;
+
+renderPriority();
+renderSections();
+renderQuiz();
+</script>
+</body>
+</html>
