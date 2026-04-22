@@ -1,0 +1,3481 @@
+<!DOCTYPE html>
+<html lang="ja" data-theme="dark" data-color="blue">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>KIKAGAKU タイムキーパー</title>
+<style>
+/* ============================================================
+   KIKAGAKU タイムキーパー — スタイルシート v4
+   キカガク社内配布版 / ライト・ダーク + 投影モード対応
+   ============================================================ */
+
+/* ─── グローバル変数（ブランド・レイアウト・セッション） ─ */
+:root {
+  /* KIKAGAKUブランドカラー */
+  --kg-blue:   #1697E6;
+  --kg-green:  #7ACB1A;
+  --kg-orange: #F57C00;
+  --kg-red:    #E53B2E;
+
+  /* セッションタイプカラー */
+  --type-lecture: #1697E6;
+  --type-work:    #F57C00;
+  --type-break:   #7ACB1A;
+  --type-qa:      #E53B2E;
+
+  /* レイアウト */
+  --radius-sm:4px; --radius-md:10px; --radius-lg:16px; --radius-xl:22px;
+  --trans:.18s ease;
+  --circ-main:603;
+}
+
+/* ─── テーマカラー変数 ────────────────────────────────── */
+[data-color="blue"]   { --accent-a:#1697E6; --accent-b:#0B6FCC; --accent-mid:#3DAEF0; }
+[data-color="green"]  { --accent-a:#7ACB1A; --accent-b:#5A9E0F; --accent-mid:#8FD62F; }
+[data-color="violet"] { --accent-a:#A78BFA; --accent-b:#7C3AED; --accent-mid:#8B5CF6; }
+[data-color="orange"] { --accent-a:#F57C00; --accent-b:#C45F00; --accent-mid:#FB923C; }
+[data-color="rose"]   { --accent-a:#E53B2E; --accent-b:#B91C1C; --accent-mid:#F87171; }
+[data-color="amber"]  { --accent-a:#FBBF24; --accent-b:#D97706; --accent-mid:#F59E0B; }
+
+/* ─── ダークテーマ ───────────────────────────────────── */
+[data-theme="dark"] {
+  --bg:        #060A12;
+  --bg-surf:   #0C1220;
+  --bg-elev:   #141E32;
+  --bg-inp:    #1B2640;
+  --border:    #1E2E4A;
+  --border-f:  var(--accent-a);
+  --text:      #EEF3FF;
+  --text-sec:  #7D90B8;
+  --text-mute: #46587A;
+  --head-bg:   #04070E;
+  --shadow:    0 4px 32px rgba(0,0,0,.55);
+  --ring-track:rgba(22,151,230,.1);
+  --sw-off:    #253550;
+  --alert-col: #FACC15;
+  --proj-bg:   #04070E;
+}
+
+/* ─── ライトテーマ ───────────────────────────────────── */
+[data-theme="light"] {
+  --bg:        #F0F5FF;
+  --bg-surf:   #FFFFFF;
+  --bg-elev:   #E6EDF8;
+  --bg-inp:    #F0F5FF;
+  --border:    #C5D3EC;
+  --border-f:  var(--accent-b);
+  --text:      #0A1628;
+  --text-sec:  #3D5275;
+  --text-mute: #6B7FA3;
+  --head-bg:   #0A1628;
+  --shadow:    0 4px 20px rgba(22,151,230,.10);
+  --ring-track:rgba(22,151,230,.18);
+  --sw-off:    #C5D3EC;
+  --alert-col: #D97706;
+  --proj-bg:   #F0F5FF;
+}
+
+/* ─── ライトテーマ：タイマー専用 ─────────────────────── */
+[data-theme="light"] .ring-track { stroke:rgba(22,151,230,.18); }
+[data-theme="light"] .ring-outer  { stroke:rgba(22,151,230,.10); }
+[data-theme="light"] .timer-time  { color:var(--accent-b); }
+[data-theme="light"] .timer-ring-wrap.warn   .timer-time { color:#D97706; }
+[data-theme="light"] .timer-ring-wrap.urgent .timer-time { color:#B91C1C; }
+[data-theme="light"] .timer-ring-wrap.warn   .ring-prog  { stroke:#D97706; filter:drop-shadow(0 0 6px #D97706); }
+[data-theme="light"] .timer-ring-wrap.urgent .ring-prog  { stroke:#B91C1C; filter:drop-shadow(0 0 8px #B91C1C); }
+[data-theme="light"] .timer-panel {
+  border-color:rgba(22,151,230,.22);
+  box-shadow:0 4px 24px rgba(22,151,230,.10);
+}
+[data-theme="light"] .btn-nav {
+  background:rgba(22,151,230,.08);
+  color:var(--accent-b);
+  border-color:rgba(22,151,230,.22);
+}
+[data-theme="light"] .btn-nav:hover {
+  background:rgba(22,151,230,.18);
+  color:var(--accent-b);
+  border-color:rgba(22,151,230,.42);
+}
+[data-theme="light"] .alert-settings {
+  background:rgba(22,151,230,.05);
+  border-color:rgba(22,151,230,.12);
+}
+[data-theme="light"] .sw-track { background:var(--sw-off); }
+
+/* ─── ティックライン (SVG 目盛り) ─────────────────────── */
+.tick-line { stroke:rgba(255,255,255,0.28); }
+[data-theme="light"] .tick-line { stroke:rgba(22,151,230,0.25); }
+
+/* ─── ヘッダークロック ────────────────────────────────── */
+.header-clock {
+  font-size:12px; font-weight:700; color:#7D90B8;
+  letter-spacing:.05em; font-variant-numeric:tabular-nums;
+  padding:0 4px; user-select:none;
+}
+
+/* ─── 音声ボタン ─────────────────────────────────────── */
+.btn-icon.active { background:rgba(122,203,26,.18); color:#7ACB1A; border-color:rgba(122,203,26,.40); }
+
+/* 音声ボタン専用スタイル */
+.voice-icon-wrap { position:relative; display:inline-flex; align-items:center; justify-content:center; }
+.voice-slash {
+  position:absolute; inset:0;
+  pointer-events:none;
+}
+/* ON: アクセントカラーで発光 */
+#btnVoice.voice-on {
+  background:rgba(22,151,230,.15);
+  color:#1697E6;
+  border-color:rgba(22,151,230,.50);
+  box-shadow:0 0 8px rgba(22,151,230,.55), 0 0 18px rgba(22,151,230,.25);
+}
+/* OFF: 斜線を表示（デフォルト状態はスラッシュあり） */
+#btnVoice:not(.voice-on) .voice-slash { display:block; }
+#btnVoice.voice-on       .voice-slash { display:none; }
+
+
+/* ─── タイマー秒数のみ大型表示 ──────────────────────── */
+.timer-time-secs { font-size:72px !important; letter-spacing:-.06em !important; }
+
+/* ─── クイック セッションタイプ ─────────────────────── */
+.quick-type-tabs {
+  display:flex; gap:6px; width:100%; margin-bottom:10px;
+}
+.quick-type-btn {
+  flex:1; padding:8px 4px; border-radius:var(--radius-md);
+  font-size:12px; font-weight:600; letter-spacing:.02em;
+  background:var(--bg-elev); color:var(--text-sec);
+  border:1.5px solid var(--border);
+  transition:all var(--trans);
+}
+.quick-type-btn:hover { background:var(--bg-inp); color:var(--text); border-color:var(--text-mute); }
+.quick-type-btn.active                     { background:rgba(22,151,230,.14);  color:#1697E6; border-color:#1697E6; }
+.quick-type-btn.active[data-qtype="work"]  { background:rgba(245,124,0,.14);  color:#F57C00; border-color:#F57C00; }
+.quick-type-btn.active[data-qtype="break"] { background:rgba(122,203,26,.14); color:#7ACB1A; border-color:#7ACB1A; }
+.quick-type-btn.active[data-qtype="custom"]{ background:rgba(167,139,250,.14);color:#A78BFA; border-color:#A78BFA; }
+.quick-custom-label-inp {
+  width:100%; margin-bottom:10px;
+  padding:8px 12px; border-radius:var(--radius-md);
+  border:1.5px solid var(--border); background:var(--bg-inp);
+  color:var(--text); font-size:13px; font-family:inherit;
+  transition:border-color var(--trans);
+}
+.quick-custom-label-inp:focus { border-color:var(--accent-a); }
+.quick-custom-label-inp.hidden { display:none; }
+
+/* クイックタイマーのバッジ */
+.quick-session-badge {
+  padding:4px 18px; border-radius:100px;
+  font-size:11px; font-weight:700; letter-spacing:.10em;
+  border:1.5px solid currentColor; margin-bottom:4px;
+  background:transparent;
+  transition:color .3s, border-color .3s;
+}
+.quick-session-badge[data-qtype="work"]   { color:#F57C00; }
+.quick-session-badge[data-qtype="break"]  { color:#7ACB1A; }
+.quick-session-badge[data-qtype="custom"] { color:var(--accent-a); }
+
+/* ─── クイック調整ボタン ─────────────────────────────── */
+.quick-adjust-row {
+  display:flex; gap:6px; justify-content:center; flex-wrap:wrap; margin-bottom:4px;
+}
+.btn-adj {
+  padding:4px 10px; border-radius:var(--radius-md);
+  background:var(--bg-elev); color:var(--text-sec);
+  font-size:11px; font-weight:600; border:1px solid var(--border);
+}
+.btn-adj:hover { background:rgba(22,151,230,.15); color:var(--accent-a); border-color:var(--accent-a); }
+
+/* ─── 警告閾値UI ─────────────────────────────────────── */
+.warn-thresh-row {
+  display:flex; align-items:center; gap:6px; flex-wrap:wrap;
+  margin-top:8px; padding-top:8px; border-top:1px solid var(--border);
+  font-size:11px;
+}
+.warn-thresh-lbl { color:var(--text-sec); white-space:nowrap; }
+.warn-thresh-unit { color:var(--text-mute); }
+.warn-thresh-inp { width:46px !important; text-align:center; }
+
+/* ─── プリセット IO ──────────────────────────────────── */
+.fav-io-row { display:flex; gap:8px; margin-top:8px; }
+.btn-import-label { display:inline-flex; align-items:center; cursor:pointer; }
+.btn-import-label:hover { background:rgba(22,151,230,.15); color:var(--accent-a); border-color:var(--accent-a); }
+
+/* ─── 日次統計 ───────────────────────────────────────── */
+.daily-stat-line {
+  font-size:11px; color:var(--text-mute);
+  text-align:center; padding:2px 0;
+  font-variant-numeric:tabular-nums;
+}
+.weekly-chart-wrap { margin-top:10px; }
+.weekly-chart-title { font-size:11px; color:var(--text-mute); text-align:center; margin-bottom:4px; }
+.weekly-chart { display:block; margin:0 auto; border-radius:6px; width:100%; max-width:340px; height:auto; }
+
+/* ─── ショートカットモーダル ─────────────────────────── */
+.shortcut-modal {
+  position:fixed; inset:0; z-index:99998;
+  background:rgba(0,0,0,.55); backdrop-filter:blur(6px);
+  display:flex; align-items:center; justify-content:center;
+}
+.shortcut-modal.hidden { display:none; }
+.shortcut-modal-box {
+  background:var(--bg-surf); border:1px solid var(--border);
+  border-radius:var(--radius-xl); padding:28px 32px;
+  min-width:320px; max-width:440px; box-shadow:0 16px 64px rgba(0,0,0,.6);
+  animation:cpDropIn .2s cubic-bezier(.34,1.2,.64,1);
+}
+.shortcut-modal-title {
+  font-size:14px; font-weight:800; color:var(--text); margin-bottom:18px;
+  letter-spacing:.04em;
+}
+.shortcut-grid { display:flex; flex-direction:column; gap:8px; margin-bottom:16px; }
+.sc-row { display:flex; align-items:center; gap:6px; font-size:12px; color:var(--text-sec); }
+.sc-row span { margin-left:4px; }
+kbd {
+  display:inline-block; padding:2px 7px; border-radius:5px;
+  background:var(--bg-elev); border:1px solid var(--border);
+  font-family:inherit; font-size:11px; font-weight:700; color:var(--text);
+  box-shadow:0 2px 0 var(--border);
+}
+.shortcut-note {
+  font-size:11px; color:var(--text-mute); margin-bottom:16px;
+  padding:8px 12px; background:var(--bg-elev); border-radius:var(--radius-md);
+}
+.shortcut-close { margin:0 auto; display:block; }
+
+/* ─── 投影モード：ライト専用 右下 KIKAGAKU ロゴ ──────── */
+.proj-kika-logo {
+  display:none;
+  position:fixed; bottom:clamp(68px,10vh,112px); right:clamp(28px,3vw,52px);
+  flex-direction:column; align-items:center; gap:clamp(7px,0.8vh,13px);
+  z-index:9055; pointer-events:none; user-select:none;
+}
+[data-theme="light"] .proj-kika-logo { display:flex; }
+.proj-kika-logo svg {
+  width:clamp(44px,5.0vw,72px);
+  height:clamp(44px,5.0vw,72px);
+}
+.proj-kika-text {
+  font-size:clamp(9px,1.05vw,15px); font-weight:900; letter-spacing:.08em;
+  color:#1A1A1A; text-transform:uppercase; white-space:nowrap;
+}
+
+/* ─── 投影モード：クロック & 一時停止ヒント ──────────── */
+.proj-clock-area {
+  position:fixed; top:clamp(14px,2.5vh,24px); right:clamp(18px,2.5vw,32px);
+  display:flex; flex-direction:column; align-items:flex-end;
+  z-index:9050; user-select:none; pointer-events:none;
+}
+.proj-clock-label {
+  font-size:clamp(9px,0.8vw,11px); font-weight:600; letter-spacing:.12em;
+  text-transform:uppercase; opacity:.55; line-height:1;
+  margin-bottom:2px;
+}
+#projClock {
+  font-size:clamp(18px,2.4vw,30px); font-weight:800;
+  font-variant-numeric:tabular-nums; letter-spacing:.04em; line-height:1;
+}
+[data-theme="dark"]  .proj-clock-area { color:#fff; }
+[data-theme="light"] .proj-clock-area { color:#04122A; }
+.proj-pause-hint.hidden { display:none; }
+.proj-pause-hint {
+  position:fixed; bottom:clamp(70px,9vh,100px); left:50%; transform:translateX(-50%);
+  font-size:clamp(13px,1.4vw,17px); font-weight:600; letter-spacing:.05em;
+  padding:9px 28px; border-radius:100px; white-space:nowrap;
+  background:rgba(0,0,0,.50); color:rgba(255,255,255,.80);
+  border:1px solid rgba(255,255,255,.14);
+  backdrop-filter:blur(12px); z-index:9050;
+  pointer-events:none;
+  animation:projPauseIn .25s ease;
+}
+@keyframes projPauseIn {
+  from { opacity:0; transform:translateX(-50%) translateY(10px); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0); }
+}
+[data-theme="light"] .proj-pause-hint {
+  background:rgba(240,245,255,.82); color:#0A1628;
+  border-color:rgba(22,151,230,.25);
+  box-shadow:0 4px 20px rgba(22,151,230,.15);
+}
+
+/* ─── リセット ───────────────────────────────────────── */
+*,*::before,*::after { box-sizing:border-box; margin:0; padding:0; }
+html { font-size:16px; scroll-behavior:smooth; }
+body {
+  font-family:
+    'Hiragino Sans','Hiragino Kaku Gothic ProN',
+    'Yu Gothic','YuGothic','Meiryo',
+    'Segoe UI',system-ui,-apple-system,sans-serif;
+  background:var(--bg); color:var(--text);
+  line-height:1.6; min-height:100vh;
+  transition:background var(--trans),color var(--trans);
+}
+button { cursor:pointer; border:none; font-family:inherit; transition:all var(--trans); }
+input  { font-family:inherit; outline:none; }
+svg    { display:block; flex-shrink:0; }
+
+/* ─── ヘッダー ───────────────────────────────────────── */
+.app-header {
+  background:var(--head-bg);
+  border-bottom:2px solid var(--kg-blue);
+  position:sticky; top:0; z-index:500;
+}
+.header-inner {
+  max-width:1200px; margin:0 auto; padding:0 20px;
+  height:60px; display:flex; align-items:center; justify-content:space-between;
+}
+.logo-area { display:flex; align-items:center; gap:14px; }
+.logo-symbol svg {
+  filter:drop-shadow(0 0 7px rgba(22,151,230,.55));
+  transition:filter .3s ease;
+}
+.logo-symbol:hover svg { filter:drop-shadow(0 0 14px rgba(22,151,230,.80)); }
+.logo-text  { display:flex; flex-direction:column; line-height:1.2; }
+.logo-main  { font-size:14px; font-weight:800; letter-spacing:.08em; color:#F1F5F9; }
+.logo-sub   { font-size:9px; color:#4A6080; letter-spacing:.07em; margin-top:2px; }
+
+/* KG 4色ドット（ロゴ右の装飾） */
+.logo-dots {
+  display:flex; gap:4px; align-items:center; margin-left:2px;
+}
+.logo-dot {
+  width:6px; height:6px; border-radius:50%;
+  opacity:.85;
+}
+
+.header-controls { display:flex; align-items:center; gap:6px; }
+.btn-icon {
+  width:36px; height:36px; border-radius:9px;
+  background:rgba(255,255,255,.07); color:#7D90B8;
+  display:flex; align-items:center; justify-content:center;
+  border:1px solid rgba(255,255,255,.08);
+}
+.btn-icon:hover { background:rgba(22,151,230,.18); color:#1697E6; border-color:rgba(22,151,230,.35); }
+
+/* ─── カラーピッカー ─────────────────────────────────── */
+.btn-color-trigger { color:var(--accent-a); }
+.btn-color-trigger.open {
+  background:color-mix(in srgb,var(--accent-a) 18%,transparent);
+  border-color:color-mix(in srgb,var(--accent-a) 40%,transparent);
+}
+.color-picker-portal {
+  position:fixed; z-index:99999;
+  background:var(--bg-surf); border:1px solid var(--border);
+  border-radius:14px; padding:16px 18px;
+  box-shadow:0 12px 48px rgba(0,0,0,.6);
+  min-width:200px;
+  animation:cpDropIn .18s cubic-bezier(.34,1.2,.64,1);
+}
+.color-picker-portal.hidden { display:none; }
+@keyframes cpDropIn {
+  from { opacity:0; transform:translateY(-8px) scale(.97); }
+  to   { opacity:1; transform:translateY(0) scale(1); }
+}
+.cp-title {
+  font-size:10px; font-weight:700; letter-spacing:.12em;
+  color:var(--text-mute); margin-bottom:12px; text-transform:uppercase;
+}
+.cp-swatches { display:flex; gap:10px; flex-wrap:wrap; margin-bottom:10px; }
+.cp-swatch {
+  width:30px; height:30px; border-radius:50%;
+  background:linear-gradient(135deg,var(--sw),var(--sw2));
+  border:2.5px solid transparent;
+  transition:transform .15s,border-color .15s,box-shadow .15s;
+  position:relative;
+}
+.cp-swatch:hover { transform:scale(1.25); }
+.cp-swatch.active {
+  border-color:#fff;
+  box-shadow:0 0 0 3px var(--sw),0 0 12px var(--sw);
+  transform:scale(1.15);
+}
+.cp-swatch.active::after {
+  content:'✓'; position:absolute; inset:0;
+  display:flex; align-items:center; justify-content:center;
+  font-size:12px; font-weight:700; color:#fff;
+  text-shadow:0 1px 3px rgba(0,0,0,.6);
+}
+.cp-labels { font-size:11px; color:var(--text-mute); height:16px; overflow:hidden; }
+.cp-label { display:none; }
+.cp-label.active { display:block; color:var(--accent-a); font-weight:600; }
+
+/* ─── メインエリア ───────────────────────────────────── */
+.app-main { max-width:1200px; margin:0 auto; padding:20px 16px 48px; }
+
+/* ─── タブナビ ───────────────────────────────────────── */
+.tab-nav {
+  display:flex; gap:4px; background:var(--bg-surf);
+  border-radius:var(--radius-xl); padding:6px;
+  margin-bottom:20px; box-shadow:var(--shadow);
+  border:1px solid var(--border);
+}
+.tab-btn {
+  flex:1; display:flex; align-items:center; justify-content:center; gap:5px;
+  padding:9px 6px; border-radius:var(--radius-lg);
+  background:transparent; color:var(--text-sec); font-size:12px; font-weight:500;
+  white-space:nowrap;
+}
+.tab-btn:hover { background:var(--bg-elev); color:var(--text); }
+.tab-btn.active {
+  background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+  color:#fff; box-shadow:0 2px 14px rgba(22,151,230,.30);
+}
+
+/* ─── 2カラムレイアウト ──────────────────────────────── */
+.two-col-layout { display:grid; grid-template-columns:1fr 1fr; gap:20px; align-items:start; }
+.sticky-panel   { position:sticky; top:80px; }
+
+/* ─── タイマーパネル ────────────────────────────────── */
+.timer-panel {
+  display:flex; flex-direction:column; align-items:center; gap:16px;
+  background:var(--bg-surf); border-radius:var(--radius-xl);
+  padding:24px 20px; box-shadow:var(--shadow); border:1px solid var(--border);
+}
+
+/* ─── セッションバッジ ───────────────────────────────── */
+.session-badge {
+  padding:4px 18px; border-radius:100px;
+  font-size:11px; font-weight:700; letter-spacing:.10em;
+  background:transparent; color:var(--accent-a);
+  border:1.5px solid var(--accent-a);
+}
+.session-badge[data-type="work"]  { color:var(--type-work);   border-color:var(--type-work); }
+.session-badge[data-type="break"] { color:var(--type-break);  border-color:var(--type-break); }
+.session-badge[data-type="qa"]    { color:var(--type-qa);     border-color:var(--type-qa); }
+
+.session-name  { font-size:18px; font-weight:700; color:var(--text); letter-spacing:-.01em; }
+.session-count { font-size:12px; color:var(--text-mute); }
+
+/* ─── タイマーリング ────────────────────────────────── */
+.timer-ring-wrap { position:relative; width:240px; height:240px; }
+.timer-ring      { width:100%; height:100%; transform:rotate(-90deg); }
+.ring-track      { fill:none; stroke:rgba(255,255,255,.06); stroke-width:14; }
+.ring-prog {
+  fill:none; stroke:var(--accent-a); stroke-width:14; stroke-linecap:butt;
+  transition:stroke-dashoffset .9s linear;
+  filter:drop-shadow(0 0 6px var(--accent-a));
+}
+.ring-outer { fill:none; stroke:rgba(255,255,255,.04); stroke-width:1; }
+
+.timer-display {
+  position:absolute; inset:0; display:flex; flex-direction:column;
+  align-items:center; justify-content:center; gap:4px;
+}
+.timer-time {
+  font-size:44px; font-weight:800; letter-spacing:-.04em;
+  color:#fff; font-variant-numeric:tabular-nums; transition:color .3s;
+  line-height:1;
+}
+.timer-sub { font-size:12px; color:var(--text-sec); }
+.timer-eta { font-size:11px; color:var(--text-mute); }
+
+/* 警告時カラー */
+.timer-ring-wrap.warn .ring-prog   { stroke:#FBBF24; filter:drop-shadow(0 0 6px #FBBF24); }
+.timer-ring-wrap.warn .timer-time  { color:#FBBF24; }
+.timer-ring-wrap.urgent .ring-prog { stroke:#E53B2E; filter:drop-shadow(0 0 8px #E53B2E); }
+.timer-ring-wrap.urgent .timer-time { color:#E53B2E; animation:blink .7s ease-in-out infinite; }
+@keyframes blink { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ─── アラートバナー ─────────────────────────────────── */
+.alert-banner {
+  position:fixed;
+  top:clamp(14px,2.5vh,28px); right:clamp(14px,2.5vw,28px);
+  display:inline-flex; align-items:center; gap:9px;
+  padding:11px 20px 11px 16px; border-radius:14px; white-space:nowrap;
+  color:var(--alert-col,#FACC15);
+  background:color-mix(in srgb,var(--alert-col,#FACC15) 8%,transparent);
+  border:1.5px solid color-mix(in srgb,var(--alert-col,#FACC15) 45%,transparent);
+  box-shadow:
+    0 0 20px color-mix(in srgb,var(--alert-col,#FACC15) 20%,transparent),
+    0 6px 24px rgba(0,0,0,.28);
+  backdrop-filter:blur(14px) saturate(1.3);
+  -webkit-backdrop-filter:blur(14px) saturate(1.3);
+  font-size:clamp(12px,1.2vw,14px); font-weight:700; letter-spacing:.04em;
+  animation:alertPopIn .35s cubic-bezier(.22,.68,0,1.2);
+  z-index:8000;
+}
+.alert-banner.hidden { display:none; }
+.alert-banner-icon  { font-size:1.1em; animation:alertPulse 1s ease-in-out infinite; flex-shrink:0; }
+.alert-banner-text  { display:flex; flex-direction:column; gap:1px; }
+.alert-banner-title { font-size:clamp(12px,1.2vw,14px); font-weight:700; line-height:1.2; }
+.alert-banner-sub   { font-size:clamp(10px,.9vw,11px); font-weight:400; opacity:.65; }
+
+@keyframes alertPopIn  { from{opacity:0;transform:translateY(-10px) scale(.92)} to{opacity:1;transform:translateY(0) scale(1)} }
+@keyframes alertPulse  { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+@keyframes projFadeIn  { from{opacity:0;transform:scale(1.02)} to{opacity:1;transform:scale(1)} }
+
+/* ─── コントロール ───────────────────────────────────── */
+.timer-controls { display:flex; align-items:center; gap:12px; }
+.btn-ctrl { display:flex; align-items:center; justify-content:center; border-radius:50%; }
+.btn-play {
+  width:64px; height:64px;
+  background:linear-gradient(135deg,var(--accent-a),var(--accent-b));
+  color:#fff;
+  box-shadow:0 0 22px color-mix(in srgb,var(--accent-a) 45%,transparent);
+}
+.btn-play:hover  { transform:scale(1.07); box-shadow:0 0 32px color-mix(in srgb,var(--accent-a) 65%,transparent); }
+.btn-play:active { transform:scale(.94); }
+.btn-nav {
+  width:44px; height:44px;
+  background:rgba(255,255,255,.07); color:rgba(255,255,255,.55);
+  border:1.5px solid rgba(255,255,255,.1);
+}
+.btn-nav:hover { background:rgba(255,255,255,.14); color:#fff; border-color:rgba(255,255,255,.22); }
+
+/* ─── 警告設定 ───────────────────────────────────────── */
+.alert-settings {
+  width:100%; background:rgba(255,255,255,.04);
+  border-radius:var(--radius-md); padding:12px 14px;
+  border:1px solid rgba(255,255,255,.07);
+}
+.alert-settings-title {
+  display:flex; align-items:center; gap:6px;
+  font-size:11px; font-weight:600; color:var(--text-mute); margin-bottom:10px;
+}
+.alert-toggles { display:flex; gap:10px; flex-wrap:wrap; }
+
+.sw-label { display:flex; align-items:center; gap:6px; cursor:pointer; font-size:12px; color:var(--text-sec); user-select:none; }
+.sw-input { display:none; }
+.sw-track {
+  width:34px; height:19px; border-radius:100px; background:var(--sw-off);
+  position:relative; transition:background var(--trans); flex-shrink:0;
+}
+.sw-track::after {
+  content:''; position:absolute; top:2px; left:2px;
+  width:15px; height:15px; border-radius:50%; background:#fff;
+  transition:transform var(--trans); box-shadow:0 1px 3px rgba(0,0,0,.3);
+}
+.sw-input:checked + .sw-track { background:var(--accent-b); }
+.sw-input:checked + .sw-track::after { transform:translateX(15px); }
+.sw-text { white-space:nowrap; }
+
+/* ─── 進捗バー ───────────────────────────────────────── */
+.overall-progress { width:100%; }
+.progress-labels  { display:flex; justify-content:space-between; font-size:11px; color:var(--text-mute); margin-bottom:5px; }
+.prog-bar-wrap    { height:4px; background:var(--bg-elev); border-radius:100px; overflow:hidden; }
+.prog-bar         { height:100%; background:linear-gradient(90deg,var(--accent-a),var(--accent-b)); border-radius:100px; transition:width .5s ease; }
+
+/* ─── フッターボタン ─────────────────────────────────── */
+.timer-footer-btns { display:flex; gap:6px; flex-wrap:wrap; justify-content:center; }
+.btn-sm {
+  display:flex; align-items:center; gap:4px;
+  padding:5px 12px; border-radius:100px;
+  background:var(--bg-elev); color:var(--text-sec);
+  font-size:12px; border:1px solid var(--border);
+}
+.btn-sm:hover  { color:var(--text); background:var(--bg-inp); }
+.btn-sm.danger { color:var(--type-qa); border-color:rgba(229,59,46,.3); }
+.btn-sm.danger:hover { background:rgba(229,59,46,.1); }
+
+/* ─── 設定パネル ─────────────────────────────────────── */
+.settings-panel  { display:flex; flex-direction:column; gap:14px; min-width:0; }
+.settings-section {
+  background:var(--bg-surf); border-radius:var(--radius-lg);
+  padding:16px; box-shadow:var(--shadow); border:1px solid var(--border);
+}
+.section-title { font-size:12px; font-weight:600; color:var(--text-sec); margin-bottom:12px; }
+
+/* ─── テンプレートボタン ─────────────────────────────── */
+.template-grid { display:grid; grid-template-columns:1fr 1fr; gap:7px; }
+.template-btn {
+  padding:8px 10px; border-radius:var(--radius-sm);
+  background:var(--bg-elev); color:var(--text-sec);
+  font-size:12px; font-weight:500; border:1px solid var(--border);
+  line-height:1.4; text-align:center;
+}
+.template-btn:hover {
+  background:color-mix(in srgb,var(--accent-a) 12%,transparent);
+  color:var(--accent-a);
+  border-color:color-mix(in srgb,var(--accent-a) 35%,transparent);
+}
+
+/* ─── セッションリスト ───────────────────────────────── */
+.session-list { display:flex; flex-direction:column; gap:7px; margin-bottom:10px; }
+.session-item {
+  display:grid; grid-template-columns:16px 10px auto 1fr auto auto auto;
+  align-items:center; gap:6px;
+  padding:8px 10px; background:var(--bg-elev);
+  border-radius:var(--radius-sm); border:1px solid var(--border);
+  transition:opacity .15s,box-shadow .15s;
+}
+.session-item.active    { border-color:var(--accent-a); background:color-mix(in srgb,var(--accent-a) 7%,transparent); }
+.session-item.drag-over { border-color:var(--accent-a); box-shadow:0 0 0 2px color-mix(in srgb,var(--accent-a) 35%,transparent); }
+.session-item.dragging  { opacity:.35; }
+.sess-handle {
+  display:flex; flex-direction:column; align-items:center; justify-content:center;
+  gap:3px; cursor:grab; padding:2px 1px; color:var(--text-mute); flex-shrink:0;
+}
+.sess-handle:active { cursor:grabbing; }
+.sess-handle span { display:block; width:12px; height:2px; background:currentColor; border-radius:1px; }
+.sess-dot { width:10px; height:10px; border-radius:50%; flex-shrink:0; }
+.session-item select,
+.session-item input[type="number"] {
+  background:var(--bg-inp); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-size:12px; padding:3px 6px;
+}
+.session-item select { width:72px; }
+.session-item input[type="number"] { width:46px; text-align:center; font-weight:600; }
+.session-item select:focus,
+.session-item input:focus  { border-color:var(--border-f); }
+.sess-label-inp {
+  min-width:0; width:100%;
+  background:var(--bg-inp); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-size:12px; padding:3px 6px;
+}
+.sess-label-inp:focus  { border-color:var(--border-f); outline:none; }
+.sess-label-inp.hidden { display:none; }
+.sess-unit { font-size:11px; color:var(--text-mute); }
+.sess-del {
+  width:22px; height:22px; border-radius:50%;
+  background:transparent; color:var(--text-mute);
+  font-size:14px; display:flex; align-items:center; justify-content:center;
+}
+.sess-del:hover { background:rgba(229,59,46,.15); color:var(--type-qa); }
+.btn-add {
+  display:flex; align-items:center; justify-content:center; gap:5px;
+  width:100%; padding:8px; border-radius:var(--radius-sm);
+  background:transparent; border:1px dashed var(--border);
+  color:var(--text-mute); font-size:12px;
+}
+.btn-add:hover { border-color:var(--accent-a); color:var(--accent-a); background:color-mix(in srgb,var(--accent-a) 5%,transparent); }
+
+/* ─── お気に入り ─────────────────────────────────────── */
+.fav-save-row { display:flex; gap:8px; margin-bottom:10px; }
+.input-text {
+  flex:1; background:var(--bg-inp); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text); font-size:13px; padding:6px 10px;
+}
+.input-text:focus { border-color:var(--border-f); }
+.btn-save {
+  padding:6px 14px; border-radius:var(--radius-sm);
+  background:color-mix(in srgb,var(--kg-green) 14%,transparent);
+  color:var(--kg-green); border:1px solid color-mix(in srgb,var(--kg-green) 30%,transparent);
+  font-size:12px; font-weight:500; white-space:nowrap;
+}
+.btn-save:hover { background:color-mix(in srgb,var(--kg-green) 25%,transparent); }
+.fav-list { display:flex; flex-direction:column; gap:6px; }
+.fav-item {
+  display:flex; align-items:center; gap:8px; padding:7px 10px;
+  background:var(--bg-elev); border-radius:var(--radius-sm); border:1px solid var(--border);
+}
+.fav-name { flex:1; font-size:12px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
+.fav-load {
+  padding:3px 10px; border-radius:100px;
+  background:color-mix(in srgb,var(--accent-a) 10%,transparent);
+  color:var(--accent-a);
+  border:1px solid color-mix(in srgb,var(--accent-a) 25%,transparent);
+  font-size:11px; font-weight:500;
+}
+.fav-load:hover { background:color-mix(in srgb,var(--accent-a) 22%,transparent); }
+.fav-del {
+  width:22px; height:22px; border-radius:50%; background:transparent;
+  color:var(--text-mute); font-size:14px;
+  display:flex; align-items:center; justify-content:center;
+}
+.fav-del:hover { background:rgba(229,59,46,.15); color:var(--type-qa); }
+.fav-empty { font-size:12px; color:var(--text-mute); text-align:center; padding:8px 0; }
+
+/* ─── ログ ───────────────────────────────────────────── */
+.log-area {
+  height:90px; overflow-y:auto; font-size:11px; color:var(--text-mute); line-height:1.9;
+}
+.log-area::-webkit-scrollbar       { width:3px; }
+.log-area::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+/* ─── クイック ───────────────────────────────────────── */
+.quick-grid {
+  display:grid; grid-template-columns:repeat(3,1fr); gap:8px; margin-bottom:12px;
+}
+.quick-btn {
+  padding:14px 6px; border-radius:var(--radius-md);
+  background:var(--bg-elev); border:1px solid var(--border);
+  color:var(--text); font-size:22px; font-weight:700;
+  display:flex; flex-direction:column; align-items:center; gap:2px;
+}
+.quick-btn span { font-size:10px; font-weight:400; color:var(--text-mute); }
+.quick-btn:hover {
+  border-color:var(--accent-a);
+  background:color-mix(in srgb,var(--accent-a) 8%,transparent); color:var(--accent-a);
+}
+.quick-btn:hover span { color:var(--accent-a); }
+.quick-btn.featured {
+  border-color:color-mix(in srgb,var(--accent-a) 30%,transparent);
+  background:color-mix(in srgb,var(--accent-a) 5%,transparent);
+}
+.quick-btn.active {
+  background:color-mix(in srgb,var(--accent-a) 18%,transparent);
+  border-color:var(--accent-a); color:var(--accent-a);
+}
+.quick-custom-row { display:flex; align-items:center; gap:8px; margin-bottom:12px; }
+.input-num {
+  width:58px; background:var(--bg-inp); border:1px solid var(--border);
+  border-radius:var(--radius-sm); color:var(--text);
+  font-size:16px; font-weight:600; padding:6px 8px; text-align:center;
+}
+.input-num:focus { border-color:var(--border-f); }
+.colon  { font-size:18px; font-weight:700; color:var(--text-sec); }
+.btn-set {
+  padding:6px 16px; border-radius:var(--radius-sm);
+  background:color-mix(in srgb,var(--accent-a) 14%,transparent);
+  color:var(--accent-a);
+  border:1px solid color-mix(in srgb,var(--accent-a) 30%,transparent);
+  font-size:13px; font-weight:500;
+}
+.btn-set:hover { background:color-mix(in srgb,var(--accent-a) 24%,transparent); }
+.quick-options { display:flex; gap:14px; flex-wrap:wrap; }
+.quick-history-row { display:flex; flex-wrap:wrap; gap:6px; }
+.quick-hist-btn {
+  padding:5px 12px; border-radius:20px;
+  background:color-mix(in srgb,var(--accent-a) 10%,transparent);
+  border:1px solid color-mix(in srgb,var(--accent-a) 30%,transparent);
+  color:var(--accent-a); font-size:12px; font-weight:600;
+}
+.quick-hist-btn:hover { background:color-mix(in srgb,var(--accent-a) 22%,transparent); }
+
+/* ─── ポモドーロ ─────────────────────────────────────── */
+.pomo-phase-tabs {
+  display:flex; gap:4px; width:100%;
+  background:var(--bg-elev); border-radius:var(--radius-md); padding:4px;
+}
+.pomo-phase-btn {
+  flex:1; padding:7px 4px; border-radius:var(--radius-sm);
+  background:transparent; color:var(--text-mute); font-size:11px; font-weight:500;
+}
+.pomo-phase-btn:hover { color:var(--text); background:var(--bg-inp); }
+.pomo-phase-btn[data-phase="focus"].active  { background:linear-gradient(135deg,#1697E6,#0B6FCC); color:#fff; }
+.pomo-phase-btn[data-phase="short"].active  { background:linear-gradient(135deg,#7ACB1A,#5A9E0F); color:#fff; }
+.pomo-phase-btn[data-phase="long"].active   { background:linear-gradient(135deg,#F57C00,#C45F00); color:#fff; }
+
+.pomo-stats { display:grid; grid-template-columns:repeat(3,1fr); gap:7px; width:100%; }
+.pomo-stat  {
+  text-align:center; background:var(--bg-elev);
+  border-radius:var(--radius-sm); padding:10px 4px; border:1px solid var(--border);
+}
+.stat-val { font-size:18px; font-weight:700; color:var(--accent-a); }
+.stat-lbl { font-size:10px; color:var(--text-mute); margin-top:2px; }
+
+.tomato-track { display:flex; flex-wrap:wrap; gap:5px; justify-content:center; min-height:26px; }
+.tomato-icon  { font-size:18px; animation:popIn .3s cubic-bezier(.34,1.56,.64,1); }
+@keyframes popIn { from{transform:scale(0);opacity:0} to{transform:scale(1);opacity:1} }
+
+.pomo-preset-grid   { display:grid; grid-template-columns:1fr 1fr 1fr; gap:7px; }
+.pomo-time-settings { display:flex; flex-direction:column; gap:10px; }
+.pomo-time-row      { display:flex; align-items:center; gap:10px; }
+.pomo-time-lbl      { font-size:12px; color:var(--text-sec); min-width:88px; }
+.stepper            { display:flex; align-items:center; gap:6px; }
+.stepper-btn {
+  width:28px; height:28px; border-radius:50%;
+  background:var(--bg-elev); border:1px solid var(--border);
+  color:var(--text); font-size:16px; display:flex; align-items:center; justify-content:center;
+}
+.stepper-btn:hover { background:var(--accent-b); color:#fff; border-color:var(--accent-b); }
+.stepper-val  { font-size:17px; font-weight:700; min-width:26px; text-align:center; }
+.stepper-unit { font-size:11px; color:var(--text-mute); }
+
+/* ─── 完了エフェクト ─────────────────────────────────── */
+@keyframes completePulse {
+  0%   { box-shadow:0 0 0 0 color-mix(in srgb,var(--accent-a) 60%,transparent); }
+  70%  { box-shadow:0 0 0 24px color-mix(in srgb,var(--accent-a) 0%,transparent); }
+  100% { box-shadow:0 0 0 0 transparent; }
+}
+.timer-panel.complete { animation:completePulse .9s ease; }
+
+/* =========================================================
+   投影モード共通
+   ========================================================= */
+.proj-overlay {
+  position:fixed; inset:0;
+  z-index:9000;
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  animation:projFadeIn .5s ease;
+}
+.proj-overlay.hidden { display:none; }
+
+/* ── Canvas 背景 ── */
+.proj-bg-canvas {
+  position:absolute; top:0; left:0;
+  pointer-events:none; z-index:0; display:block;
+}
+
+/* ── 中央コンテンツ ── */
+.proj-center {
+  position:relative; z-index:1;
+  display:flex; flex-direction:column;
+  align-items:center; justify-content:center;
+  pointer-events:none; user-select:none;
+}
+
+/* バッジ */
+.proj-badge {
+  padding:5px 22px; border-radius:100px;
+  font-size:clamp(11px,1.2vw,14px); font-weight:700; letter-spacing:.14em;
+  color:var(--kg-blue);
+  border:1.5px solid currentColor;
+  backdrop-filter:blur(4px);
+  margin-bottom:clamp(12px,2.5vh,28px);
+  transition:color .4s,border-color .4s;
+}
+
+/* 大きな時刻（ダーク投影） */
+.proj-time {
+  font-size:clamp(72px,15vw,200px); font-weight:900;
+  letter-spacing:-.04em; font-variant-numeric:tabular-nums;
+  line-height:1;
+  transition:color .4s,text-shadow .4s;
+  margin-bottom:clamp(14px,2.5vh,30px);
+}
+
+/* ダークモード投影の時刻スタイル */
+[data-theme="dark"] .proj-time {
+  color:#FFFFFF;
+  text-shadow:0 4px 60px rgba(0,0,0,.55);
+}
+[data-theme="dark"] .proj-time.warn {
+  color:#F57C00;
+  text-shadow:0 0 60px rgba(245,124,0,.55),0 0 120px rgba(245,124,0,.20),0 4px 40px rgba(0,0,0,.7);
+}
+[data-theme="dark"] .proj-time.urgent {
+  color:#E53B2E;
+  text-shadow:0 0 60px rgba(229,59,46,.65),0 0 120px rgba(229,59,46,.25),0 4px 40px rgba(0,0,0,.7);
+  animation:blink .7s ease-in-out infinite;
+}
+
+/* ライトモード投影：中央コンテンツにガラス背景 */
+[data-theme="light"] .proj-center {
+  background:rgba(255,255,255,0.80);
+  backdrop-filter:blur(32px) saturate(1.6);
+  -webkit-backdrop-filter:blur(32px) saturate(1.6);
+  border-radius:clamp(24px,3vw,44px);
+  padding:clamp(32px,4.5vh,64px) clamp(48px,7vw,120px);
+  border:1.5px solid rgba(255,255,255,0.98);
+  box-shadow:0 12px 64px rgba(0,0,0,0.08), 0 2px 16px rgba(0,0,0,0.05), inset 0 1px 0 rgba(255,255,255,0.9);
+}
+
+/* ライトモード投影の時刻スタイル */
+[data-theme="light"] .proj-time {
+  color:#04122A;
+  text-shadow:0 2px 12px rgba(22,80,180,.12);
+}
+[data-theme="light"] .proj-time.warn {
+  color:#D97706;
+  text-shadow:0 0 40px rgba(217,119,6,.40), 0 2px 12px rgba(0,0,0,.10);
+}
+[data-theme="light"] .proj-time.urgent {
+  color:#B91C1C;
+  text-shadow:0 0 40px rgba(185,28,28,.45), 0 2px 12px rgba(0,0,0,.10);
+  animation:blink .7s ease-in-out infinite;
+}
+
+/* ライトモード投影のバッジ */
+[data-theme="light"] .proj-badge {
+  background:rgba(22,151,230,0.10);
+  border-color:rgba(22,151,230,0.50);
+  color:#0B6FCC;
+  backdrop-filter:none;
+}
+
+/* ライトモード投影のセッション番号 */
+[data-theme="light"] .proj-session-count {
+  color:rgba(10,22,40,.55);
+  font-weight:500;
+}
+
+/* ライトモード投影のプログレスライン */
+[data-theme="light"] .proj-line-wrap .proj-line-track {
+  background:rgba(10,22,80,.10);
+}
+
+/* ライトモード投影の現在時刻 */
+[data-theme="light"] .proj-clock-area {
+  color:#04122A;
+  opacity:.65;
+  font-weight:800;
+}
+
+/* ダークモード投影：中央コンテンツにダークガラス背景 */
+[data-theme="dark"] .proj-center {
+  background:rgba(8,12,28,0.72);
+  backdrop-filter:blur(32px) saturate(1.4);
+  -webkit-backdrop-filter:blur(32px) saturate(1.4);
+  border-radius:clamp(24px,3vw,44px);
+  padding:clamp(32px,4.5vh,64px) clamp(48px,7vw,120px);
+  border:1.5px solid rgba(255,255,255,0.10);
+  box-shadow:0 12px 64px rgba(0,0,0,0.45), 0 2px 16px rgba(0,0,0,0.30), inset 0 1px 0 rgba(255,255,255,0.06);
+}
+
+/* ダークモード投影：KIKAGAKUロゴ表示 */
+[data-theme="dark"] .proj-kika-logo { display:flex; }
+[data-theme="dark"] .proj-kika-text { color:rgba(255,255,255,0.80); }
+
+/* プログレスライン */
+.proj-line-wrap {
+  width:clamp(220px,42vw,580px);
+  margin-bottom:clamp(10px,1.8vh,22px);
+  padding:0 2px;
+}
+[data-theme="light"] .proj-line-wrap .proj-line-track {
+  background:rgba(10,22,40,.08);
+}
+.proj-line-track {
+  width:100%; height:4px; background:rgba(255,255,255,.10);
+  border-radius:100px; overflow:visible; position:relative;
+}
+.proj-line-bar {
+  height:100%; width:0%; border-radius:100px;
+  background:linear-gradient(90deg,var(--kg-blue),#3DAEF0);
+  box-shadow:0 0 12px var(--kg-blue),0 0 28px rgba(22,151,230,.25);
+  transition:width .95s linear,background .4s ease,box-shadow .4s ease;
+  will-change:width;
+}
+
+/* セッション番号 */
+.proj-session-count {
+  font-size:clamp(12px,1.4vw,16px);
+  color:rgba(255,255,255,.38);
+  font-weight:400; letter-spacing:.08em;
+}
+
+/* 非表示要素 */
+.proj-sub-label,.proj-prog-bar-wrap,.proj-ring-container,
+.proj-ring-area,.proj-controls,.proj-alert-settings { display:none; }
+
+/* ── 投影アラート ── */
+.proj-alert {
+  position:fixed; top:clamp(16px,3vh,32px); left:50%;
+  transform:translateX(-50%);
+  display:inline-flex; align-items:center; gap:10px;
+  padding:12px 32px 12px 24px; border-radius:100px; white-space:nowrap;
+  font-size:clamp(13px,1.6vw,18px); font-weight:700; letter-spacing:.06em;
+  color:#F57C00;
+  background:rgba(20,10,0,.75);
+  border:1.5px solid rgba(245,124,0,.55);
+  box-shadow:0 0 24px rgba(245,124,0,.30),0 8px 32px rgba(0,0,0,.65);
+  backdrop-filter:blur(16px) saturate(1.4);
+  -webkit-backdrop-filter:blur(16px) saturate(1.4);
+  animation:projAlertIn .35s cubic-bezier(.22,.68,0,1.2);
+  z-index:9100;
+}
+/* ライトモードの投影アラート */
+[data-theme="light"] .proj-alert {
+  background:rgba(255,252,235,.92);
+  color:#D97706;
+  border-color:rgba(217,119,6,.50);
+  box-shadow:0 0 20px rgba(217,119,6,.18),0 6px 24px rgba(0,0,0,.18);
+}
+.proj-alert.hidden { display:none; }
+.proj-alert-icon { font-size:1.1em; animation:pulse 1s ease-in-out infinite; flex-shrink:0; }
+.proj-alert-text { display:flex; flex-direction:column; }
+.proj-alert-title { font-size:clamp(13px,1.6vw,18px); font-weight:700; line-height:1.2; }
+.proj-alert-sub   { font-size:clamp(10px,1vw,12px); font-weight:400; opacity:.65; }
+
+@keyframes projAlertIn {
+  from { opacity:0; transform:translateX(-50%) translateY(-12px) scale(.92); }
+  to   { opacity:1; transform:translateX(-50%) translateY(0) scale(1); }
+}
+@keyframes pulse { 0%,100%{transform:scale(1)} 50%{transform:scale(1.25)} }
+
+/* ── 右下コントロール ── */
+.proj-bottom-row {
+  position:fixed; bottom:22px; right:22px;
+  display:flex; align-items:center; gap:8px; z-index:9100;
+}
+.proj-bg-btn {
+  display:flex; align-items:center; justify-content:center;
+  width:34px; height:34px; border-radius:9px;
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
+  color:rgba(255,255,255,.75);
+  cursor:pointer; transition:all .2s; backdrop-filter:blur(8px);
+}
+/* ライトモード: 背景切替ボタンのみ非表示 */
+[data-theme="light"] .proj-bg-btn {
+  background:rgba(10,22,40,.08); border-color:rgba(10,22,40,.20);
+  color:rgba(10,22,40,.65);
+}
+[data-theme="light"] #btnProjBgToggle { display:none; }
+.proj-bg-btn:hover { background:rgba(255,255,255,.28); border-color:rgba(255,255,255,.50); color:#fff; transform:scale(1.08); }
+[data-theme="light"] .proj-bg-btn:hover { background:rgba(10,22,40,.16); border-color:rgba(10,22,40,.40); color:rgba(10,22,40,.90); }
+
+/* テーマ切替ボタン: ダークモード（視認性重視） */
+#btnProjThemeToggle {
+  background:rgba(20,20,45,.55);
+  border-color:rgba(110,120,200,.65);
+  color:rgba(210,220,255,.92);
+  backdrop-filter:blur(14px);
+  box-shadow:0 2px 10px rgba(0,0,0,.30);
+}
+#btnProjThemeToggle:hover {
+  background:rgba(40,40,80,.70);
+  border-color:rgba(150,160,240,.80);
+  color:#fff;
+  transform:scale(1.08);
+}
+/* テーマ切替ボタン: ライトモード（全画面終了ボタンと同色） */
+[data-theme="light"] #btnProjThemeToggle {
+  background:rgba(10,22,40,.08);
+  border-color:rgba(10,22,40,.20);
+  color:rgba(10,22,40,.65);
+  backdrop-filter:blur(8px);
+  box-shadow:none;
+}
+[data-theme="light"] #btnProjThemeToggle:hover {
+  background:rgba(10,22,40,.16);
+  border-color:rgba(10,22,40,.40);
+  color:rgba(10,22,40,.90);
+  transform:scale(1.08);
+}
+.proj-bg-icon { display:block; }
+
+.proj-close-btn {
+  display:flex; align-items:center; gap:6px;
+  padding:9px 16px; border-radius:10px;
+  background:rgba(255,255,255,.14); border:1px solid rgba(255,255,255,.28);
+  color:rgba(255,255,255,.75); font-size:12px; font-weight:500;
+  transition:all .2s; backdrop-filter:blur(8px); letter-spacing:.04em;
+}
+[data-theme="light"] .proj-close-btn {
+  background:rgba(10,22,40,.08); border-color:rgba(10,22,40,.20);
+  color:rgba(10,22,40,.65);
+}
+.proj-close-btn:hover { background:rgba(255,255,255,.28); border-color:rgba(255,255,255,.50); color:#fff; }
+[data-theme="light"] .proj-close-btn:hover { background:rgba(10,22,40,.16); border-color:rgba(10,22,40,.40); color:rgba(10,22,40,.90); }
+
+/* ─── レスポンシブ ───────────────────────────────────── */
+@media(max-width:760px){
+  .two-col-layout { grid-template-columns:1fr; }
+  .sticky-panel   { position:static; }
+  .timer-ring-wrap{ width:200px; height:200px; }
+  .timer-time     { font-size:36px; }
+  .pomo-preset-grid { grid-template-columns:1fr 1fr; }
+}
+@media(max-width:480px){
+  .header-inner { padding:0 12px; }
+  .logo-dots    { display:none; }
+  .app-main     { padding:12px 10px 32px; }
+  .timer-ring-wrap{ width:180px; height:180px; }
+  .timer-time   { font-size:32px; }
+  .tab-btn      { font-size:11px; padding:8px 4px; gap:4px; }
+}
+@media(max-height:700px){
+  .proj-time     { font-size:clamp(56px,12vw,130px); }
+  .proj-line-wrap{ width:clamp(180px,36vw,420px); }
+}
+@media(max-width:768px){
+  .proj-time     { font-size:clamp(60px,16vw,140px); }
+  .proj-line-wrap{ width:clamp(180px,50vw,420px); }
+}
+@media(max-width:480px){
+  .proj-time     { font-size:clamp(52px,18vw,110px); }
+  .proj-badge    { font-size:11px; padding:4px 16px; }
+  .proj-line-wrap{ width:76vw; }
+  .proj-bottom-row{ bottom:12px; right:12px; gap:6px; }
+  .proj-bg-btn   { width:30px; height:30px; }
+  .proj-close-btn{ font-size:11px; padding:7px 12px; }
+}
+
+/* ─── トースト通知 ───────────────────────────────────── */
+.toast-msg {
+  position:fixed; bottom:28px; left:50%; transform:translateX(-50%) translateY(10px);
+  background:var(--bg-surf); color:var(--text); border:1px solid var(--border);
+  border-radius:100px; padding:9px 22px; font-size:12px; font-weight:500;
+  box-shadow:0 8px 32px rgba(0,0,0,.35); white-space:nowrap;
+  opacity:0; transition:opacity .22s ease, transform .22s ease;
+  pointer-events:none; z-index:99999;
+}
+.toast-msg.show { opacity:1; transform:translateX(-50%) translateY(0); }
+
+/* ─── スクロールバー ─────────────────────────────────── */
+::-webkit-scrollbar       { width:5px; }
+::-webkit-scrollbar-track { background:transparent; }
+::-webkit-scrollbar-thumb { background:var(--border); border-radius:4px; }
+
+/* ─── フォーカス ─────────────────────────────────────── */
+:focus-visible { outline:2px solid var(--accent-a); outline-offset:2px; }
+
+.app-main,.app-header { position:relative; z-index:1; }
+.proj-overlay { z-index:9000; }
+
+/* ─── カラーテーマ反映 ──────────────────────────────── */
+.stat-val  { color:var(--accent-a); }
+.fav-load  { color:var(--accent-a); border-color:color-mix(in srgb,var(--accent-a) 28%,transparent); background:color-mix(in srgb,var(--accent-a) 10%,transparent); }
+.fav-load:hover { background:color-mix(in srgb,var(--accent-a) 22%,transparent); }
+.session-item.active { border-color:var(--accent-a); background:color-mix(in srgb,var(--accent-a) 7%,transparent); }
+.btn-play:active   { transform:scale(.95); }
+.btn-play:disabled { opacity:.35; cursor:not-allowed; transform:none; }
+.quick-btn:active  { transform:scale(.96); }
+.template-btn:active { transform:scale(.97); }
+/* ─── 投影モード：タイムオーバー表示 ─── */
+.proj-overtime {
+  font-size:clamp(28px,5.5vw,72px); font-weight:800;
+  letter-spacing:.04em; font-variant-numeric:tabular-nums;
+  color:#E53B2E; opacity:.90;
+  margin-top:-.2em; margin-bottom:clamp(8px,1.5vh,18px);
+  text-shadow:0 0 40px rgba(229,59,46,.45);
+  animation:blink .7s ease-in-out infinite;
+}
+[data-theme="light"] .proj-overtime { text-shadow:0 0 30px rgba(185,28,28,.35); }
+/* ─── カラーラベルをクリック可能に ─── */
+.cp-label { cursor:pointer; }
+.cp-label:hover { opacity:.8; }
+</style>
+</head>
+<body>
+
+  <!-- ===================== ヘッダー ===================== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="logo-area">
+        <div class="logo-symbol" aria-hidden="true">
+          <svg width="40" height="40" viewBox="0 0 42 42" fill="none">
+            <defs>
+              <linearGradient id="kgGrad" x1="0" y1="0" x2="42" y2="42" gradientUnits="userSpaceOnUse">
+                <stop offset="0%"   stop-color="#1697E6"/>
+                <stop offset="100%" stop-color="#0B6FCC"/>
+              </linearGradient>
+              <radialGradient id="kgCore" cx="50%" cy="50%" r="50%">
+                <stop offset="0%"   stop-color="#3DAEF0"/>
+                <stop offset="70%"  stop-color="#1697E6"/>
+                <stop offset="100%" stop-color="#0B6FCC" stop-opacity="0.7"/>
+              </radialGradient>
+              <filter id="kgGlow">
+                <feGaussianBlur stdDeviation="1.5" result="blur"/>
+                <feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge>
+              </filter>
+            </defs>
+            <polygon points="21,2.5 37.2,11.5 37.2,30.5 21,39.5 4.8,30.5 4.8,11.5"
+              fill="none" stroke="url(#kgGrad)" stroke-width="1.0" opacity="0.30"/>
+            <line x1="21" y1="21" x2="21"   y2="6"    stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <line x1="21" y1="21" x2="35.4" y2="12.8" stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <line x1="21" y1="21" x2="35.4" y2="29.2" stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <line x1="21" y1="21" x2="21"   y2="36"   stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <line x1="21" y1="21" x2="6.6"  y2="29.2" stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <line x1="21" y1="21" x2="6.6"  y2="12.8" stroke="url(#kgGrad)" stroke-width="2.0" stroke-linecap="round" opacity="0.75"/>
+            <circle cx="21"   cy="4.5"  r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="34.8" cy="12.2" r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="34.8" cy="29.8" r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="21"   cy="37.5" r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="7.2"  cy="29.8" r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="7.2"  cy="12.2" r="2.8" fill="url(#kgGrad)" filter="url(#kgGlow)"/>
+            <circle cx="21" cy="21" r="6.2" fill="url(#kgCore)" opacity="0.9" filter="url(#kgGlow)"/>
+            <circle cx="21" cy="21" r="2.6" fill="white" opacity="0.95"/>
+          </svg>
+        </div>
+        <div class="logo-text">
+          <span class="logo-main">KIKAGAKU</span>
+          <span class="logo-sub">タイムキーパー</span>
+        </div>
+        <!-- KG 4色ドット -->
+        <div class="logo-dots" aria-hidden="true">
+          <span class="logo-dot" style="background:#1697E6"></span>
+          <span class="logo-dot" style="background:#7ACB1A"></span>
+          <span class="logo-dot" style="background:#F57C00"></span>
+          <span class="logo-dot" style="background:#E53B2E"></span>
+        </div>
+      </div>
+
+      <div class="header-controls">
+        <button class="btn-icon btn-color-trigger" id="btnColorTrigger" title="テーマカラー" aria-label="カラーテーマ">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"/><circle cx="12" cy="12" r="4" fill="currentColor" stroke="none"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="btnVoice" title="音声アナウンスOFF" aria-label="音声アナウンス切替" aria-pressed="false">
+          <span class="voice-icon-wrap">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+              <path d="M12 1a3 3 0 0 0-3 3v8a3 3 0 0 0 6 0V4a3 3 0 0 0-3-3z"/>
+              <path d="M19 10v2a7 7 0 0 1-14 0v-2"/>
+              <line x1="12" y1="19" x2="12" y2="23"/><line x1="8" y1="23" x2="16" y2="23"/>
+            </svg>
+            <svg class="voice-slash" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" aria-hidden="true">
+              <line x1="3" y1="3" x2="21" y2="21"/>
+            </svg>
+          </span>
+        </button>
+        <button class="btn-icon" id="btnProjection" title="投影モード (F)" aria-label="投影モード">
+          <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/>
+          </svg>
+        </button>
+        <button class="btn-icon" id="btnTheme" title="テーマ切替 dark↔light (T)" aria-label="テーマ切替">
+          <svg id="iconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="5"/>
+            <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+            <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+            <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+            <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+          </svg>
+          <svg id="iconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+            <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+          </svg>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================== メイン ===================== -->
+  <main class="app-main">
+    <nav class="tab-nav" role="tablist">
+      <button class="tab-btn active" id="tab-btn-lecture" data-tab="lecture" role="tab" aria-selected="true" aria-controls="tab-lecture">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+        講義タイマー
+      </button>
+      <button class="tab-btn" id="tab-btn-quick" data-tab="quick" role="tab" aria-selected="false" aria-controls="tab-quick">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        クイック
+      </button>
+      <button class="tab-btn" id="tab-btn-pomodoro" data-tab="pomodoro" role="tab" aria-selected="false" aria-controls="tab-pomodoro">
+        <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 10 10"/><path d="M12 6v6l4 2"/></svg>
+        ポモドーロ
+      </button>
+    </nav>
+
+    <!-- ==================== タブ1：講義タイマー ==================== -->
+    <section id="tab-lecture" class="tab-content active" role="tabpanel" aria-labelledby="tab-btn-lecture">
+      <div class="two-col-layout">
+        <div class="timer-panel sticky-panel">
+          <div class="session-badge" id="lectureSessionBadge" data-type="lecture">講義</div>
+          <div class="session-name"  id="lectureSessionName">講義</div>
+          <div class="session-count" id="lectureSessionCount">1/1 セッション目</div>
+          <div class="timer-ring-wrap" id="lectureRingWrap">
+            <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+              <g id="lectureTicks"></g>
+              <g id="lectureSegments"></g>
+              <circle class="ring-track" cx="110" cy="110" r="96"/>
+              <circle class="ring-prog" id="lectureRingProg" cx="110" cy="110" r="96" stroke-dasharray="603" stroke-dashoffset="0"/>
+              <circle class="ring-outer" cx="110" cy="110" r="105"/>
+            </svg>
+            <div class="timer-display" role="timer" aria-label="講義タイマー">
+              <div class="timer-time" id="lectureTime">00:00</div>
+              <div class="timer-sub"  id="lectureSub">準備完了</div>
+              <div class="timer-eta"  id="lectureEta"></div>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="btn-ctrl btn-nav" id="lecturePrev" title="前のセッション (←)" aria-label="前のセッション">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="19,20 9,12 19,4"/><rect x="5" y="4" width="3" height="16"/></svg>
+            </button>
+            <button class="btn-ctrl btn-nav" id="lectureReset" title="リセット (R)" aria-label="リセット">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+            </button>
+            <button class="btn-ctrl btn-play" id="lectureToggle" title="開始/停止 (Space)" aria-label="開始/停止">
+              <svg id="lecturePlayIcon"  width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 20,12 5,21"/></svg>
+              <svg id="lecturePauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button class="btn-ctrl btn-nav" id="lectureFwd" title="30秒早送り" aria-label="30秒早送り">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-.18-5.51"/>
+              </svg>
+            </button>
+            <button class="btn-ctrl btn-nav" id="lectureNext" title="次のセッション (→)" aria-label="次のセッション">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,4 15,12 5,20"/><rect x="16" y="4" width="3" height="16"/></svg>
+            </button>
+          </div>
+          <div class="alert-settings">
+            <div class="alert-settings-title">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              警告タイミング設定
+            </div>
+            <div class="alert-toggles">
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="alertMin1" checked><span class="sw-track"></span><span class="sw-text">残り1分</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="alertEnd"  checked><span class="sw-track"></span><span class="sw-text">終了時</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="autoNext">        <span class="sw-track"></span><span class="sw-text">自動次へ</span></label>
+            </div>
+            <div class="warn-thresh-row">
+              <span class="warn-thresh-lbl">🟡 黄色警告</span>
+              <input type="number" class="input-num warn-thresh-inp" id="warnCautionMin" min="1" max="30" value="3">
+              <span class="warn-thresh-unit">分前</span>
+              <span class="warn-thresh-lbl" style="margin-left:10px">🔴 赤色警告</span>
+              <input type="number" class="input-num warn-thresh-inp" id="warnUrgentMin" min="0" max="10" value="1">
+              <span class="warn-thresh-unit">分前</span>
+            </div>
+          </div>
+          <div class="overall-progress">
+            <div class="progress-labels">
+              <span id="lectureProgressLabel">セッション 1 / 1</span>
+              <span id="lectureTotalTime">合計 0分</span>
+            </div>
+            <div class="prog-bar-wrap"><div class="prog-bar" id="lectureProgressBar" style="width:0%"></div></div>
+          </div>
+          <div class="timer-footer-btns">
+            <button class="btn-sm" id="lectureMute">
+              <svg id="soundOnIcon"  width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+              <svg id="soundOffIcon" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><line x1="23" y1="9" x2="17" y2="15"/><line x1="17" y1="9" x2="23" y2="15"/></svg>
+              <span id="muteLabel">音ON</span>
+            </button>
+            <button class="btn-sm" id="lectureFullscreen">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              全画面
+            </button>
+          </div>
+        </div>
+
+        <div class="settings-panel">
+          <div class="settings-section">
+            <h3 class="section-title">📋 テンプレート</h3>
+            <div class="template-grid" id="lectureTemplates">
+              <button class="template-btn" data-template="lecture30">30分講義</button>
+              <button class="template-btn" data-template="lecture60">60分講義</button>
+              <button class="template-btn" data-template="ws90">90分WS</button>
+              <button class="template-btn" data-template="short">短時間回</button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">⏱ セッション</h3>
+            <div id="sessionList" class="session-list"></div>
+            <button class="btn-add" id="btnAddSession">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              セッションを追加
+            </button>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">⭐ お気に入りプリセット</h3>
+            <div class="fav-save-row">
+              <input type="text" id="favoriteName" class="input-text" placeholder="プリセット名を入力" maxlength="20">
+              <button class="btn-save" id="btnSaveFavorite">保存</button>
+            </div>
+            <div id="favoriteList" class="fav-list"></div>
+            <div class="fav-io-row">
+              <button class="btn-sm" id="btnExportFavs">📤 エクスポート</button>
+              <label class="btn-sm btn-import-label">📥 インポート<input type="file" id="favImportInput" accept=".json" style="display:none"></label>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">📝 進行ログ</h3>
+            <div id="lectureLog" class="log-area" role="log" aria-live="polite"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== タブ2：クイック ==================== -->
+    <section id="tab-quick" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-quick" style="display:none">
+      <div class="two-col-layout">
+        <div class="settings-panel">
+          <div class="settings-section" id="quickHistorySection" style="display:none">
+            <h3 class="section-title">🕐 最近使用した時間</h3>
+            <div class="quick-history-row" id="quickHistoryRow"></div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">⚡ ワンタップで開始</h3>
+            <div class="quick-grid" id="quickGrid">
+              <button class="quick-btn" data-min="1">1<span>分</span></button>
+              <button class="quick-btn" data-min="3">3<span>分</span></button>
+              <button class="quick-btn featured" data-min="5">5<span>分</span></button>
+              <button class="quick-btn" data-min="7">7<span>分</span></button>
+              <button class="quick-btn featured" data-min="10">10<span>分</span></button>
+              <button class="quick-btn" data-min="15">15<span>分</span></button>
+              <button class="quick-btn featured" data-min="20">20<span>分</span></button>
+              <button class="quick-btn" data-min="25">25<span>分</span></button>
+              <button class="quick-btn" data-min="30">30<span>分</span></button>
+            </div>
+            <div class="quick-custom-row">
+              <input type="number" id="quickCustomMin" class="input-num" placeholder="分" min="0" max="99">
+              <span class="colon">:</span>
+              <input type="number" id="quickCustomSec" class="input-num" placeholder="秒" min="0" max="59">
+              <button class="btn-set" id="btnQuickCustom">セット</button>
+            </div>
+            <div class="quick-options">
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="quickAutoStart" checked><span class="sw-track"></span><span class="sw-text">タップで即スタート</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="quickLoop"><span class="sw-track"></span><span class="sw-text">繰り返し</span></label>
+            </div>
+          </div>
+          <div class="settings-section">
+            <div class="alert-settings-title">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 8A6 6 0 0 0 6 8c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.73 21a2 2 0 0 1-3.46 0"/></svg>
+              警告タイミング設定
+            </div>
+            <div class="alert-toggles">
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="quickAlertMin1" checked><span class="sw-track"></span><span class="sw-text">残り警告</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="quickAlertEnd" checked><span class="sw-track"></span><span class="sw-text">終了時</span></label>
+            </div>
+            <div class="warn-thresh-row">
+              <span class="warn-thresh-lbl">🟡 黄色警告</span>
+              <input type="number" class="input-num warn-thresh-inp" id="quickWarnCautionMin" min="1" max="30" value="3">
+              <span class="warn-thresh-unit">分前</span>
+              <span class="warn-thresh-lbl" style="margin-left:10px">🔴 赤色警告</span>
+              <input type="number" class="input-num warn-thresh-inp" id="quickWarnUrgentMin" min="0" max="10" value="1">
+              <span class="warn-thresh-unit">分前</span>
+            </div>
+          </div>
+        </div>
+        <div class="timer-panel sticky-panel">
+          <!-- セッションタイプ選択 -->
+          <div class="quick-type-tabs" id="quickTypeTabs">
+            <button class="quick-type-btn active" data-qtype="work">ワーク</button>
+            <button class="quick-type-btn" data-qtype="break">休憩</button>
+            <button class="quick-type-btn" data-qtype="custom">カスタム</button>
+          </div>
+          <input type="text" id="quickCustomLabel" class="quick-custom-label-inp hidden" placeholder="ラベル名を入力" maxlength="20">
+          <!-- バッジ -->
+          <div class="quick-session-badge" id="quickTypeBadge" data-qtype="work">ワーク</div>
+          <div class="timer-ring-wrap" id="quickRingWrap">
+            <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+              <circle class="ring-track" cx="110" cy="110" r="96"/>
+              <circle class="ring-prog" id="quickRingProg" cx="110" cy="110" r="96" stroke-dasharray="603" stroke-dashoffset="0"/>
+              <circle class="ring-outer" cx="110" cy="110" r="105"/>
+            </svg>
+            <div class="timer-display" role="timer" aria-label="クイックタイマー">
+              <div class="timer-time" id="quickTime">00:00</div>
+              <div class="timer-sub"  id="quickSub">時間を選択</div>
+              <div class="timer-eta"  id="quickEta"></div>
+            </div>
+          </div>
+          <div class="quick-adjust-row">
+            <button class="btn-adj" id="qAdjM1m" title="-1分">−1分</button>
+            <button class="btn-adj" id="qAdjM30" title="-30秒">−30秒</button>
+            <button class="btn-adj" id="qAdjP30" title="+30秒">+30秒</button>
+            <button class="btn-adj" id="qAdjP1m" title="+1分">+1分</button>
+          </div>
+          <div class="timer-controls">
+            <button class="btn-ctrl btn-nav" id="quickReset" aria-label="リセット">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+            </button>
+            <button class="btn-ctrl btn-play" id="quickToggle" aria-label="開始/停止">
+              <svg id="quickPlayIcon"  width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 20,12 5,21"/></svg>
+              <svg id="quickPauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+          </div>
+          <div class="timer-footer-btns">
+            <button class="btn-sm" id="quickFullscreen">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              全画面
+            </button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ==================== タブ3：ポモドーロ ==================== -->
+    <section id="tab-pomodoro" class="tab-content" role="tabpanel" aria-labelledby="tab-btn-pomodoro" style="display:none">
+      <div class="two-col-layout">
+        <div class="timer-panel sticky-panel">
+          <div class="pomo-phase-tabs">
+            <button class="pomo-phase-btn active" data-phase="focus">🎯 集中</button>
+            <button class="pomo-phase-btn" data-phase="short">☕ 短休憩</button>
+            <button class="pomo-phase-btn" data-phase="long">🌿 長休憩</button>
+          </div>
+          <div class="timer-ring-wrap" id="pomoRingWrap">
+            <svg class="timer-ring" viewBox="0 0 220 220" aria-hidden="true">
+              <circle class="ring-track" cx="110" cy="110" r="96"/>
+              <circle class="ring-prog" id="pomoRingProg" cx="110" cy="110" r="96" stroke-dasharray="603" stroke-dashoffset="0"/>
+              <circle class="ring-outer" cx="110" cy="110" r="105"/>
+            </svg>
+            <div class="timer-display" role="timer" aria-label="ポモドーロタイマー">
+              <div class="timer-time" id="pomoTime">25:00</div>
+              <div class="timer-sub"  id="pomoSub">集中モード</div>
+              <div class="timer-eta"  id="pomoEta"></div>
+            </div>
+          </div>
+          <div class="timer-controls">
+            <button class="btn-ctrl btn-nav" id="pomoReset" aria-label="リセット">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 .49-4.95"/></svg>
+            </button>
+            <button class="btn-ctrl btn-play" id="pomoToggle" aria-label="開始/停止">
+              <svg id="pomoPlayIcon"  width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><polygon points="5,3 20,12 5,21"/></svg>
+              <svg id="pomoPauseIcon" width="22" height="22" viewBox="0 0 24 24" fill="currentColor" style="display:none"><rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/></svg>
+            </button>
+            <button class="btn-ctrl btn-nav" id="pomoSkip" title="スキップ" aria-label="スキップ">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><polygon points="5 4 15 12 5 20"/><rect x="16" y="4" width="3" height="16"/></svg>
+            </button>
+          </div>
+          <div class="pomo-stats">
+            <div class="pomo-stat"><div class="stat-val" id="pomoDone">0</div><div class="stat-lbl">完了セット</div></div>
+            <div class="pomo-stat"><div class="stat-val" id="pomoFocusTotal">0分</div><div class="stat-lbl">集中時間</div></div>
+            <div class="pomo-stat"><div class="stat-val" id="pomoBreakTotal">0分</div><div class="stat-lbl">休憩時間</div></div>
+          </div>
+          <div class="tomato-track" id="tomatoTrack" role="img" aria-label="完了セット数"></div>
+          <div class="daily-stat-line" id="dailyStatLine"></div>
+          <div class="weekly-chart-wrap">
+            <div class="weekly-chart-title">過去7日間の集中時間</div>
+            <canvas id="weeklyChart" class="weekly-chart" width="340" height="90" aria-label="週次集中時間グラフ"></canvas>
+          </div>
+          <div class="timer-footer-btns">
+            <button class="btn-sm" id="pomoFullscreen">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/></svg>
+              全画面
+            </button>
+            <button class="btn-sm danger" id="pomoResetAll">全リセット</button>
+          </div>
+        </div>
+        <div class="settings-panel">
+          <div class="settings-section">
+            <h3 class="section-title">🍅 プリセット</h3>
+            <div class="pomo-preset-grid">
+              <button class="template-btn" data-pomopreset="standard">スタンダード<br><small>25/5/15</small></button>
+              <button class="template-btn" data-pomopreset="deep">ディープワーク<br><small>50/10/30</small></button>
+              <button class="template-btn" data-pomopreset="sprint">ショートスプリント<br><small>15/3/10</small></button>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">⚙️ 時間設定</h3>
+            <div class="pomo-time-settings">
+              <div class="pomo-time-row"><span class="pomo-time-lbl">🎯 集中</span><div class="stepper"><button class="stepper-btn" data-field="focus" data-dir="-1">−</button><span class="stepper-val" id="focusVal">25</span><span class="stepper-unit">分</span><button class="stepper-btn" data-field="focus" data-dir="1">+</button></div></div>
+              <div class="pomo-time-row"><span class="pomo-time-lbl">☕ 短休憩</span><div class="stepper"><button class="stepper-btn" data-field="short" data-dir="-1">−</button><span class="stepper-val" id="shortVal">5</span><span class="stepper-unit">分</span><button class="stepper-btn" data-field="short" data-dir="1">+</button></div></div>
+              <div class="pomo-time-row"><span class="pomo-time-lbl">🌿 長休憩</span><div class="stepper"><button class="stepper-btn" data-field="long" data-dir="-1">−</button><span class="stepper-val" id="longVal">15</span><span class="stepper-unit">分</span><button class="stepper-btn" data-field="long" data-dir="1">+</button></div></div>
+              <div class="pomo-time-row"><span class="pomo-time-lbl">🔁 長休憩まで</span><div class="stepper"><button class="stepper-btn" data-field="interval" data-dir="-1">−</button><span class="stepper-val" id="intervalVal">4</span><span class="stepper-unit">セット</span><button class="stepper-btn" data-field="interval" data-dir="1">+</button></div></div>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">🔔 アラート・動作設定</h3>
+            <div class="alert-toggles">
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="pomoAutoNext" checked><span class="sw-track"></span><span class="sw-text">フェーズ終了後に自動再開</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="pomoAlertMin1" checked><span class="sw-track"></span><span class="sw-text">残り警告サウンド</span></label>
+              <label class="sw-label"><input type="checkbox" class="sw-input" id="pomoAlertEnd" checked><span class="sw-track"></span><span class="sw-text">終了時にサウンド</span></label>
+            </div>
+          </div>
+          <div class="settings-section">
+            <h3 class="section-title">⭐ お気に入りプリセット</h3>
+            <div class="fav-save-row">
+              <input type="text" id="pomoFavoriteName" class="input-text" placeholder="プリセット名を入力" maxlength="20">
+              <button class="btn-save" id="btnSavePomoFavorite">保存</button>
+            </div>
+            <div id="pomoFavoriteList" class="fav-list"></div>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- ===================== 投影モード ===================== -->
+  <div id="projectionOverlay" class="proj-overlay hidden" role="dialog" aria-modal="true" aria-label="投影モード">
+    <canvas id="projBgCanvas" class="proj-bg-canvas" aria-hidden="true"></canvas>
+
+    <!-- ライトモード投影: 右下 KIKAGAKU ロゴ -->
+    <div class="proj-kika-logo" id="projKikaLogo" aria-hidden="true">
+      <!-- KIKAGAKUロゴマーク: 公式サイトより忠実に再現 -->
+      <svg viewBox="0 0 158.245 154.199" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <linearGradient id="kk_g0" x1="90.4157" y1="154.199" x2="90.4157" y2="103.5" gradientUnits="userSpaceOnUse"><stop stop-color="#ABCD03"/><stop offset="1" stop-color="#009E3B"/></linearGradient>
+          <linearGradient id="kk_g1" x1="6.71039" y1="48.3214" x2="50.617" y2="73.6708" gradientUnits="userSpaceOnUse"><stop stop-color="#ABCD03"/><stop offset="1" stop-color="#009E3B"/></linearGradient>
+          <linearGradient id="kk_g2" x1="67.827" y1="0" x2="67.827" y2="50.6989" gradientUnits="userSpaceOnUse"><stop stop-color="#E83820"/><stop offset="1" stop-color="#94252A"/></linearGradient>
+          <linearGradient id="kk_g3" x1="90.4012" y1="0" x2="90.4012" y2="50.6989" gradientUnits="userSpaceOnUse"><stop stop-color="#FDD000"/><stop offset="1" stop-color="#ED6C00"/></linearGradient>
+          <linearGradient id="kk_g4" x1="17.9987" y1="125.434" x2="61.9053" y2="100.084" gradientUnits="userSpaceOnUse"><stop stop-color="#E83820"/><stop offset="1" stop-color="#94252A"/></linearGradient>
+          <linearGradient id="kk_g5" x1="6.71352" y1="105.885" x2="50.6201" y2="80.5352" gradientUnits="userSpaceOnUse"><stop stop-color="#FDD000"/><stop offset="1" stop-color="#ED6C00"/></linearGradient>
+          <linearGradient id="kk_g6" x1="151.528" y1="105.874" x2="107.621" y2="80.5247" gradientUnits="userSpaceOnUse"><stop stop-color="#E83820"/><stop offset="1" stop-color="#94252A"/></linearGradient>
+          <linearGradient id="kk_g7" x1="140.24" y1="125.436" x2="96.3331" y2="100.086" gradientUnits="userSpaceOnUse"><stop stop-color="#FDD000"/><stop offset="1" stop-color="#ED6C00"/></linearGradient>
+          <linearGradient id="kk_g8" x1="67.8415" y1="154.199" x2="67.8415" y2="103.5" gradientUnits="userSpaceOnUse"><stop stop-color="#00A0E9"/><stop offset="1" stop-color="#004EA2"/></linearGradient>
+          <linearGradient id="kk_g9" x1="140.255" y1="28.77" x2="96.3485" y2="54.1195" gradientUnits="userSpaceOnUse"><stop stop-color="#ABCD03"/><stop offset="1" stop-color="#009E3B"/></linearGradient>
+          <linearGradient id="kk_g10" x1="17.9956" y1="28.7708" x2="61.9021" y2="54.1202" gradientUnits="userSpaceOnUse"><stop stop-color="#00A0E9"/><stop offset="1" stop-color="#004EA2"/></linearGradient>
+          <linearGradient id="kk_g11" x1="151.536" y1="48.3206" x2="107.629" y2="73.6701" gradientUnits="userSpaceOnUse"><stop stop-color="#00A0E9"/><stop offset="1" stop-color="#004EA2"/></linearGradient>
+        </defs>
+        <path d="M69.9766 103.5C69.9766 126.362 83.9605 145.959 103.834 154.199L110.84 137.299C97.5817 131.801 88.2688 118.746 88.2688 103.5H69.9766Z" fill="url(#kk_g0)"/>
+        <path d="M60.8387 55.9805C41.0379 44.5497 17.0737 46.8562 0 59.9552L11.1407 74.4613C22.528 65.7286 38.4993 64.191 51.6999 71.8067L60.8387 55.966V55.9805Z" fill="url(#kk_g1)"/>
+        <path d="M88.2661 50.6989C88.2661 27.8373 74.2822 8.23948 54.4088 0L47.4023 16.8996C60.661 22.3975 69.9739 35.453 69.9739 50.6989H88.2661Z" fill="url(#kk_g2)"/>
+        <path d="M69.9766 50.6989C69.9766 27.8373 83.9605 8.23948 103.834 0L110.84 16.8996C97.5817 22.3975 88.2688 35.453 88.2688 50.6989H69.9766Z" fill="url(#kk_g3)"/>
+        <path d="M51.6993 82.3836C31.8984 93.8145 21.9182 115.719 24.7179 137.057L42.8505 134.664C40.9792 120.433 47.6376 105.84 60.8381 98.2098L51.6993 82.3691V82.3836Z" fill="url(#kk_g4)"/>
+        <path d="M60.8387 98.223C41.0379 109.654 17.0737 107.347 0 94.2483L11.1407 79.7422C22.528 88.4749 38.4993 90.0125 51.6999 82.3968L60.8387 98.2375V98.223Z" fill="url(#kk_g5)"/>
+        <path d="M97.4062 98.223C117.207 109.654 141.171 107.347 158.245 94.2483L147.104 79.7422C135.717 88.4749 119.746 90.0125 106.545 82.3968L97.4062 98.2375V98.223Z" fill="url(#kk_g6)"/>
+        <path d="M106.565 82.3836C126.366 93.8145 136.346 115.719 133.546 137.057L115.413 134.664C117.285 120.433 110.626 105.84 97.4258 98.2098L106.565 82.3691V82.3836Z" fill="url(#kk_g7)"/>
+        <path d="M88.2661 103.5C88.2661 126.362 74.2822 145.959 54.4088 154.199L47.4023 137.299C60.661 131.801 69.9739 118.746 69.9739 103.5H88.2661Z" fill="url(#kk_g8)"/>
+        <path d="M106.565 71.8182C126.366 60.3873 136.346 38.4831 133.546 17.1445L115.413 19.538C117.285 33.7686 110.626 48.3617 97.4258 55.992L106.565 71.8327V71.8182Z" fill="url(#kk_g9)"/>
+        <path d="M51.6993 71.8182C31.8984 60.3873 21.9182 38.4831 24.7179 17.1445L42.8505 19.538C40.9792 33.7686 47.6376 48.3617 60.8381 55.992L51.6993 71.8327V71.8182Z" fill="url(#kk_g10)"/>
+        <path d="M97.4062 55.9805C117.207 44.5497 141.171 46.8562 158.245 59.9552L147.104 74.4613C135.717 65.7286 119.746 64.191 106.545 71.8067L97.4062 55.966V55.9805Z" fill="url(#kk_g11)"/>
+      </svg>
+      <span class="proj-kika-text">KIKAGAKU</span>
+    </div>
+
+    <div class="proj-center">
+      <div class="proj-badge" id="projBadge">待機中</div>
+      <div class="proj-time" id="projTime" role="timer" aria-label="残り時間">00:00</div>
+      <div class="proj-overtime hidden" id="projOvertime" aria-live="polite"></div>
+      <div class="proj-line-wrap">
+        <div class="proj-line-track">
+          <div class="proj-line-bar" id="projLineBar"></div>
+        </div>
+      </div>
+      <div class="proj-session-count" id="projSessionCount"></div>
+    </div>
+
+    <div class="proj-pause-hint hidden" id="projPauseHint">
+      <span class="proj-pause-icon">⏸</span> 一時停止中 — タップで再開
+    </div>
+
+    <div class="proj-alert hidden" id="projAlert" role="alert" aria-live="assertive">
+      <span class="proj-alert-icon">⚡</span>
+      <div class="proj-alert-text">
+        <span class="proj-alert-title">残り1分！</span>
+        <span class="proj-alert-sub">まもなく終了します</span>
+      </div>
+    </div>
+
+    <div style="display:none">
+      <input type="checkbox" id="projAlertMin1" checked>
+      <input type="checkbox" id="projAlertEnd" checked>
+      <input type="checkbox" id="projAutoNext">
+    </div>
+
+    <div class="proj-clock-area" aria-hidden="true">
+      <span class="proj-clock-label">現在</span><span id="projClock">--:--</span>
+    </div>
+
+    <div class="proj-bottom-row">
+      <button class="proj-bg-btn" id="btnProjBgToggle" title="背景テーマ切替" aria-label="背景テーマ切替">
+        <svg class="proj-bg-icon" id="iconBgKikagaku" width="18" height="18" viewBox="0 0 18 18" fill="none">
+          <circle cx="4"  cy="4"  r="2.8" fill="#1697E6"/>
+          <circle cx="14" cy="4"  r="2.8" fill="#7ACB1A"/>
+          <circle cx="14" cy="14" r="2.8" fill="#F57C00"/>
+          <circle cx="4"  cy="14" r="2.8" fill="#E53B2E"/>
+          <circle cx="9"  cy="9"  r="2.2" fill="rgba(255,255,255,0.55)"/>
+        </svg>
+        <svg class="proj-bg-icon" id="iconBgIndigo" width="18" height="18" viewBox="0 0 18 18" fill="none" style="display:none">
+          <defs>
+            <radialGradient id="igGrad" cx="35%" cy="35%" r="65%">
+              <stop offset="0%"   stop-color="#7B8FFF"/>
+              <stop offset="100%" stop-color="#2010A0"/>
+            </radialGradient>
+          </defs>
+          <circle cx="9" cy="9" r="8" fill="url(#igGrad)"/>
+          <circle cx="9" cy="9" r="3.5" fill="rgba(255,255,255,0.18)"/>
+        </svg>
+      </button>
+      <button class="proj-bg-btn" id="btnProjThemeToggle" title="ライト/ダーク切替 (T)" aria-label="ライト/ダーク切替">
+        <svg id="projIconSun" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="display:none">
+          <circle cx="12" cy="12" r="5"/>
+          <line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/>
+          <line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/>
+          <line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/>
+          <line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/>
+        </svg>
+        <svg id="projIconMoon" width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+          <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z"/>
+        </svg>
+      </button>
+      <button class="proj-close-btn" id="btnCloseProjection" title="閉じる (Esc)" aria-label="投影モードを閉じる">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+          <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"/>
+        </svg>
+        全画面終了
+      </button>
+    </div>
+  </div>
+
+  <!-- ===================== ショートカットモーダル ===================== -->
+  <div id="shortcutModal" class="shortcut-modal hidden" role="dialog" aria-modal="true" aria-label="キーボードショートカット">
+    <div class="shortcut-modal-box">
+      <div class="shortcut-modal-title">⌨️ キーボードショートカット</div>
+      <div class="shortcut-grid">
+        <div class="sc-row"><kbd>Space</kbd><kbd>K</kbd><span>開始 / 一時停止</span></div>
+        <div class="sc-row"><kbd>R</kbd><span>リセット</span></div>
+        <div class="sc-row"><kbd>F</kbd><span>投影モード</span></div>
+        <div class="sc-row"><kbd>T</kbd><span>テーマ切替</span></div>
+        <div class="sc-row"><kbd>M</kbd><span>ミュート切替</span></div>
+        <div class="sc-row"><kbd>←</kbd><kbd>→</kbd><span>セッション移動 (講義)</span></div>
+        <div class="sc-row"><kbd>Esc</kbd><span>投影モードを閉じる</span></div>
+        <div class="sc-row"><kbd>?</kbd><span>このヘルプを表示</span></div>
+      </div>
+      <div class="shortcut-note">投影モード中：画面クリックで一時停止 / 再開</div>
+      <button class="btn-sm shortcut-close" id="btnCloseShortcut">閉じる</button>
+    </div>
+  </div>
+
+  <!-- ===================== カラーピッカー ===================== -->
+  <div class="color-picker-portal hidden" id="colorPickerPortal" role="dialog" aria-label="テーマカラー選択">
+    <div class="cp-title">テーマカラー</div>
+    <div class="cp-swatches">
+      <button class="cp-swatch active" data-color="blue"   aria-label="キカガクブルー" style="--sw:#1697E6;--sw2:#0B6FCC"></button>
+      <button class="cp-swatch"        data-color="green"  aria-label="グリーン"       style="--sw:#7ACB1A;--sw2:#5A9E0F"></button>
+      <button class="cp-swatch"        data-color="violet" aria-label="バイオレット"   style="--sw:#A78BFA;--sw2:#7C3AED"></button>
+      <button class="cp-swatch"        data-color="orange" aria-label="オレンジ"       style="--sw:#F57C00;--sw2:#C45F00"></button>
+      <button class="cp-swatch"        data-color="rose"   aria-label="レッド"         style="--sw:#E53B2E;--sw2:#B91C1C"></button>
+      <button class="cp-swatch"        data-color="amber"  aria-label="アンバー"       style="--sw:#FBBF24;--sw2:#D97706"></button>
+    </div>
+    <div class="cp-labels">
+      <span class="cp-label active" data-color="blue">キカガクブルー</span>
+      <span class="cp-label" data-color="green">グリーン</span>
+      <span class="cp-label" data-color="violet">バイオレット</span>
+      <span class="cp-label" data-color="orange">オレンジ</span>
+      <span class="cp-label" data-color="rose">レッド</span>
+      <span class="cp-label" data-color="amber">アンバー</span>
+    </div>
+  </div>
+
+<script>
+'use strict';
+
+/* =========================================================
+   定数
+   ========================================================= */
+const STORAGE_KEY       = 'kikagaku_ui_v3';
+const FAV_KEY           = 'kikagaku_fav_v3';
+const SESSION_KEY       = 'kikagaku_sessions_v1';
+const CIRC_MAIN         = 603;
+const AUTO_NEXT_DELAY   = 800; /* セッション自動送り遅延 (ms) */
+/* 閾値はstateから読む(カスタマイズ可能) */
+function WARN_URGENT_SEC(){ return state?.warnUrgentSec ?? 60; }
+function WARN_CAUTION_SEC(){ return state?.warnCautionSec ?? 180; }
+
+/* キカガク4色 = セッションタイプカラー */
+const TYPE_COLORS = {
+  lecture:'#1697E6',  /* KG Blue   */
+  work:   '#F57C00',  /* KG Orange */
+  break:  '#7ACB1A',  /* KG Green  */
+  qa:     '#E53B2E',  /* KG Red    */
+  custom: '#A78BFA',
+};
+
+const LECTURE_TEMPLATES = {
+  lecture30:[
+    {type:'lecture',min:20,label:'講義'},{type:'work',min:7,label:'ワーク'},{type:'qa',min:3,label:'Q&A'},
+  ],
+  lecture60:[
+    {type:'lecture',min:30,label:'講義'},{type:'work',min:15,label:'ワーク'},
+    {type:'break',min:5,label:'休憩'},{type:'qa',min:10,label:'Q&A'},
+  ],
+  ws90:[
+    {type:'lecture',min:20,label:'導入講義'},{type:'work',min:30,label:'ワーク'},
+    {type:'break',min:10,label:'休憩'},{type:'lecture',min:15,label:'解説'},{type:'qa',min:15,label:'Q&A'},
+  ],
+  short:[
+    {type:'lecture',min:10,label:'講義'},{type:'work',min:10,label:'ワーク'},{type:'qa',min:5,label:'Q&A'},
+  ],
+};
+
+const POMO_PRESETS = {
+  standard:{focus:25,short:5,long:15,interval:4},
+  deep:    {focus:50,short:10,long:30,interval:4},
+  sprint:  {focus:15,short:3, long:10,interval:4},
+};
+
+/* =========================================================
+   状態
+   ========================================================= */
+function defaultUiPrefs(){
+  return{
+    theme:'dark',color:'blue',activeTab:'lecture',muted:false,projBg:'kikagaku',
+    alertMin1:true, alertEnd:true, autoNext:false,
+    quickAutoStart:true, quickLoop:false, quickCustomLabel:'', quickType:'work',
+    pomoAutoNext:true, pomoAlertEnd:true, pomoAlertMin1:true,
+    warnUrgentSec:60, warnCautionSec:180,
+    voiceEnabled:false,
+  };
+}
+function defaultState(){
+  const p=loadUiPrefs();
+  const savedSess=loadSessions();
+  const initSessions=savedSess?savedSess.sessions:[{type:'lecture',min:20,label:'講義'}];
+  const initIdx=savedSess?savedSess.currentIdx:0;
+  return{
+    theme:p.theme, color:p.color, activeTab:p.activeTab, muted:p.muted, projBg:p.projBg,
+    warnUrgentSec:p.warnUrgentSec, warnCautionSec:p.warnCautionSec,
+    voiceEnabled:p.voiceEnabled,
+    lecture:{
+      sessions:initSessions,
+      currentIdx:initIdx, remaining:(initSessions[initIdx]?.min||20)*60, running:false,
+      alert1m:p.alertMin1, alertEnd:p.alertEnd, autoNext:p.autoNext,
+    },
+    quick:{totalSec:5*60, remaining:5*60, running:false, loop:p.quickLoop, autoStart:p.quickAutoStart, type:p.quickType, customLabel:p.quickCustomLabel, alertMin1:p.quickAlertMin1, alertEnd:p.quickAlertEnd},
+    pomodoro:{
+      focus:25, short:5, long:15, interval:4,
+      phase:'focus', remaining:25*60, running:false,
+      completedSets:0, focusTotal:0, breakTotal:0, setCount:0,
+      autoNext:p.pomoAutoNext, alertEnd:p.pomoAlertEnd, alertMin1:p.pomoAlertMin1,
+    },
+  };
+}
+function loadUiPrefs(){
+  try{
+    const raw=localStorage.getItem(STORAGE_KEY);
+    if(!raw) return defaultUiPrefs();
+    const s=JSON.parse(raw), def=defaultUiPrefs();
+    return{
+      theme:    (s.theme==='dark'||s.theme==='light')?s.theme:def.theme,
+      color:    s.color    || def.color,
+      activeTab:s.activeTab|| def.activeTab,
+      muted:    typeof s.muted==='boolean'?s.muted:def.muted,
+      projBg:   s.projBg   || def.projBg,
+      alertMin1:    typeof s.alertMin1==='boolean'   ?s.alertMin1   :def.alertMin1,
+      alertEnd:     typeof s.alertEnd==='boolean'    ?s.alertEnd    :def.alertEnd,
+      autoNext:     typeof s.autoNext==='boolean'    ?s.autoNext    :def.autoNext,
+      quickAutoStart:typeof s.quickAutoStart==='boolean'?s.quickAutoStart:def.quickAutoStart,
+      quickLoop:    typeof s.quickLoop==='boolean'   ?s.quickLoop   :def.quickLoop,
+      quickAlertMin1:   typeof s.quickAlertMin1==='boolean'?s.quickAlertMin1:true,
+      quickAlertEnd:    typeof s.quickAlertEnd==='boolean' ?s.quickAlertEnd :true,
+      quickCustomLabel: typeof s.quickCustomLabel==='string'?s.quickCustomLabel:'',
+      quickType:        typeof s.quickType==='string'       ?s.quickType       :'work',
+      pomoAutoNext:  typeof s.pomoAutoNext==='boolean'  ?s.pomoAutoNext  :def.pomoAutoNext,
+      pomoAlertEnd:  typeof s.pomoAlertEnd==='boolean'  ?s.pomoAlertEnd  :def.pomoAlertEnd,
+      pomoAlertMin1: typeof s.pomoAlertMin1==='boolean' ?s.pomoAlertMin1 :def.pomoAlertMin1,
+      warnUrgentSec: Number.isFinite(s.warnUrgentSec) ?s.warnUrgentSec :def.warnUrgentSec,
+      warnCautionSec:Number.isFinite(s.warnCautionSec)?s.warnCautionSec:def.warnCautionSec,
+      voiceEnabled: typeof s.voiceEnabled==='boolean'?s.voiceEnabled:def.voiceEnabled,
+    };
+  }catch{return defaultUiPrefs();}
+}
+function saveUiPrefs(){
+  try{
+    localStorage.setItem(STORAGE_KEY,JSON.stringify({
+      theme:state.theme, color:state.color, activeTab:state.activeTab,
+      muted:state.muted, projBg:state.projBg,
+      alertMin1:state.lecture.alert1m, alertEnd:state.lecture.alertEnd, autoNext:state.lecture.autoNext,
+      quickAutoStart:state.quick.autoStart, quickLoop:state.quick.loop,
+      quickAlertMin1:state.quick.alertMin1, quickAlertEnd:state.quick.alertEnd,
+      quickCustomLabel:state.quick.customLabel, quickType:state.quick.type,
+      pomoAutoNext:state.pomodoro.autoNext, pomoAlertEnd:state.pomodoro.alertEnd, pomoAlertMin1:state.pomodoro.alertMin1,
+      warnUrgentSec:state.warnUrgentSec, warnCautionSec:state.warnCautionSec,
+      voiceEnabled:state.voiceEnabled,
+    }));
+  }catch(e){console.warn('UI設定保存失敗:',e);}
+}
+function loadFavs(){
+  try{
+    const raw=localStorage.getItem(FAV_KEY);
+    if(!raw) return{lecture:[],pomodoro:[]};
+    const f=JSON.parse(raw);
+    return{
+      lecture:  Array.isArray(f.lecture)  ? f.lecture  : [],
+      pomodoro: Array.isArray(f.pomodoro) ? f.pomodoro
+              : Array.isArray(f.pomo)     ? f.pomo : [],
+    };
+  }catch{return{lecture:[],pomodoro:[]};}
+}
+function saveFavs(){
+  try{
+    localStorage.setItem(FAV_KEY,JSON.stringify({lecture:_favs.lecture,pomodoro:_favs.pomodoro}));
+  }catch(e){console.warn('プリセット保存失敗:',e);}
+}
+function saveSessions(){
+  try{
+    localStorage.setItem(SESSION_KEY,JSON.stringify({
+      sessions:state.lecture.sessions,
+      currentIdx:state.lecture.currentIdx,
+    }));
+  }catch(e){console.warn('セッション保存失敗:',e);}
+}
+function loadSessions(){
+  try{
+    const raw=localStorage.getItem(SESSION_KEY);
+    if(!raw) return null;
+    const d=JSON.parse(raw);
+    if(!Array.isArray(d.sessions)||!d.sessions.length) return null;
+    const validated=d.sessions.filter(s=>s&&typeof s.min==='number'&&s.min>0&&typeof s.type==='string');
+    if(!validated.length) return null;
+    return{sessions:validated, currentIdx:Math.max(0,Math.min(d.currentIdx||0,validated.length-1))};
+  }catch{return null;}
+}
+
+let state = defaultState();
+let _favs = loadFavs();
+function saveState(){ saveUiPrefs(); saveSessions(); }
+
+/* =========================================================
+   タイマー精度：モジュールレベル開始時刻変数
+   ブラウザのタブ非アクティブ時もズレない
+   ========================================================= */
+let _lecStartAt=0, _lecRemAtStart=0;
+let _qkStartAt=0,  _qkRemAtStart=0;
+let _pmStartAt=0,  _pmRemAtStart=0, _pmFocusAtStart=0, _pmBreakAtStart=0;
+
+/* =========================================================
+   SVGグラデーション
+   ========================================================= */
+function injectSvgGradients(){
+  const ns='http://www.w3.org/2000/svg';
+  const svg=document.createElementNS(ns,'svg');
+  svg.setAttribute('width','0');svg.setAttribute('height','0');svg.style.position='absolute';
+  const defs=document.createElementNS(ns,'defs');
+  function makeGrad(id,x1,y1,x2,y2){
+    const g=document.createElementNS(ns,'linearGradient');
+    g.id=id;g.setAttribute('gradientUnits','userSpaceOnUse');
+    g.setAttribute('x1',x1);g.setAttribute('y1',y1);g.setAttribute('x2',x2);g.setAttribute('y2',y2);
+    const s1=document.createElementNS(ns,'stop');s1.setAttribute('offset','0%');s1.setAttribute('stop-color','var(--accent-a)');
+    const s2=document.createElementNS(ns,'stop');s2.setAttribute('offset','100%');s2.setAttribute('stop-color','var(--accent-b)');
+    g.append(s1,s2);return g;
+  }
+  defs.append(makeGrad('mainGrad','0','0','200','200'));
+  svg.appendChild(defs);
+  document.body.insertBefore(svg,document.body.firstChild);
+}
+
+function buildTicks(containerId,cx,cy,r){
+  const el=document.getElementById(containerId);if(!el)return;el.innerHTML='';
+  const ns='http://www.w3.org/2000/svg';
+  [0,90,180,270].forEach(deg=>{
+    const rad=(deg/180)*Math.PI,rInner=r-12;
+    const x1=cx+rInner*Math.sin(rad),y1=cy-rInner*Math.cos(rad);
+    const x2=cx+r*Math.sin(rad),y2=cy-r*Math.cos(rad);
+    const ln=document.createElementNS(ns,'line');
+    ln.setAttribute('x1',x1);ln.setAttribute('y1',y1);ln.setAttribute('x2',x2);ln.setAttribute('y2',y2);
+    ln.setAttribute('class','tick-line');ln.setAttribute('stroke-width','2');ln.setAttribute('stroke-linecap','round');
+    el.appendChild(ln);
+  });
+}
+
+function buildSessionSegments(containerId,cx,cy,r,sessions,currentIdx){
+  const el=document.getElementById(containerId);if(!el)return;el.innerHTML='';
+  const total=sessions.reduce((s,e)=>s+(e.min||0),0);if(total<=0)return;
+  const ns='http://www.w3.org/2000/svg';let angle=-Math.PI/2;
+  sessions.forEach((sess,i)=>{
+    const sweep=(sess.min/total)*Math.PI*2,endAngle=angle+sweep-0.02;
+    const x1=cx+r*Math.cos(angle),y1=cy+r*Math.sin(angle);
+    const x2=cx+r*Math.cos(endAngle),y2=cy+r*Math.sin(endAngle);
+    const path=document.createElementNS(ns,'path');
+    path.setAttribute('d',`M ${cx} ${cy} L ${x1} ${y1} A ${r} ${r} 0 ${sweep>Math.PI?1:0} 1 ${x2} ${y2} Z`);
+    path.setAttribute('fill',TYPE_COLORS[sess.type]||'#1697E6');
+    path.setAttribute('opacity',i===currentIdx?'0.20':'0.07');
+    el.appendChild(path);angle+=sweep;
+  });
+}
+
+/* =========================================================
+   音声アナウンス (Web Speech API)
+   ========================================================= */
+function announceVoice(text){
+  if(!state.voiceEnabled||!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  const utter=new SpeechSynthesisUtterance(text);
+  utter.lang='ja-JP'; utter.rate=0.95; utter.pitch=1;
+  window.speechSynthesis.speak(utter);
+}
+function toggleVoice(){
+  state.voiceEnabled=!state.voiceEnabled; saveState();
+  _applyVoiceBtn();
+  if(state.voiceEnabled) announceVoice('音声アナウンスをオンにしました');
+}
+function _applyVoiceBtn(){
+  const btn=document.getElementById('btnVoice'); if(!btn) return;
+  btn.classList.toggle('voice-on', state.voiceEnabled);
+  btn.setAttribute('aria-pressed', state.voiceEnabled?'true':'false');
+  btn.title=state.voiceEnabled?'音声アナウンスON':'音声アナウンスOFF';
+}
+
+/* =========================================================
+   Web Audio
+   ========================================================= */
+let _audioCtx=null;
+function getAudio(){ if(!_audioCtx)_audioCtx=new(window.AudioContext||window.webkitAudioContext)(); return _audioCtx; }
+function playBeep(freq=880,dur=.15,type='sine',vol=.3){
+  if(state.muted)return;
+  try{
+    const ctx=getAudio(),osc=ctx.createOscillator(),gain=ctx.createGain();
+    osc.connect(gain);gain.connect(ctx.destination);
+    osc.frequency.value=freq;osc.type=type;
+    gain.gain.setValueAtTime(vol,ctx.currentTime);
+    gain.gain.exponentialRampToValueAtTime(.001,ctx.currentTime+dur);
+    osc.start();osc.stop(ctx.currentTime+dur);
+  }catch{}
+}
+function playWarn()    { playBeep(440,.2,'square',.2); setTimeout(()=>playBeep(440,.2,'square',.2),260); }
+function playComplete(){ [523,659,784,1047].forEach((f,i)=>setTimeout(()=>playBeep(f,.35,'sine',.3),i*100)); }
+
+/* =========================================================
+   タイマーコア（精度向上版）
+   - モジュールレベル変数でウォールクロック基準計算
+   - 500ms ポーリングで表示タイムラグを最小化
+   - visibilitychange でタブ復帰時即時反映
+   ========================================================= */
+let lectureIv=null, quickIv=null, pomoIv=null;
+let _pomoAutoStartTimer=null;
+let _lecAutoNextTimer=null;
+let _qkLoopTimer=null;
+
+/* ── 講義 tick ── */
+function tickLecture(){
+  if(!state.lecture.running) return;
+  const newRem=Math.max(0, _lecRemAtStart - Math.floor((Date.now()-_lecStartAt)/1000));
+  if(newRem===state.lecture.remaining && newRem>0) return;
+  state.lecture.remaining=newRem;
+  if(newRem<=0){ onLectureEnd(); return; }
+  checkLectureWarnings(); renderLectureTimer(); renderProjection(); updateDocTitle(); saveState();
+}
+function startLecture(){
+  if(lectureIv) return;
+  if(state.lecture.remaining<=0) return;
+  stopOvertime();
+  state.lecture.running=true;
+  _lecStartAt=Date.now(); _lecRemAtStart=state.lecture.remaining;
+  lectureIv=setInterval(tickLecture, 500);
+  renderLectureControls(); renderProjection();
+}
+function pauseLecture(){
+  clearInterval(lectureIv); lectureIv=null; state.lecture.running=false;
+  clearTimeout(_lecAutoNextTimer); _lecAutoNextTimer=null;
+  saveState(); renderLectureControls(); renderProjection(); updateDocTitle();
+}
+function resetLecture(){
+  pauseLecture(); stopOvertime();
+  const s=state.lecture.sessions[state.lecture.currentIdx];
+  state.lecture.remaining=(s?s.min:1)*60;
+  Object.assign(_warnedLec, defaultWarn);
+  renderLectureTimer(); renderLectureControls(); renderProjection(); saveState();
+}
+function fwdLecture(){
+  if(state.lecture.remaining<=0) return;
+  state.lecture.remaining=Math.max(0,state.lecture.remaining-30);
+  if(state.lecture.remaining<=0){ onLectureEnd(); return; }
+  /* 早送り後は開始時刻を再計算（ドリフト防止） */
+  if(state.lecture.running){ _lecStartAt=Date.now(); _lecRemAtStart=state.lecture.remaining; }
+  renderLectureTimer(); renderProjection(); saveState();
+}
+function onLectureEnd(){
+  pauseLecture();
+  const s=state.lecture.sessions[state.lecture.currentIdx];
+  if(getAlertSetting('alertEnd')) playComplete();
+  announceVoice(`${s?.label||'セッション'}が終了しました`);
+  addLog(`✅ 「${s?.label||'完了'}」完了`);
+  showCompleteEffect();
+  const nextIdx=state.lecture.currentIdx+1;
+  if(nextIdx<state.lecture.sessions.length){
+    state.lecture.currentIdx=nextIdx;
+    const next=state.lecture.sessions[nextIdx];
+    state.lecture.remaining=next.min*60;
+    Object.assign(_warnedLec, defaultWarn);
+    renderLectureTimer(); renderLectureControls(); renderSessionList(); renderProjection();
+    buildSessionSegments('lectureSegments',110,110,88,state.lecture.sessions,state.lecture.currentIdx);
+    saveState();
+    if(getAlertSetting('autoNext')){ _lecAutoNextTimer=setTimeout(()=>{ _lecAutoNextTimer=null; startLecture(); },AUTO_NEXT_DELAY); }
+  }else{
+    state.lecture.remaining=0;
+    addLog('🎉 全セッション完了！');
+    renderLectureTimer(); renderProjection(); saveState();
+    startOvertime();
+  }
+}
+
+/* ── クイック tick ── */
+function tickQuick(){
+  if(!state.quick.running) return;
+  const newRem=Math.max(0, _qkRemAtStart - Math.floor((Date.now()-_qkStartAt)/1000));
+  if(newRem===state.quick.remaining && newRem>0) return;
+  state.quick.remaining=newRem;
+  if(newRem<=0){ onQuickEnd(); return; }
+  checkQuickWarnings(); renderQuickTimer(); renderProjection(); updateDocTitle(); saveState();
+}
+function startQuick(){
+  if(quickIv) return;
+  if(state.quick.remaining<=0) return;
+  state.quick.running=true;
+  _qkStartAt=Date.now(); _qkRemAtStart=state.quick.remaining;
+  quickIv=setInterval(tickQuick, 500);
+  renderQuickControls(); renderProjection();
+}
+function pauseQuick(){ clearInterval(quickIv); quickIv=null; clearTimeout(_qkLoopTimer); _qkLoopTimer=null; state.quick.running=false; saveState(); renderQuickControls(); renderProjection(); updateDocTitle(); }
+function resetQuick(){ pauseQuick(); state.quick.remaining=state.quick.totalSec; Object.assign(_warnedQk, defaultWarn); renderQuickTimer(); renderProjection(); saveState(); }
+function onQuickEnd(){
+  pauseQuick(); if(state.quick.alertEnd) playComplete(); showCompleteEffect('quick');
+  /* 常に元の時間に戻して警告色をリセット */
+  state.quick.remaining=state.quick.totalSec;
+  Object.assign(_warnedQk, defaultWarn);
+  renderQuickTimer(); renderQuickControls(); renderProjection();
+  if(state.quick.loop){ _qkLoopTimer=setTimeout(()=>{ _qkLoopTimer=null; startQuick(); },AUTO_NEXT_DELAY); }
+  saveState();
+}
+
+/* ── ポモドーロ tick ── */
+function tickPomo(){
+  if(!state.pomodoro.running) return;
+  const elapsed=Math.floor((Date.now()-_pmStartAt)/1000);
+  const newRem=Math.max(0, _pmRemAtStart - elapsed);
+  if(newRem===state.pomodoro.remaining && newRem>0) return;
+  state.pomodoro.remaining=newRem;
+  const gone=_pmRemAtStart - newRem;
+  if(state.pomodoro.phase==='focus') state.pomodoro.focusTotal=_pmFocusAtStart+gone;
+  else                               state.pomodoro.breakTotal=_pmBreakAtStart+gone;
+  if(newRem<=0){ onPomoEnd(); return; }
+  checkPomoWarnings(); renderPomoTimer(); renderProjection(); renderPomoStats(); updateDocTitle(); saveState();
+}
+function startPomo(){
+  if(pomoIv) return;
+  state.pomodoro.running=true;
+  _pmStartAt=Date.now(); _pmRemAtStart=state.pomodoro.remaining;
+  _pmFocusAtStart=state.pomodoro.focusTotal;
+  _pmBreakAtStart=state.pomodoro.breakTotal;
+  pomoIv=setInterval(tickPomo, 500);
+  renderPomoControls(); renderProjection();
+}
+function pausePomo(){
+  clearInterval(pomoIv); pomoIv=null; state.pomodoro.running=false;
+  clearTimeout(_pomoAutoStartTimer); _pomoAutoStartTimer=null;
+  saveState(); renderPomoControls(); renderProjection(); updateDocTitle();
+}
+function resetPomo(){ pausePomo(); state.pomodoro.remaining=getPomoDur(state.pomodoro.phase); Object.assign(_warnedPm, defaultWarn); renderPomoTimer(); renderProjection(); saveState(); }
+function skipPomo(){ pausePomo(); advancePomoPhase(); }
+function onPomoEnd(){
+  const actualFocusSec=state.pomodoro.focusTotal - _pmFocusAtStart;
+  pausePomo(); if(state.pomodoro.alertEnd) playComplete(); showCompleteEffect('pomo');
+  if(state.pomodoro.phase==='focus'){
+    state.pomodoro.completedSets++; state.pomodoro.setCount++; renderTomatoes();
+    saveDailyStats(Math.max(0, actualFocusSec));
+    announceVoice('集中セッション終了。休憩してください');
+    switchPomoPhase(state.pomodoro.setCount>=state.pomodoro.interval?(state.pomodoro.setCount=0,'long'):'short');
+  }else{ announceVoice('休憩終了。次の集中セッションを始めます'); switchPomoPhase('focus'); }
+  renderPomoStats(); saveState();
+  if(state.pomodoro.autoNext) _pomoAutoStartTimer=setTimeout(()=>startPomo(),AUTO_NEXT_DELAY);
+}
+function advancePomoPhase(){
+  if(state.pomodoro.phase==='focus'){
+    state.pomodoro.completedSets++; state.pomodoro.setCount++; renderTomatoes();
+    const elapsed=state.pomodoro.focusTotal - _pmFocusAtStart;
+    if(elapsed>0) saveDailyStats(elapsed);
+    switchPomoPhase(state.pomodoro.setCount>=state.pomodoro.interval?(state.pomodoro.setCount=0,'long'):'short');
+  }else switchPomoPhase('focus');
+  renderPomoStats(); saveState();
+}
+function switchPomoPhase(phase){
+  state.pomodoro.phase=phase; state.pomodoro.remaining=getPomoDur(phase);
+  Object.assign(_warnedPm, defaultWarn);
+  renderPomoTimer(); renderPomoPhaseButtons(); renderProjection(); saveState();
+}
+function getPomoDur(phase){
+  return phase==='focus'?state.pomodoro.focus*60:phase==='short'?state.pomodoro.short*60:state.pomodoro.long*60;
+}
+
+/* ── タブ復帰時の即時補正（visibilitychange）── */
+document.addEventListener('visibilitychange',()=>{
+  if(document.hidden) return;
+  if(state.lecture.running)  tickLecture();
+  if(state.quick.running)    tickQuick();
+  if(state.pomodoro.running) tickPomo();
+});
+
+/* =========================================================
+   警告チェック
+   ========================================================= */
+const defaultWarn={m1:false};
+let _warnedLec={...defaultWarn}, _warnedQk={...defaultWarn}, _warnedPm={...defaultWarn};
+
+const ALERT_ID_MAP={
+  alert1m: ['alertMin1','projAlertMin1'],
+  alertEnd:['alertEnd','projAlertEnd'],
+  autoNext:['autoNext','projAutoNext'],
+};
+function getAlertSetting(key){
+  const isProj=!document.getElementById('projectionOverlay').classList.contains('hidden');
+  const ids=ALERT_ID_MAP[key]; if(!ids) return false;
+  const el=document.getElementById(isProj?ids[1]:ids[0]); return el?el.checked:false;
+}
+
+function _applyWarnClass(wrapId, rem, total, ws, alert1mEnabled){
+  const wrap=document.getElementById(wrapId); if(!wrap) return;
+  if(rem<=WARN_URGENT_SEC()&&rem>0){
+    if(alert1mEnabled&&!ws.m1){ ws.m1=true; playWarn(); announceVoice(WARN_URGENT_SEC()>=60?`残り${Math.round(WARN_URGENT_SEC()/60)}分です`:`残り${WARN_URGENT_SEC()}秒です`); }
+    wrap.classList.add('urgent'); wrap.classList.remove('warn');
+  }else if(rem<=WARN_CAUTION_SEC()&&rem>0){
+    wrap.classList.add('warn'); wrap.classList.remove('urgent');
+  }else{
+    wrap.classList.remove('warn','urgent');
+    if(rem>WARN_URGENT_SEC()) Object.assign(ws, defaultWarn);
+  }
+}
+function checkLectureWarnings(){
+  const total=(state.lecture.sessions[state.lecture.currentIdx]?.min||1)*60;
+  _applyWarnClass('lectureRingWrap',state.lecture.remaining,total,_warnedLec,getAlertSetting('alert1m'));
+}
+function checkQuickWarnings(){
+  const wrap=document.getElementById('quickRingWrap'); if(!wrap) return;
+  const rem=state.quick.remaining, total=state.quick.totalSec;
+  if(rem<=WARN_URGENT_SEC()&&rem>0){
+    if(state.quick.alertMin1&&!_warnedQk.m1){
+      _warnedQk.m1=true; playWarn();
+      announceVoice(WARN_URGENT_SEC()>=60?`残り${Math.round(WARN_URGENT_SEC()/60)}分です`:`残り${WARN_URGENT_SEC()}秒です`);
+    }
+    wrap.classList.add('urgent'); wrap.classList.remove('warn');
+  }else if(rem<=WARN_CAUTION_SEC()&&rem>0){
+    wrap.classList.add('warn'); wrap.classList.remove('urgent');
+  }else{
+    wrap.classList.remove('warn','urgent');
+    if(rem>WARN_URGENT_SEC()) Object.assign(_warnedQk, defaultWarn);
+  }
+}
+function checkPomoWarnings()  { _applyWarnClass('pomoRingWrap',state.pomodoro.remaining,getPomoDur(state.pomodoro.phase),_warnedPm,state.pomodoro.alertMin1); }
+
+function showCompleteEffect(mode='lecture'){
+  const panel=document.querySelector(
+    mode==='quick'?'#tab-quick .timer-panel':
+    mode==='pomo' ?'#tab-pomodoro .timer-panel':
+                   '#tab-lecture .timer-panel'
+  );
+  if(!panel) return;
+  panel.classList.add('complete'); setTimeout(()=>panel.classList.remove('complete'),1000);
+}
+
+/* =========================================================
+   フォーマット
+   ========================================================= */
+function fmt(sec){
+  if(!Number.isFinite(sec)||sec<0) return '00:00';
+  return String(Math.floor(sec/60)).padStart(2,'0')+':'+String(sec%60).padStart(2,'0');
+}
+function fmtDisplay(sec,elId){
+  const el=document.getElementById(elId); if(!el) return;
+  if(Number.isFinite(sec)&&sec>0&&sec<=59){
+    el.textContent=String(sec);
+    el.classList.add('timer-time-secs');
+  }else{
+    el.textContent=fmt(sec);
+    el.classList.remove('timer-time-secs');
+  }
+}
+function etaStr(rem,running=true){
+  if(!running||!Number.isFinite(rem)||rem<=0) return '';
+  const e=new Date(Date.now()+rem*1000);
+  return `終了予定 ${String(e.getHours()).padStart(2,'0')}:${String(e.getMinutes()).padStart(2,'0')}`;
+}
+function setRing(el,rem,total,circ=CIRC_MAIN){
+  if(!el) return;
+  el.style.strokeDashoffset=circ*(1-Math.max(0,total>0?rem/total:0));
+}
+
+/* =========================================================
+   講義タイマー レンダリング
+   ========================================================= */
+function renderLectureTimer(){
+  const sess=state.lecture.sessions[state.lecture.currentIdx];
+  const rem=state.lecture.remaining, total=(sess?.min||1)*60;
+  const _lbl={lecture:'講義',work:'ワーク',break:'休憩',qa:'Q&A'};
+  const dispLabel=sess?(sess.label||(sess.type==='custom'?'カスタム':(_lbl[sess.type]||''))):'';
+
+  fmtDisplay(rem,'lectureTime');
+  document.getElementById('lectureEta').textContent=etaStr(rem,state.lecture.running);
+  const subEl=document.getElementById('lectureSub');
+  if(subEl) subEl.textContent=rem>0?`${dispLabel}進行中`:'準備完了';
+  const badge=document.getElementById('lectureSessionBadge');
+  if(badge&&sess){ badge.textContent=dispLabel; badge.dataset.type=sess.type; }
+  const nameEl=document.getElementById('lectureSessionName');
+  if(nameEl&&sess) nameEl.textContent=dispLabel;
+  const countEl=document.getElementById('lectureSessionCount');
+  if(countEl) countEl.textContent=`${state.lecture.currentIdx+1}/${state.lecture.sessions.length} セッション目`;
+
+  setRing(document.getElementById('lectureRingProg'),rem,total);
+  _buildSegmentsIfNeeded();
+
+  const idx=state.lecture.currentIdx;
+  const totalMin=state.lecture.sessions.reduce((s,e)=>s+(e.min||0),0);
+  const passedSec=state.lecture.sessions.slice(0,idx).reduce((s,e)=>s+(e.min||0),0)*60+(total-rem);
+  const pct=totalMin>0?Math.min(100,(passedSec/(totalMin*60))*100):0;
+  document.getElementById('lectureProgressLabel').textContent=`セッション ${idx+1} / ${state.lecture.sessions.length}`;
+  document.getElementById('lectureTotalTime').textContent=`合計 ${totalMin}分`;
+  document.getElementById('lectureProgressBar').style.width=pct+'%';
+}
+function renderLectureControls(){
+  const p=document.getElementById('lecturePlayIcon'), pa=document.getElementById('lecturePauseIcon');
+  if(state.lecture.running){ p.style.display='none'; pa.style.display='block'; }
+  else{ p.style.display='block'; pa.style.display='none'; }
+}
+
+let _dragSrcIdx=null;
+let _lastSegKey='';
+function _buildSegmentsIfNeeded(){
+  const key=JSON.stringify(state.lecture.sessions)+'|'+state.lecture.currentIdx;
+  if(key===_lastSegKey) return;
+  _lastSegKey=key;
+  buildSessionSegments('lectureSegments',110,110,88,state.lecture.sessions,state.lecture.currentIdx);
+}
+function renderSessionList(){
+  const container=document.getElementById('sessionList'); if(!container) return;
+  container.innerHTML='';
+  state.lecture.sessions.forEach((sess,i)=>{
+    const div=document.createElement('div');
+    div.className=`session-item${i===state.lecture.currentIdx?' active':''}`;
+    div.draggable=true; div.dataset.idx=i;
+
+    const handle=document.createElement('div');
+    handle.className='sess-handle'; handle.setAttribute('aria-hidden','true');
+    for(let k=0;k<3;k++){ const s=document.createElement('span'); handle.appendChild(s); }
+
+    const dot=document.createElement('div');
+    dot.className='sess-dot'; dot.style.background=TYPE_COLORS[sess.type]||'#1697E6';
+
+    const PRESETS=[['lecture','講義'],['work','ワーク'],['break','休憩'],['qa','Q&A'],['custom','カスタム…']];
+    const isCustom=!PRESETS.slice(0,-1).some(([v])=>v===sess.type);
+
+    const sel=document.createElement('select');
+    PRESETS.forEach(([v,l])=>{
+      const o=document.createElement('option'); o.value=v; o.textContent=l;
+      if(isCustom?v==='custom':v===sess.type) o.selected=true;
+      sel.appendChild(o);
+    });
+
+    const labelInp=document.createElement('input');
+    labelInp.type='text'; labelInp.className='sess-label-inp';
+    labelInp.placeholder='ラベル名'; labelInp.maxLength=20;
+    labelInp.value=sess.label||'';
+    labelInp.addEventListener('input',()=>{
+      const idx2=Number(div.dataset.idx);
+      const s2=state.lecture.sessions[idx2];
+      s2.label=labelInp.value.trim();
+      if(idx2===state.lecture.currentIdx){ renderLectureTimer(); renderProjection(); } saveState();
+    });
+
+    sel.addEventListener('change',()=>{
+      const idx2=Number(div.dataset.idx);
+      const pl={lecture:'講義',work:'ワーク',break:'休憩',qa:'Q&A'};
+      if(sel.value==='custom'){
+        state.lecture.sessions[idx2].type='custom';
+        if(!state.lecture.sessions[idx2].label||pl[state.lecture.sessions[idx2].label]) state.lecture.sessions[idx2].label='カスタム';
+        dot.style.background=TYPE_COLORS.custom;
+      }else{
+        state.lecture.sessions[idx2].type=sel.value;
+        state.lecture.sessions[idx2].label=pl[sel.value]||sel.value;
+        dot.style.background=TYPE_COLORS[sel.value]||'#1697E6';
+      }
+      labelInp.value=state.lecture.sessions[idx2].label;
+      if(idx2===state.lecture.currentIdx){ renderLectureTimer(); renderProjection(); } saveState();
+    });
+
+    const inp=document.createElement('input'); inp.type='number'; inp.min='1'; inp.max='99'; inp.value=sess.min;
+    inp.addEventListener('change',()=>{
+      const idx2=Number(div.dataset.idx);
+      const v=Math.max(1,Math.min(99,parseInt(inp.value)||1));
+      state.lecture.sessions[idx2].min=v; inp.value=v;
+      if(idx2===state.lecture.currentIdx){
+        state.lecture.remaining=v*60;
+        if(state.lecture.running){ _lecStartAt=Date.now(); _lecRemAtStart=v*60; }
+        renderLectureTimer(); renderProjection();
+      }
+      saveState();
+    });
+
+    const unit=document.createElement('span'); unit.className='sess-unit'; unit.textContent='分';
+    const del=document.createElement('button'); del.className='sess-del'; del.textContent='×';
+    del.addEventListener('click',()=>{
+      const idx2=Number(div.dataset.idx);
+      if(state.lecture.sessions.length<=1) return;
+      const wasCurrent=(idx2===state.lecture.currentIdx);
+      state.lecture.sessions.splice(idx2,1);
+      if(idx2<state.lecture.currentIdx){
+        /* 現在より前を削除 → インデックスを1つ戻すだけ。残り時間は変えない */
+        state.lecture.currentIdx--;
+      }else if(wasCurrent){
+        /* 現在セッションを削除 → タイマー停止・新セッションへ移行 */
+        pauseLecture(); stopOvertime();
+        if(state.lecture.currentIdx>=state.lecture.sessions.length) state.lecture.currentIdx=state.lecture.sessions.length-1;
+        state.lecture.remaining=state.lecture.sessions[state.lecture.currentIdx].min*60;
+        Object.assign(_warnedLec,defaultWarn);
+      }
+      /* 現在より後ろを削除 → インデックスも残り時間も変えない */
+      renderSessionList(); renderLectureTimer(); renderProjection(); saveState();
+    });
+
+    div.addEventListener('dragstart',e=>{
+      _dragSrcIdx=i; div.classList.add('dragging');
+      e.dataTransfer.effectAllowed='move'; e.dataTransfer.setData('text/plain',String(i));
+    });
+    div.addEventListener('dragend',()=>{
+      _dragSrcIdx=null;
+      container.querySelectorAll('.session-item').forEach(el=>el.classList.remove('dragging','drag-over'));
+    });
+    div.addEventListener('dragover',e=>{
+      e.preventDefault(); e.dataTransfer.dropEffect='move';
+      container.querySelectorAll('.session-item').forEach(el=>el.classList.remove('drag-over'));
+      if(_dragSrcIdx!==null&&_dragSrcIdx!==i) div.classList.add('drag-over');
+    });
+    div.addEventListener('dragleave',()=>div.classList.remove('drag-over'));
+    div.addEventListener('drop',e=>{
+      e.preventDefault();
+      const src=_dragSrcIdx, dst=i;
+      if(src===null||src===dst) return;
+      const [moved]=state.lecture.sessions.splice(src,1);
+      state.lecture.sessions.splice(dst,0,moved);
+      if(state.lecture.currentIdx===src) state.lecture.currentIdx=dst;
+      else if(src<dst&&state.lecture.currentIdx>src&&state.lecture.currentIdx<=dst) state.lecture.currentIdx--;
+      else if(src>dst&&state.lecture.currentIdx>=dst&&state.lecture.currentIdx<src) state.lecture.currentIdx++;
+      renderSessionList(); renderLectureTimer(); renderProjection(); saveState();
+    });
+
+    div.append(handle,dot,sel,labelInp,inp,unit,del);
+    container.appendChild(div);
+  });
+  /* セッション一覧が変わった時はセグメントを強制再構築 */
+  _lastSegKey='';
+  _buildSegmentsIfNeeded();
+}
+
+/* =========================================================
+   クイック レンダリング
+   ========================================================= */
+const QUICK_TYPE_COLORS={work:'#F57C00',break:'#7ACB1A'};
+function quickTypeLabel(){
+  if(state.quick.type==='break')  return '休憩';
+  if(state.quick.type==='custom') return state.quick.customLabel||'カスタム';
+  return 'ワーク';
+}
+function renderQuickTimer(){
+  const rem=state.quick.remaining, total=state.quick.totalSec;
+  fmtDisplay(rem,'quickTime');
+  document.getElementById('quickEta').textContent=etaStr(rem,state.quick.running);
+  const sub=document.getElementById('quickSub'); if(sub) sub.textContent=rem>0?'タイマー進行中':'完了';
+  setRing(document.getElementById('quickRingProg'),rem,total);
+  /* タイプ別リングカラー */
+  const col=QUICK_TYPE_COLORS[state.quick.type]||'var(--accent-a)';
+  const ring=document.getElementById('quickRingProg');
+  if(ring){ ring.setAttribute('stroke',col); ring.style.filter=`drop-shadow(0 0 6px ${col})`; }
+  /* バッジ更新 */
+  const badge=document.getElementById('quickTypeBadge');
+  if(badge){ badge.textContent=quickTypeLabel(); badge.dataset.qtype=state.quick.type; }
+}
+function renderQuickControls(){
+  const p=document.getElementById('quickPlayIcon'),pa=document.getElementById('quickPauseIcon');
+  if(state.quick.running){ p.style.display='none'; pa.style.display='block'; }
+  else{ p.style.display='block'; pa.style.display='none'; }
+  const btn=document.getElementById('quickToggle');
+  if(btn) btn.disabled=!state.quick.running&&state.quick.remaining<=0;
+}
+
+/* =========================================================
+   ポモドーロ レンダリング
+   ========================================================= */
+function renderPomoTimer(){
+  const rem=state.pomodoro.remaining, total=getPomoDur(state.pomodoro.phase);
+  fmtDisplay(rem,'pomoTime');
+  document.getElementById('pomoEta').textContent=etaStr(rem,state.pomodoro.running);
+  const sub=document.getElementById('pomoSub');
+  if(sub){ const nm={focus:'集中モード',short:'短休憩中',long:'長休憩中'}; sub.textContent=nm[state.pomodoro.phase]||''; }
+  setRing(document.getElementById('pomoRingProg'),rem,total);
+  const ring=document.getElementById('pomoRingProg');
+  if(ring){
+    if(state.pomodoro.phase==='focus') ring.setAttribute('stroke','url(#mainGrad)');
+    else if(state.pomodoro.phase==='short') ring.setAttribute('stroke','#7ACB1A');
+    else ring.setAttribute('stroke','#F57C00');
+  }
+}
+function renderPomoControls(){
+  const p=document.getElementById('pomoPlayIcon'),pa=document.getElementById('pomoPauseIcon');
+  if(state.pomodoro.running){ p.style.display='none'; pa.style.display='block'; }
+  else{ p.style.display='block'; pa.style.display='none'; }
+}
+function renderPomoPhaseButtons(){
+  document.querySelectorAll('.pomo-phase-btn').forEach(btn=>btn.classList.toggle('active',btn.dataset.phase===state.pomodoro.phase));
+}
+function renderPomoSettings(){
+  document.getElementById('focusVal').textContent=state.pomodoro.focus;
+  document.getElementById('shortVal').textContent=state.pomodoro.short;
+  document.getElementById('longVal').textContent=state.pomodoro.long;
+  document.getElementById('intervalVal').textContent=state.pomodoro.interval;
+}
+function renderPomoStats(){
+  document.getElementById('pomoDone').textContent=state.pomodoro.completedSets;
+  document.getElementById('pomoFocusTotal').textContent=Math.round(state.pomodoro.focusTotal/60)+'分';
+  document.getElementById('pomoBreakTotal').textContent=Math.round(state.pomodoro.breakTotal/60)+'分';
+  renderTomatoes();
+  renderDailyStats();
+}
+const DAILY_KEY='kikagaku_daily_v1';
+const QUICK_HIST_KEY='kikagaku_qhist_v1';
+function getTodayKey(){
+  const d=new Date();
+  return `${d.getFullYear()}-${String(d.getMonth()+1).padStart(2,'0')}-${String(d.getDate()).padStart(2,'0')}`;
+}
+function loadDailyStats(){
+  try{ const d=JSON.parse(localStorage.getItem(DAILY_KEY)||'{}'); return d; }catch{ return {}; }
+}
+function saveDailyStats(focusDelta){
+  try{
+    const d=loadDailyStats(), k=getTodayKey();
+    if(!d[k]) d[k]={sets:0,focusSec:0};
+    d[k].sets++; d[k].focusSec+=focusDelta;
+    /* 7日より古いデータを削除 */
+    const c7=new Date(Date.now()-7*86400000);
+    const cutoff=`${c7.getFullYear()}-${String(c7.getMonth()+1).padStart(2,'0')}-${String(c7.getDate()).padStart(2,'0')}`;
+    Object.keys(d).forEach(dk=>{ if(dk<cutoff) delete d[dk]; });
+    localStorage.setItem(DAILY_KEY,JSON.stringify(d));
+  }catch{}
+}
+function renderDailyStats(){
+  const el=document.getElementById('dailyStatLine'); if(!el) return;
+  const d=loadDailyStats(), k=getTodayKey();
+  const t=d[k]||{sets:0,focusSec:0};
+  el.textContent=`今日: ${t.sets}セット / ${Math.round(t.focusSec/60)}分集中`;
+  renderWeeklyChart();
+}
+function renderWeeklyChart(){
+  const canvas=document.getElementById('weeklyChart'); if(!canvas) return;
+  const ctx=canvas.getContext('2d'); if(!ctx) return;
+  const dpr=window.devicePixelRatio||1;
+  const cssW=canvas.clientWidth||canvas.width;
+  const cssH=canvas.clientHeight||canvas.height;
+  if(canvas.width!==Math.round(cssW*dpr)||canvas.height!==Math.round(cssH*dpr)){
+    canvas.width=Math.round(cssW*dpr); canvas.height=Math.round(cssH*dpr);
+    ctx.scale(dpr,dpr);
+  }
+  const d=loadDailyStats();
+  const days=[];
+  for(let i=6;i>=0;i--){
+    const dt=new Date(Date.now()-i*86400000);
+    const k=`${dt.getFullYear()}-${String(dt.getMonth()+1).padStart(2,'0')}-${String(dt.getDate()).padStart(2,'0')}`;
+    const label=['日','月','火','水','木','金','土'][dt.getDay()];
+    days.push({k, label, min:Math.round((d[k]?.focusSec||0)/60)});
+  }
+  const maxMin=Math.max(...days.map(x=>x.min), 1);
+  const W=cssW, H=cssH;
+  const pad={t:6,b:22,l:6,r:6};
+  const barW=Math.floor((W-pad.l-pad.r)/7*0.6);
+  const barGap=Math.floor((W-pad.l-pad.r)/7);
+  ctx.clearRect(0,0,W,H);
+  const isDark=document.documentElement.dataset.theme!=='light';
+  const barColor=isDark?'rgba(22,151,230,0.75)':'rgba(22,151,230,0.55)';
+  const todayColor=isDark?'rgba(22,151,230,1)':'rgba(14,110,190,0.9)';
+  const textColor=isDark?'rgba(200,215,235,0.65)':'rgba(40,60,90,0.65)';
+  const gridColor=isDark?'rgba(255,255,255,0.06)':'rgba(0,0,0,0.06)';
+  /* グリッドライン */
+  ctx.strokeStyle=gridColor; ctx.lineWidth=1;
+  for(let pct of [0.25,0.5,0.75,1]){
+    const y=pad.t+(H-pad.t-pad.b)*(1-pct);
+    ctx.beginPath(); ctx.moveTo(pad.l,y); ctx.lineTo(W-pad.r,y); ctx.stroke();
+  }
+  const today=getTodayKey();
+  days.forEach((day,i)=>{
+    const x=pad.l+i*barGap+(barGap-barW)/2;
+    const barH=maxMin>0?Math.max(3,(day.min/maxMin)*(H-pad.t-pad.b)):0;
+    const y=H-pad.b-barH;
+    ctx.fillStyle=day.k===today?todayColor:barColor;
+    ctx.beginPath();
+    ctx.roundRect?ctx.roundRect(x,y,barW,barH,3):ctx.fillRect(x,y,barW,barH);
+    ctx.fill();
+    ctx.fillStyle=textColor;
+    ctx.font=`bold ${Math.max(9,Math.floor(barGap*0.38))}px sans-serif`;
+    ctx.textAlign='center';
+    ctx.fillText(day.label, x+barW/2, H-6);
+    if(day.min>0){
+      ctx.font=`${Math.max(8,Math.floor(barGap*0.30))}px sans-serif`;
+      ctx.fillText(day.min+'m', x+barW/2, Math.max(pad.t+10, y-3));
+    }
+  });
+}
+function renderTomatoes(){
+  const track=document.getElementById('tomatoTrack'); if(!track) return;
+  track.innerHTML=''; const n=Math.min(state.pomodoro.completedSets,20);
+  for(let i=0;i<n;i++){ const s=document.createElement('span'); s.className='tomato-icon'; s.textContent='🍅'; track.appendChild(s); }
+  track.setAttribute('aria-label',`完了セット数: ${n}`);
+}
+
+/* =========================================================
+   ユーティリティ
+   ========================================================= */
+function resolveColor(cssVar){
+  if(!cssVar) return '#1697E6';
+  if(cssVar.startsWith('var(')){
+    const name=cssVar.match(/var\((--[\w-]+)\)/)?.[1];
+    if(name) return getComputedStyle(document.documentElement).getPropertyValue(name).trim()||'#1697E6';
+  }
+  return cssVar;
+}
+function hexToRgba(hex,alpha){
+  const raw=resolveColor(hex).replace('#','').trim();
+  const h=raw.length===3?raw.split('').map(c=>c+c).join(''):raw;
+  if(!h||h.length<6||!/^[0-9a-fA-F]{6}/.test(h)) return `rgba(22,151,230,${alpha})`;
+  const r=parseInt(h.slice(0,2),16),g=parseInt(h.slice(2,4),16),b=parseInt(h.slice(4,6),16);
+  return `rgba(${r},${g},${b},${alpha})`;
+}
+
+/* =========================================================
+   投影Canvas — ダーク / ライト 両対応
+   Fix: interlocked重複解消 / caching / indigo実装
+   ========================================================= */
+let _bgCacheKey = null;
+
+/* Olympic インターロック共通ロジック（glow=trueでダーク発光） */
+function _makeInterlocked(ctx, lw, vw, glow){
+  return function interlocked(c1x,c1y,r1,col1, c2x,c2y,r2,col2){
+    const dx=c2x-c1x, dy=c2y-c1y, d=Math.hypot(dx,dy);
+    const τ=Math.PI*2, nrm=a=>((a%τ)+τ)%τ;
+    const s=(col,cx_,cy_,rv,a0,a1,acw)=>{
+      ctx.save();
+      ctx.strokeStyle=col; ctx.lineWidth=lw; ctx.lineCap='butt';
+      if(glow){ ctx.shadowColor=col; ctx.shadowBlur=vw*0.022; }
+      ctx.beginPath();
+      a0===undefined ? ctx.arc(cx_,cy_,rv,0,τ) : ctx.arc(cx_,cy_,rv,a0,a1,acw);
+      ctx.stroke(); ctx.restore();
+    };
+    if(d>=r1+r2||d<=Math.abs(r1-r2)){
+      s(col2,c2x,c2y,r2); s(col1,c1x,c1y,r1); return;
+    }
+    const a=(r1*r1-r2*r2+d*d)/(2*d);
+    const h=Math.sqrt(Math.max(0,r1*r1-a*a));
+    const mx=c1x+a*dx/d, my=c1y+a*dy/d;
+    const p1x=mx+h*dy/d, p1y=my-h*dx/d;
+    const p2x=mx-h*dy/d, p2y=my+h*dx/d;
+    const b1=Math.atan2(p1y-c2y,p1x-c2x);
+    const b2=Math.atan2(p2y-c2y,p2x-c2x);
+    const th=Math.atan2(c1y-c2y,c1x-c2x);
+    const nb1=nrm(b1),nth=nrm(th),nb2=nrm(b2);
+    const iACW=!(nrm(nth-nb1)<nrm(nb2-nb1));
+    const eps=0.02;
+    s(col2,c2x,c2y,r2);
+    s(col1,c1x,c1y,r1);
+    s(col2,c2x,c2y,r2, iACW?b1-eps:b1+eps, iACW?b2+eps:b2-eps, iACW);
+  };
+}
+
+function drawProjBgCanvas(){
+  const canvas=document.getElementById('projBgCanvas'); if(!canvas) return;
+  const vw=window.innerWidth, vh=window.innerHeight;
+  const theme=document.documentElement.getAttribute('data-theme');
+  const bg=state.projBg||'kikagaku';
+
+  /* キャッシュ: テーマ・サイズ・背景種別が変化した時だけ再描画 */
+  const cacheKey=`${theme}_${bg}_${vw}_${vh}`;
+  if(cacheKey===_bgCacheKey) return;
+  _bgCacheKey=cacheKey;
+
+  canvas.width=vw; canvas.height=vh;
+  canvas.style.width=vw+'px'; canvas.style.height=vh+'px';
+  const ctx=canvas.getContext('2d');
+  ctx.clearRect(0,0,vw,vh);
+  const cx=vw/2, cy=vh/2;
+  const lw=Math.max(16,Math.min(32,vw*0.018));
+
+  if(theme==='light'){
+    ctx.fillStyle='#FFFFFF';
+    ctx.fillRect(0,0,vw,vh);
+    const il=_makeInterlocked(ctx,lw,vw,false);
+    /* 右上: 水平展開 Red ←→ Orange */
+    il(vw*0.67,vh*0.28,vw*0.13,'rgba(214, 36, 20,0.95)',
+       vw*0.91,vh*0.22,vw*0.19,'rgba(244,108,  0,0.88)');
+    /* 左下: Blue × Green (右上と点対称) */
+    il(vw*0.33,vh*0.72,vw*0.13,'rgba( 22,150,226,0.95)',
+       vw*0.09,vh*0.78,vw*0.19,'rgba(108,200, 28,0.88)');
+
+  }else if(bg==='indigo'){
+    /* ── インディゴモード: リッチインディゴグラデーション背景 ── */
+
+    /* ① ベース: 左上ネイビー → 右下ディープパープルの斜めグラデーション */
+    const iBase=ctx.createLinearGradient(0,0,vw,vh);
+    iBase.addColorStop(0,  '#080520');   /* 深いネイビー */
+    iBase.addColorStop(0.40,'#0D0830'); /* ミッドナイトインディゴ */
+    iBase.addColorStop(0.70,'#120840'); /* パープルインディゴ */
+    iBase.addColorStop(1,   '#1A0535'); /* ディープバイオレット */
+    ctx.fillStyle=iBase; ctx.fillRect(0,0,vw,vh);
+
+    /* ② 中央下から上へのソフトインディゴ光 */
+    const iMid=ctx.createRadialGradient(cx,vh*0.75,0,cx,vh*0.75,vw*0.75);
+    iMid.addColorStop(0,  'rgba(70,40,200,0.35)');
+    iMid.addColorStop(0.5,'rgba(40,15,130,0.15)');
+    iMid.addColorStop(1,  'rgba(0,0,0,0)');
+    ctx.fillStyle=iMid; ctx.fillRect(0,0,vw,vh);
+
+    /* ③ 左上コーナー: 青紫の光源 */
+    const ig1=ctx.createRadialGradient(vw*0.15,vh*0.18,0,vw*0.15,vh*0.18,vw*0.65);
+    ig1.addColorStop(0,'rgba(100,70,255,0.45)');
+    ig1.addColorStop(0.5,'rgba(50,25,160,0.20)');
+    ig1.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ig1; ctx.fillRect(0,0,vw,vh);
+
+    /* ④ 右下コーナー: 深紫の光源 */
+    const ig2=ctx.createRadialGradient(vw*0.85,vh*0.82,0,vw*0.85,vh*0.82,vw*0.60);
+    ig2.addColorStop(0,'rgba(130,35,220,0.40)');
+    ig2.addColorStop(0.5,'rgba(70,10,150,0.18)');
+    ig2.addColorStop(1,'rgba(0,0,0,0)');
+    ctx.fillStyle=ig2; ctx.fillRect(0,0,vw,vh);
+
+    /* ⑤ 中央ビネット（四隅を引き締める） */
+    const iv=ctx.createRadialGradient(cx,cy,Math.min(vw,vh)*0.20,cx,cy,Math.max(vw,vh)*0.90);
+    iv.addColorStop(0,'rgba(0,0,0,0)');
+    iv.addColorStop(1,'rgba(2,1,12,0.55)');
+    ctx.fillStyle=iv; ctx.fillRect(0,0,vw,vh);
+    /* 円の背後: 左上エリアのインディゴグロー */
+    const cg1=ctx.createRadialGradient(vw*0.18,vh*0.24,0, vw*0.18,vh*0.24,vw*0.30);
+    cg1.addColorStop(0,  'rgba( 80,100,255,0.42)');
+    cg1.addColorStop(0.5,'rgba( 50, 60,200,0.20)');
+    cg1.addColorStop(1,  'rgba(  0,  0,  0,0)');
+    ctx.fillStyle=cg1; ctx.fillRect(0,0,vw,vh);
+    /* 円の背後: 右下エリアのインディゴグロー */
+    const cg2=ctx.createRadialGradient(vw*0.82,vh*0.76,0, vw*0.82,vh*0.76,vw*0.30);
+    cg2.addColorStop(0,  'rgba(100, 60,255,0.40)');
+    cg2.addColorStop(0.5,'rgba( 65, 30,200,0.18)');
+    cg2.addColorStop(1,  'rgba(  0,  0,  0,0)');
+    ctx.fillStyle=cg2; ctx.fillRect(0,0,vw,vh);
+
+    /* インターロック円: 通常と同じ線幅、透過しつつ存在感（左上・右下配置） */
+    const il=_makeInterlocked(ctx,lw,vw,true);
+    /* 左上 */
+    il(vw*0.33,vh*0.28,vw*0.13,'rgba( 60,110,240,0.38)',
+       vw*0.09,vh*0.22,vw*0.19,'rgba( 40, 75,200,0.32)');
+    /* 右下 */
+    il(vw*0.67,vh*0.72,vw*0.13,'rgba( 60,110,240,0.38)',
+       vw*0.91,vh*0.78,vw*0.19,'rgba( 40, 75,200,0.32)');
+
+  }else{
+    /* ── KIKAGAKUモード: 4色インターロック + インディゴグラデーション ── */
+    ctx.fillStyle='#04060E';
+    ctx.fillRect(0,0,vw,vh);
+    /* 右上コーナー: 青紫の光源 */
+    const kg1=ctx.createRadialGradient(vw*0.85,vh*0.18,0,vw*0.85,vh*0.18,vw*0.65);
+    kg1.addColorStop(0,'rgba(60,35,180,0.40)');
+    kg1.addColorStop(0.5,'rgba(30,15,110,0.18)');
+    kg1.addColorStop(1,'rgba(4,6,14,0)');
+    ctx.fillStyle=kg1; ctx.fillRect(0,0,vw,vh);
+    /* 左下コーナー: 深紫の光源 */
+    const kg2=ctx.createRadialGradient(vw*0.15,vh*0.82,0,vw*0.15,vh*0.82,vw*0.60);
+    kg2.addColorStop(0,'rgba(80,20,160,0.32)');
+    kg2.addColorStop(0.5,'rgba(40,8,100,0.14)');
+    kg2.addColorStop(1,'rgba(4,6,14,0)');
+    ctx.fillStyle=kg2; ctx.fillRect(0,0,vw,vh);
+    /* 中央ビネット */
+    const vg=ctx.createRadialGradient(cx,cy,Math.min(vw,vh)*0.25,cx,cy,Math.max(vw,vh)*0.90);
+    vg.addColorStop(0,'rgba(3,4,12,0)');
+    vg.addColorStop(1,'rgba(3,4,12,0.65)');
+    ctx.fillStyle=vg; ctx.fillRect(0,0,vw,vh);
+    const il=_makeInterlocked(ctx,lw,vw,true);
+    il(vw*0.67,vh*0.28,vw*0.13,'rgba(214, 36, 20,0.92)',
+       vw*0.91,vh*0.22,vw*0.19,'rgba(244,108,  0,0.87)');
+    il(vw*0.33,vh*0.72,vw*0.13,'rgba( 22,150,226,0.92)',
+       vw*0.09,vh*0.78,vw*0.19,'rgba(108,200, 28,0.87)');
+  }
+}
+
+/* =========================================================
+   プログレスライン
+   ========================================================= */
+function updateProjLine(rem,total,type){
+  const bar=document.getElementById('projLineBar'); if(!bar) return;
+  const elapsed=total>0?Math.max(0,Math.min(1,1-(rem/total))):0;
+  bar.style.width=(elapsed*100).toFixed(2)+'%';
+  const gradMap={
+    lecture:`linear-gradient(90deg,#1697E6,#3DAEF0)`,
+    work:   `linear-gradient(90deg,#C45F00,#F57C00)`,
+    break:  `linear-gradient(90deg,#5A9E0F,#7ACB1A)`,
+    qa:     `linear-gradient(90deg,#B91C1C,#E53B2E)`,
+    custom: `linear-gradient(90deg,#7C3AED,#A78BFA)`,
+  };
+  let grad=gradMap[type]||gradMap.lecture;
+  let glow='#1697E6';
+  if(rem<=WARN_URGENT_SEC()&&rem>0){ grad='linear-gradient(90deg,#B91C1C,#E53B2E)'; glow='#E53B2E'; }
+  else if(rem<=WARN_CAUTION_SEC()&&rem>0){ grad='linear-gradient(90deg,#D97706,#FBBF24)'; glow='#FBBF24'; }
+  bar.style.background=grad;
+  bar.style.boxShadow=`0 0 10px ${glow}, 0 0 20px ${hexToRgba(glow,0.30)}`;
+}
+
+/* =========================================================
+   投影モード レンダリング
+   ========================================================= */
+function renderProjection(){
+  if(document.getElementById('projectionOverlay').classList.contains('hidden')) return;
+  const tab=state.activeTab;
+  let rem=0,total=1,label='',type='lecture',sessNum=1,sessTot=1;
+  if(tab==='lecture'){
+    rem=state.lecture.remaining;
+    const s=state.lecture.sessions[state.lecture.currentIdx];
+    total=(s?.min||1)*60;
+    const _presetLbl={lecture:'講義',work:'ワーク',break:'休憩',qa:'Q&A'};
+    type=s?.type||'lecture';
+    label=s?.label||(type==='custom'?'カスタム':(_presetLbl[type]||'講義'));
+    sessNum=state.lecture.currentIdx+1; sessTot=state.lecture.sessions.length;
+  }else if(tab==='quick'){
+    rem=state.quick.remaining; total=state.quick.totalSec;
+    label=quickTypeLabel();
+    type=state.quick.type==='break'?'break':state.quick.type==='custom'?'custom':'work';
+  }else{
+    rem=state.pomodoro.remaining; total=getPomoDur(state.pomodoro.phase);
+    const nm={focus:'集中',short:'短休憩',long:'長休憩'};
+    label=nm[state.pomodoro.phase]||'集中';
+    type=state.pomodoro.phase==='focus'?'lecture':'break';
+  }
+
+  const isRunning=(tab==='lecture'?state.lecture.running:tab==='quick'?state.quick.running:state.pomodoro.running);
+  /* タイマーが一時停止中（かつ開始済み・未終了）のときのみ表示 */
+  const paused=!isRunning&&rem>0&&rem<total;
+  const ph=document.getElementById('projPauseHint');
+  if(ph) ph.classList.toggle('hidden',!paused);
+  document.getElementById('projTime').textContent=fmt(rem);
+
+  const badgeEl=document.getElementById('projBadge');
+  if(badgeEl){
+    const colMap={lecture:'#1697E6',work:'#F57C00',break:'#7ACB1A',qa:'#E53B2E',custom:'#A78BFA'};
+    const col=colMap[type]||'#1697E6';
+    badgeEl.textContent=label;
+    badgeEl.style.color=col; badgeEl.style.borderColor=col;
+  }
+
+  const countEl=document.getElementById('projSessionCount');
+  if(countEl) countEl.textContent=sessTot>1?`${sessNum} / ${sessTot}`:'';
+
+  updateProjLine(rem,total,type);
+  drawProjBgCanvas();
+  renderOvertimeDisplay();
+
+  const pt=document.getElementById('projTime');
+  const pa=document.getElementById('projAlert');
+  if(rem<=WARN_URGENT_SEC()&&rem>0){
+    pt?.classList.add('urgent'); pt?.classList.remove('warn');
+    if(pa?.classList.contains('hidden')){
+      const urgentSec=WARN_URGENT_SEC();
+      const paTitle=pa.querySelector('.proj-alert-title');
+      if(paTitle) paTitle.textContent=urgentSec>=60?`残り${Math.round(urgentSec/60)}分！`:`残り${urgentSec}秒！`;
+      pa.classList.remove('hidden'); pa.style.animation='none';
+      requestAnimationFrame(()=>{ pa.style.animation=''; });
+    }
+  }else if(rem<=WARN_CAUTION_SEC()&&rem>0){
+    pt?.classList.add('warn'); pt?.classList.remove('urgent');
+    pa?.classList.add('hidden');
+  }else{
+    pt?.classList.remove('warn','urgent'); pa?.classList.add('hidden');
+  }
+}
+
+/* =========================================================
+   お気に入り
+   ========================================================= */
+function saveLecFav(){
+  const inp=document.getElementById('favoriteName');
+  const name=inp.value.trim(); if(!name){ inp.focus(); return; }
+  _favs.lecture.unshift({id:Date.now(),name,sessions:JSON.parse(JSON.stringify(state.lecture.sessions))});
+  _favs.lecture=_favs.lecture.slice(0,20);
+  inp.value=''; saveFavs(); renderLecFavs();
+}
+function loadLecFav(id){
+  const f=_favs.lecture.find(x=>x.id===id); if(!f) return;
+  const sessions=JSON.parse(JSON.stringify(f.sessions));
+  if(!Array.isArray(sessions)||!sessions.length){ showToast('⚠️ プリセットにセッションデータがありません'); return; }
+  pauseLecture(); stopOvertime();
+  state.lecture.sessions=sessions;
+  state.lecture.currentIdx=0;
+  state.lecture.remaining=(sessions[0].min||1)*60;
+  Object.assign(_warnedLec, defaultWarn);
+  renderSessionList(); renderLectureTimer(); renderLectureControls(); renderProjection(); saveState();
+}
+function delLecFav(id){ _favs.lecture=_favs.lecture.filter(x=>x.id!==id); saveFavs(); renderLecFavs(); }
+function renderLecFavs(){
+  const list=document.getElementById('favoriteList'); if(!list) return;
+  list.innerHTML='';
+  if(!_favs.lecture.length){ list.innerHTML='<div class="fav-empty">保存済みなし</div>'; return; }
+  _favs.lecture.forEach(f=>{
+    const div=document.createElement('div'); div.className='fav-item';
+    div.innerHTML=`<span class="fav-name">⭐ ${escHtml(f.name)}</span><button class="fav-load">読込</button><button class="fav-del" title="削除">×</button>`;
+    div.querySelector('.fav-load').addEventListener('click',()=>loadLecFav(f.id));
+    div.querySelector('.fav-del').addEventListener('click',()=>delLecFav(f.id));
+    list.appendChild(div);
+  });
+}
+function savePomoFav(){
+  const inp=document.getElementById('pomoFavoriteName');
+  const name=inp.value.trim(); if(!name){ inp.focus(); return; }
+  const p=state.pomodoro;
+  _favs.pomodoro.unshift({id:Date.now(),name,focus:p.focus,short:p.short,long:p.long,interval:p.interval});
+  _favs.pomodoro=_favs.pomodoro.slice(0,20);
+  inp.value=''; saveFavs(); renderPomoFavs();
+}
+function loadPomoFav(id){
+  const f=_favs.pomodoro.find(x=>x.id===id); if(!f) return;
+  pausePomo();
+  Object.assign(state.pomodoro,{focus:+f.focus,short:+f.short,long:+f.long,interval:+f.interval});
+  state.pomodoro.remaining=getPomoDur(state.pomodoro.phase);
+  renderPomoSettings(); renderPomoTimer(); renderPomoControls(); renderProjection(); saveState();
+}
+function delPomoFav(id){ _favs.pomodoro=_favs.pomodoro.filter(x=>x.id!==id); saveFavs(); renderPomoFavs(); }
+function renderPomoFavs(){
+  const list=document.getElementById('pomoFavoriteList'); if(!list) return;
+  list.innerHTML='';
+  if(!_favs.pomodoro.length){ list.innerHTML='<div class="fav-empty">保存済みなし</div>'; return; }
+  _favs.pomodoro.forEach(f=>{
+    const div=document.createElement('div'); div.className='fav-item';
+    div.innerHTML=`<span class="fav-name" title="${+f.focus}/${+f.short}/${+f.long}分">⭐ ${escHtml(f.name)}</span><button class="fav-load">読込</button><button class="fav-del" title="削除">×</button>`;
+    div.querySelector('.fav-load').addEventListener('click',()=>loadPomoFav(f.id));
+    div.querySelector('.fav-del').addEventListener('click',()=>delPomoFav(f.id));
+    list.appendChild(div);
+  });
+}
+
+/* =========================================================
+   プリセット エクスポート / インポート
+   ========================================================= */
+function exportFavs(){
+  const json=JSON.stringify({version:4,lecture:_favs.lecture,pomodoro:_favs.pomodoro},null,2);
+  const blob=new Blob([json],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob);
+  a.download=`kikagaku-presets-${new Date().toISOString().slice(0,10)}.json`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(a.href), 10000);
+}
+function importFavs(file){
+  if(!file) return;
+  const reader=new FileReader();
+  reader.onerror=()=>showToast('⚠️ ファイルの読み込みに失敗しました。');
+  reader.onload=e=>{
+    try{
+      const d=JSON.parse(e.target.result);
+      const lecBefore=_favs.lecture.length, pomoBefore=_favs.pomodoro.length;
+      if(Array.isArray(d.lecture)){
+        _favs.lecture=[..._favs.lecture,...d.lecture.filter(x=>x.id&&x.name&&Array.isArray(x.sessions))].slice(0,20);
+      }
+      if(Array.isArray(d.pomodoro)){
+        _favs.pomodoro=[..._favs.pomodoro,...d.pomodoro.filter(x=>
+          x.id && x.name &&
+          Number.isFinite(+x.focus) && +x.focus>0 &&
+          Number.isFinite(+x.short) && +x.short>0 &&
+          Number.isFinite(+x.long)  && +x.long>0  &&
+          Number.isFinite(+x.interval) && +x.interval>0
+        )].slice(0,20);
+      }
+      const lecAdded=_favs.lecture.length-lecBefore, pomoAdded=_favs.pomodoro.length-pomoBefore;
+      saveFavs(); renderLecFavs(); renderPomoFavs();
+      showToast(`✅ インポート完了: 講義+${lecAdded}件 / ポモ+${pomoAdded}件`);
+    }catch{ showToast('⚠️ インポート失敗。JSON形式を確認してください。'); }
+  };
+  reader.readAsText(file);
+}
+
+function addLog(msg){
+  const area=document.getElementById('lectureLog'); if(!area) return;
+  const now=new Date(), ts=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const d=document.createElement('div'); d.textContent=`${ts} ${msg}`;
+  area.appendChild(d);
+  /* 最大100件を超えた場合、古いものから削除 */
+  while(area.children.length>100) area.removeChild(area.firstChild);
+  area.scrollTop=area.scrollHeight;
+}
+function escHtml(s){
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#x27;');
+}
+
+let _toastTimer=null;
+function showToast(msg, duration=2800){
+  let el=document.getElementById('appToast');
+  if(!el){
+    el=document.createElement('div'); el.id='appToast'; el.className='toast-msg';
+    document.body.appendChild(el);
+  }
+  el.textContent=msg;
+  el.classList.add('show');
+  clearTimeout(_toastTimer);
+  _toastTimer=setTimeout(()=>el.classList.remove('show'), duration);
+}
+
+/* =========================================================
+   テーマ / カラー / 投影
+   ========================================================= */
+function applyTheme(theme){
+  /* 'system' が旧データとして残っている場合はダークにフォールバック */
+  const t=(theme==='dark'||theme==='light')?theme:'dark';
+  document.documentElement.setAttribute('data-theme',t);
+  document.getElementById('iconSun').style.display  =(t==='dark' ?'block':'none');
+  document.getElementById('iconMoon').style.display =(t==='light'?'block':'none');
+  const ps=document.getElementById('projIconSun'),pm=document.getElementById('projIconMoon');
+  if(ps) ps.style.display=(t==='dark' ?'block':'none');
+  if(pm) pm.style.display=(t==='light'?'block':'none');
+  state.theme=t; _bgCacheKey=null; saveState();
+  requestAnimationFrame(()=>{
+    updateLogoColor();
+    renderWeeklyChart();
+    if(!document.getElementById('projectionOverlay').classList.contains('hidden')) renderProjection();
+  });
+}
+function initPrefersColorScheme(){
+  _applyVoiceBtn();
+}
+function applyColor(color){
+  document.documentElement.setAttribute('data-color',color);
+  state.color=color; saveState();
+  document.querySelectorAll('.cp-swatch').forEach(s=>s.classList.toggle('active',s.dataset.color===color));
+  document.querySelectorAll('.cp-label').forEach(l=>l.classList.toggle('active',l.dataset.color===color));
+  document.querySelector('.btn-color-trigger').style.color='var(--accent-a)';
+  requestAnimationFrame(()=>{
+    updateLogoColor();
+    if(!document.getElementById('projectionOverlay').classList.contains('hidden')) renderProjection();
+  });
+}
+function applyProjBg(){
+  const isKika=(state.projBg||'kikagaku')==='kikagaku';
+  document.getElementById('iconBgKikagaku').style.display=isKika?'block':'none';
+  document.getElementById('iconBgIndigo').style.display=isKika?'none':'block';
+}
+
+function openProjection(){
+  const ov=document.getElementById('projectionOverlay');
+  ov.classList.remove('hidden');
+  ov.style.animation='none'; requestAnimationFrame(()=>{ ov.style.animation=''; });
+  renderProjection();
+  [['projAlertMin1','alertMin1'],['projAlertEnd','alertEnd'],['projAutoNext','autoNext']].forEach(([pi,li])=>{
+    const proj=document.getElementById(pi), lec=document.getElementById(li);
+    if(proj&&lec) proj.checked=lec.checked;
+  });
+  document.getElementById('btnCloseProjection').focus();
+}
+function closeProjection(){
+  document.getElementById('projectionOverlay').classList.add('hidden');
+  document.getElementById('btnProjection').focus();
+}
+window.addEventListener('resize',()=>{
+  _bgCacheKey=null;
+  if(!document.getElementById('projectionOverlay').classList.contains('hidden')) renderProjection();
+});
+
+/* =========================================================
+   タブ切替
+   ========================================================= */
+function switchTab(tab){
+  if(state.activeTab==='lecture')      pauseLecture();
+  else if(state.activeTab==='quick')   pauseQuick();
+  else if(state.activeTab==='pomodoro')pausePomo();
+  stopOvertime();
+  Object.assign(_warnedLec, defaultWarn); Object.assign(_warnedQk, defaultWarn); Object.assign(_warnedPm, defaultWarn);
+  state.activeTab=tab; saveState(); updateDocTitle();
+  document.querySelectorAll('.tab-btn').forEach(b=>{
+    b.classList.toggle('active',b.dataset.tab===tab);
+    b.setAttribute('aria-selected',b.dataset.tab===tab);
+  });
+  document.querySelectorAll('.tab-content').forEach(s=>{
+    s.style.display=s.id===`tab-${tab}`?'block':'none';
+    s.classList.toggle('active',s.id===`tab-${tab}`);
+  });
+  renderProjection();
+}
+
+function loadQuickHistory(){ try{return JSON.parse(localStorage.getItem(QUICK_HIST_KEY)||'[]');}catch{return [];} }
+function saveQuickHistory(hist){ try{localStorage.setItem(QUICK_HIST_KEY,JSON.stringify(hist));}catch{} }
+function addQuickHistory(sec){
+  let hist=loadQuickHistory();
+  hist=hist.filter(s=>s!==sec);
+  hist.unshift(sec);
+  hist=hist.slice(0,5);
+  saveQuickHistory(hist);
+  renderQuickHistory();
+}
+function renderQuickHistory(){
+  const hist=loadQuickHistory();
+  const section=document.getElementById('quickHistorySection');
+  const row=document.getElementById('quickHistoryRow');
+  if(!section||!row) return;
+  const presetSecs=[1,3,5,7,10,15,20,25,30].map(m=>m*60);
+  const filtered=hist.filter(s=>!presetSecs.includes(s));
+  if(!filtered.length){ section.style.display='none'; return; }
+  section.style.display='';
+  row.innerHTML='';
+  filtered.forEach(sec=>{
+    const m=Math.floor(sec/60), s=sec%60;
+    const label=s?`${m}:${String(s).padStart(2,'0')}`:`${m}分`;
+    const btn=document.createElement('button');
+    btn.className='quick-hist-btn'; btn.textContent=label;
+    btn.addEventListener('click',()=>setQuickTime(sec));
+    row.appendChild(btn);
+  });
+}
+function setQuickTime(totalSec){
+  pauseQuick(); state.quick.totalSec=totalSec; state.quick.remaining=totalSec;
+  addQuickHistory(totalSec);
+  renderQuickTimer(); renderQuickControls(); renderProjection(); saveState();
+  document.querySelectorAll('.quick-btn').forEach(b=>b.classList.remove('active'));
+  const m=document.querySelector(`.quick-btn[data-min="${totalSec/60}"]`); if(m) m.classList.add('active');
+  if(state.quick.autoStart) setTimeout(()=>startQuick(),200);
+}
+
+function toggleMute(){
+  state.muted=!state.muted;
+  document.getElementById('soundOnIcon').style.display=state.muted?'none':'block';
+  document.getElementById('soundOffIcon').style.display=state.muted?'block':'none';
+  document.getElementById('muteLabel').textContent=state.muted?'音OFF':'音ON';
+  saveState();
+}
+
+/* =========================================================
+   キーボードショートカット
+   ========================================================= */
+document.addEventListener('keydown',e=>{
+  const tag=document.activeElement?.tagName;
+  if(tag==='INPUT'||tag==='SELECT'||tag==='TEXTAREA') return;
+  switch(e.code){
+    case 'Space':case 'KeyK':
+      e.preventDefault();
+      if(state.activeTab==='lecture')       state.lecture.running?pauseLecture():startLecture();
+      else if(state.activeTab==='quick')    state.quick.running?pauseQuick():startQuick();
+      else                                  state.pomodoro.running?pausePomo():startPomo();
+      break;
+    case 'KeyR':
+      if(state.activeTab==='lecture')       resetLecture();
+      else if(state.activeTab==='quick')    resetQuick();
+      else                                  resetPomo();
+      break;
+    case 'KeyF':
+      e.preventDefault();
+      document.getElementById('projectionOverlay').classList.contains('hidden')?openProjection():closeProjection();
+      break;
+    case 'KeyT': applyTheme(state.theme==='dark'?'light':'dark'); break;
+    case 'KeyM': toggleMute(); break;
+    case 'ArrowRight':
+      if(state.activeTab==='lecture'){
+        const ni=state.lecture.currentIdx+1;
+        if(ni<state.lecture.sessions.length){
+          pauseLecture(); stopOvertime(); state.lecture.currentIdx=ni;
+          state.lecture.remaining=state.lecture.sessions[ni].min*60; Object.assign(_warnedLec, defaultWarn);
+          renderLectureTimer(); renderLectureControls(); renderSessionList(); renderProjection(); saveState();
+        }
+      }break;
+    case 'ArrowLeft':
+      if(state.activeTab==='lecture'){
+        const pi=state.lecture.currentIdx-1;
+        if(pi>=0){
+          pauseLecture(); stopOvertime(); state.lecture.currentIdx=pi;
+          state.lecture.remaining=state.lecture.sessions[pi].min*60; Object.assign(_warnedLec, defaultWarn);
+          renderLectureTimer(); renderLectureControls(); renderSessionList(); renderProjection(); saveState();
+        }
+      }break;
+    case 'Escape':
+      closeProjection();
+      document.getElementById('shortcutModal')?.classList.add('hidden');
+      document.getElementById('colorPickerPortal')?.classList.add('hidden');
+      document.getElementById('btnColorTrigger')?.classList.remove('open');
+      break;
+    case 'Slash':
+      if(e.shiftKey){ /* ? キー */
+        const sm=document.getElementById('shortcutModal'); if(sm) sm.classList.toggle('hidden');
+      }
+      break;
+  }
+});
+
+/* =========================================================
+   イベント
+   ========================================================= */
+function initEvents(){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.addEventListener('click',()=>switchTab(b.dataset.tab)));
+  document.getElementById('btnTheme').addEventListener('click',()=>{
+    applyTheme(state.theme==='dark'?'light':'dark');
+  });
+  document.getElementById('btnProjThemeToggle').addEventListener('click',()=>{
+    applyTheme(state.theme==='dark'?'light':'dark');
+  });
+  document.getElementById('btnVoice')?.addEventListener('click',toggleVoice);
+
+  const trigger=document.getElementById('btnColorTrigger');
+  const portal=document.getElementById('colorPickerPortal');
+  function positionPortal(){
+    const rect=trigger.getBoundingClientRect();
+    portal.style.top=(rect.bottom+8)+'px';
+    portal.style.right=(window.innerWidth-rect.right)+'px';
+    portal.style.left='auto';
+  }
+  trigger.addEventListener('click',e=>{
+    e.stopPropagation();
+    const hidden=portal.classList.contains('hidden');
+    if(hidden){ positionPortal(); portal.classList.remove('hidden'); trigger.classList.add('open'); }
+    else{ portal.classList.add('hidden'); trigger.classList.remove('open'); }
+  });
+  document.addEventListener('click',e=>{
+    if(!portal.contains(e.target)&&e.target!==trigger){ portal.classList.add('hidden'); trigger.classList.remove('open'); }
+  });
+  portal.addEventListener('click',e=>e.stopPropagation());
+  document.querySelectorAll('.cp-swatch').forEach(s=>s.addEventListener('click',()=>{
+    applyColor(s.dataset.color); portal.classList.add('hidden'); trigger.classList.remove('open');
+  }));
+  document.querySelectorAll('.cp-label').forEach(l=>l.addEventListener('click',()=>{
+    applyColor(l.dataset.color); portal.classList.add('hidden'); trigger.classList.remove('open');
+  }));
+
+  document.getElementById('btnProjection').addEventListener('click',openProjection);
+  document.getElementById('btnCloseProjection').addEventListener('click',closeProjection);
+  document.getElementById('projectionOverlay').addEventListener('click',e=>{
+    if(e.target.closest('.proj-bottom-row,button,input,select')) return;
+    if(state.activeTab==='lecture')       state.lecture.running?pauseLecture():startLecture();
+    else if(state.activeTab==='quick')   state.quick.running?pauseQuick():startQuick();
+    else                                  state.pomodoro.running?pausePomo():startPomo();
+  });
+  document.getElementById('btnProjBgToggle').addEventListener('click',()=>{
+    state.projBg=(state.projBg==='kikagaku')?'indigo':'kikagaku';
+    _bgCacheKey=null; saveState(); applyProjBg(); renderProjection();
+  });
+
+  [['projAlertMin1','alertMin1','alert1m'],['projAlertEnd','alertEnd','alertEnd'],['projAutoNext','autoNext','autoNext']].forEach(([pi,li,sk])=>{
+    const proj=document.getElementById(pi), lec=document.getElementById(li);
+    lec?.addEventListener('change',()=>{
+      if(proj) proj.checked=lec.checked;
+      state.lecture[sk]=lec.checked; saveState();
+    });
+    proj?.addEventListener('change',()=>{
+      if(lec) lec.checked=proj.checked;
+      state.lecture[sk]=proj.checked; saveState();
+    });
+  });
+
+  document.getElementById('lectureToggle').addEventListener('click',()=>state.lecture.running?pauseLecture():startLecture());
+  document.getElementById('lectureReset').addEventListener('click',resetLecture);
+  document.getElementById('lecturePrev').addEventListener('click',()=>{
+    const pi=state.lecture.currentIdx-1;
+    if(pi>=0){ pauseLecture(); stopOvertime(); state.lecture.currentIdx=pi; state.lecture.remaining=state.lecture.sessions[pi].min*60; Object.assign(_warnedLec, defaultWarn); renderLectureTimer(); renderLectureControls(); renderSessionList(); renderProjection(); saveState(); }
+  });
+  document.getElementById('lectureNext').addEventListener('click',()=>{
+    const ni=state.lecture.currentIdx+1;
+    if(ni<state.lecture.sessions.length){ pauseLecture(); stopOvertime(); state.lecture.currentIdx=ni; state.lecture.remaining=state.lecture.sessions[ni].min*60; Object.assign(_warnedLec, defaultWarn); renderLectureTimer(); renderLectureControls(); renderSessionList(); renderProjection(); saveState(); }
+  });
+  document.getElementById('lectureFwd').addEventListener('click',fwdLecture);
+  document.getElementById('lectureFullscreen').addEventListener('click',()=>toggleFullscreen(document.getElementById('tab-lecture')));
+  document.getElementById('lectureMute').addEventListener('click',toggleMute);
+
+  document.getElementById('lectureTemplates').addEventListener('click',e=>{
+    const b=e.target.closest('[data-template]'); if(!b) return;
+    const t=LECTURE_TEMPLATES[b.dataset.template]; if(!t) return;
+    pauseLecture(); stopOvertime(); state.lecture.sessions=JSON.parse(JSON.stringify(t));
+    state.lecture.currentIdx=0; state.lecture.remaining=t[0].min*60;
+    Object.assign(_warnedLec, defaultWarn);
+    renderSessionList(); renderLectureTimer(); renderLectureControls(); renderProjection(); saveState();
+  });
+  document.getElementById('btnAddSession').addEventListener('click',()=>{
+    state.lecture.sessions.push({type:'lecture',min:10,label:'講義'});
+    renderSessionList(); renderLectureTimer(); renderProjection(); saveState();
+  });
+
+  document.getElementById('btnSaveFavorite').addEventListener('click',saveLecFav);
+  document.getElementById('favoriteName').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing) saveLecFav(); });
+  document.getElementById('btnCloseShortcut')?.addEventListener('click',()=>document.getElementById('shortcutModal').classList.add('hidden'));
+  document.getElementById('shortcutModal')?.addEventListener('click',e=>{ if(e.target===e.currentTarget) e.currentTarget.classList.add('hidden'); });
+  document.getElementById('btnExportFavs')?.addEventListener('click',exportFavs);
+  document.getElementById('favImportInput')?.addEventListener('change',e=>{ importFavs(e.target.files?.[0]); e.target.value=''; });
+  document.getElementById('btnSavePomoFavorite').addEventListener('click',savePomoFav);
+  document.getElementById('pomoFavoriteName').addEventListener('keydown',e=>{ if(e.key==='Enter'&&!e.isComposing) savePomoFav(); });
+
+  document.getElementById('quickGrid').addEventListener('click',e=>{
+    const b=e.target.closest('.quick-btn'); if(!b) return;
+    const totalSec=parseFloat(b.dataset.min)*60;
+    document.getElementById('quickCustomMin').value=Math.floor(totalSec/60);
+    document.getElementById('quickCustomSec').value=totalSec%60||'0';
+    setQuickTime(totalSec);
+  });
+  document.getElementById('btnQuickCustom').addEventListener('click',()=>{
+    const m=Math.max(0,Math.min(99,parseInt(document.getElementById('quickCustomMin').value)||0));
+    const s=Math.max(0,Math.min(59,parseInt(document.getElementById('quickCustomSec').value)||0));
+    document.getElementById('quickCustomMin').value=m||'';
+    document.getElementById('quickCustomSec').value=s||'';
+    const total=m*60+s; if(total>0) setQuickTime(total);
+  });
+  /* クイック セッションタイプ切替 */
+  document.getElementById('quickTypeTabs').addEventListener('click',e=>{
+    const btn=e.target.closest('.quick-type-btn'); if(!btn) return;
+    const qt=btn.dataset.qtype;
+    state.quick.type=qt;
+    document.querySelectorAll('.quick-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.qtype===qt));
+    const labelInp=document.getElementById('quickCustomLabel');
+    if(qt==='custom'){ labelInp.classList.remove('hidden'); labelInp.focus(); }
+    else              labelInp.classList.add('hidden');
+    renderQuickTimer(); renderProjection(); saveState();
+  });
+  document.getElementById('quickCustomLabel').addEventListener('input',e=>{
+    state.quick.customLabel=e.target.value;
+    renderQuickTimer(); renderProjection(); saveState();
+  });
+  document.getElementById('quickCustomLabel').addEventListener('blur',e=>{
+    const trimmed=e.target.value.trim();
+    e.target.value=trimmed;
+    state.quick.customLabel=trimmed;
+    renderQuickTimer(); renderProjection(); saveState();
+  });
+  document.getElementById('quickToggle').addEventListener('click',()=>state.quick.running?pauseQuick():startQuick());
+  document.getElementById('quickReset').addEventListener('click',resetQuick);
+  function adjustQuick(delta){
+    const newRem=Math.max(0,Math.min(99*60,state.quick.remaining+delta));
+    state.quick.remaining=newRem;
+    state.quick.totalSec=newRem; /* リングの基準時間を再調整してズレを防ぐ */
+    if(state.quick.running){ _qkStartAt=Date.now(); _qkRemAtStart=newRem; }
+    renderQuickTimer(); renderQuickControls(); renderProjection(); saveState();
+  }
+  document.getElementById('qAdjM1m')?.addEventListener('click',()=>adjustQuick(-60));
+  document.getElementById('qAdjM30')?.addEventListener('click',()=>adjustQuick(-30));
+  document.getElementById('qAdjP30')?.addEventListener('click',()=>adjustQuick(30));
+  document.getElementById('qAdjP1m')?.addEventListener('click',()=>adjustQuick(60));
+  document.getElementById('quickFullscreen').addEventListener('click',()=>toggleFullscreen(document.getElementById('tab-quick')));
+  document.getElementById('quickAutoStart').addEventListener('change',e=>{ state.quick.autoStart=e.target.checked; saveState(); });
+  document.getElementById('quickLoop').addEventListener('change',e=>{ state.quick.loop=e.target.checked; saveState(); });
+
+  document.getElementById('pomoToggle').addEventListener('click',()=>state.pomodoro.running?pausePomo():startPomo());
+  document.getElementById('pomoReset').addEventListener('click',resetPomo);
+  document.getElementById('pomoSkip').addEventListener('click',skipPomo);
+  document.getElementById('pomoAutoNext')?.addEventListener('change',e=>{ state.pomodoro.autoNext=e.target.checked; saveState(); });
+  document.getElementById('pomoAlertMin1')?.addEventListener('change',e=>{ state.pomodoro.alertMin1=e.target.checked; saveState(); });
+  document.getElementById('pomoAlertEnd')?.addEventListener('change',e=>{ state.pomodoro.alertEnd=e.target.checked; saveState(); });
+  document.getElementById('pomoFullscreen').addEventListener('click',()=>toggleFullscreen(document.getElementById('tab-pomodoro')));
+  document.getElementById('pomoResetAll').addEventListener('click',()=>{
+    clearTimeout(_pomoAutoStartTimer); _pomoAutoStartTimer=null;
+    pausePomo(); Object.assign(state.pomodoro,{completedSets:0,focusTotal:0,breakTotal:0,setCount:0,phase:'focus',remaining:getPomoDur('focus')});
+    renderPomoTimer(); renderPomoControls(); renderPomoPhaseButtons(); renderPomoStats(); renderProjection(); saveState();
+    Object.assign(_warnedPm, defaultWarn);
+  });
+  document.querySelectorAll('.pomo-phase-btn').forEach(b=>b.addEventListener('click',()=>{ pausePomo(); switchPomoPhase(b.dataset.phase); }));
+  document.querySelectorAll('[data-pomopreset]').forEach(b=>b.addEventListener('click',()=>{
+    const p=POMO_PRESETS[b.dataset.pomopreset]; if(!p) return;
+    pausePomo(); Object.assign(state.pomodoro,p); state.pomodoro.remaining=getPomoDur(state.pomodoro.phase);
+    renderPomoSettings(); renderPomoTimer(); renderProjection(); saveState();
+  }));
+  document.querySelectorAll('.stepper-btn').forEach(b=>b.addEventListener('click',()=>{
+    const field=b.dataset.field, dir=parseInt(b.dataset.dir);
+    const max=field==='interval'?20:90;
+    state.pomodoro[field]=Math.max(1,Math.min(max,state.pomodoro[field]+dir));
+    renderPomoSettings();
+    if(field===state.pomodoro.phase){ state.pomodoro.remaining=getPomoDur(state.pomodoro.phase); renderPomoTimer(); renderProjection(); }
+    saveState();
+  }));
+}
+
+/* =========================================================
+   ロゴカラー同期 — ヘッダーロゴのグラデーションをアクセントカラーに追従させる
+   ========================================================= */
+function updateLogoColor(){
+  const root=document.documentElement;
+  const a=getComputedStyle(root).getPropertyValue('--accent-a').trim()||'#1697E6';
+  const b=getComputedStyle(root).getPropertyValue('--accent-b').trim()||'#0B6FCC';
+  /* kgGrad の stop 色を更新 */
+  const grad=document.getElementById('kgGrad');
+  if(grad){
+    const stops=grad.querySelectorAll('stop');
+    if(stops[0]) stops[0].setAttribute('stop-color',a);
+    if(stops[1]) stops[1].setAttribute('stop-color',b);
+  }
+  /* kgCore の stop 色を更新 */
+  const core=document.getElementById('kgCore');
+  if(core){
+    const stops=core.querySelectorAll('stop');
+    if(stops[0]) stops[0].setAttribute('stop-color',a);
+    if(stops[1]) stops[1].setAttribute('stop-color',a);
+    if(stops[2]) stops[2].setAttribute('stop-color',b);
+  }
+  /* ドロップシャドウもアクセントカラーに */
+  const sym=document.querySelector('.logo-symbol svg');
+  if(sym) sym.style.filter=`drop-shadow(0 0 7px ${hexToRgba(a,0.55)})`;
+}
+
+
+/* =========================================================
+   ブラウザタブタイトル — タイマー実行中に残り時間を表示
+   ========================================================= */
+const _origTitle = document.title;
+function updateDocTitle(){
+  const tab=state.activeTab;
+  const running=tab==='lecture'?state.lecture.running:tab==='quick'?state.quick.running:state.pomodoro.running;
+  const rem=tab==='lecture'?state.lecture.remaining:tab==='quick'?state.quick.remaining:state.pomodoro.remaining;
+  document.title=(running&&rem>0)?`${fmt(rem)} — ${_origTitle}`:_origTitle;
+}
+
+/* =========================================================
+   タイムオーバー（講義全完了後カウントアップ）
+   ========================================================= */
+let _overtimeStart=0, _overtimeIv=null;
+function startOvertime(){
+  if(_overtimeIv) return;
+  _overtimeStart=Date.now();
+  _overtimeIv=setInterval(renderOvertimeDisplay,1000);
+  renderOvertimeDisplay();
+}
+function stopOvertime(){
+  clearInterval(_overtimeIv); _overtimeIv=null; _overtimeStart=0;
+  renderOvertimeDisplay();
+}
+function renderOvertimeDisplay(){
+  const el=document.getElementById('projOvertime'); if(!el) return;
+  if(_overtimeStart>0){
+    const sec=Math.floor((Date.now()-_overtimeStart)/1000);
+    el.textContent='+'+fmt(sec); el.classList.remove('hidden');
+  }else{
+    el.textContent=''; el.classList.add('hidden');
+  }
+}
+
+/* =========================================================
+   現在時刻クロック
+   ========================================================= */
+function updateClock(){
+  const now=new Date();
+  const hm=`${String(now.getHours()).padStart(2,'0')}:${String(now.getMinutes()).padStart(2,'0')}`;
+  const pc=document.getElementById('projClock'); if(pc) pc.textContent=hm;
+}
+/* =========================================================
+   警告閾値 UI
+   ========================================================= */
+function applyWarnSettings(){
+  const uc=document.getElementById('warnCautionMin');
+  const uu=document.getElementById('warnUrgentMin');
+  if(uc) uc.value=Math.round(state.warnCautionSec/60);
+  if(uu) uu.value=Math.round(state.warnUrgentSec/60);
+  /* クイックタブも同じグローバル閾値を表示 */
+  const qc=document.getElementById('quickWarnCautionMin');
+  const qu=document.getElementById('quickWarnUrgentMin');
+  if(qc) qc.value=Math.round(state.warnCautionSec/60);
+  if(qu) qu.value=Math.round(state.warnUrgentSec/60);
+  /* クイックのアラートチェックボックスを初期化 */
+  const qa1=document.getElementById('quickAlertMin1');
+  const qae=document.getElementById('quickAlertEnd');
+  if(qa1) qa1.checked=state.quick.alertMin1;
+  if(qae) qae.checked=state.quick.alertEnd;
+}
+function initWarnSettings(){
+  function syncCautionMin(v){
+    const urgentMin=Math.round(state.warnUrgentSec/60);
+    const clamped=Math.max(urgentMin+1,Math.min(30,v));
+    state.warnCautionSec=clamped*60;
+    /* 両タブのinputを同期 */
+    ['warnCautionMin','quickWarnCautionMin'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=clamped;
+    });
+    saveState();
+  }
+  function syncUrgentMin(v){
+    const cautionMin=Math.round(state.warnCautionSec/60);
+    const clamped=Math.max(0,Math.min(cautionMin-1,Math.min(10,v)));
+    state.warnUrgentSec=clamped*60;
+    ['warnUrgentMin','quickWarnUrgentMin'].forEach(id=>{
+      const el=document.getElementById(id); if(el) el.value=clamped;
+    });
+    saveState();
+  }
+  ['warnCautionMin','quickWarnCautionMin'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change',e=>syncCautionMin(parseInt(e.target.value)||3));
+  });
+  ['warnUrgentMin','quickWarnUrgentMin'].forEach(id=>{
+    document.getElementById(id)?.addEventListener('change',e=>syncUrgentMin(parseInt(e.target.value)||1));
+  });
+  /* クイックのアラートトグル */
+  document.getElementById('quickAlertMin1')?.addEventListener('change',e=>{
+    state.quick.alertMin1=e.target.checked; saveState();
+  });
+  document.getElementById('quickAlertEnd')?.addEventListener('change',e=>{
+    state.quick.alertEnd=e.target.checked; saveState();
+  });
+}
+
+function initClock(){
+  updateClock();
+  setInterval(updateClock,1000);
+}
+
+function toggleFullscreen(el){
+  if(!document.fullscreenElement) el?.requestFullscreen().catch(()=>{});
+  else document.exitFullscreen().catch(()=>{});
+}
+
+/* =========================================================
+   初期化
+   ========================================================= */
+function init(){
+  injectSvgGradients();
+  applyTheme(state.theme);
+  applyColor(state.color||'blue');
+  applyProjBg();
+  buildTicks('lectureTicks',110,110,96);
+  switchTab(state.activeTab);
+  renderLectureTimer(); renderLectureControls(); renderSessionList();
+  renderQuickTimer(); renderQuickControls();
+  const qa=document.getElementById('quickAutoStart'); if(qa) qa.checked=state.quick.autoStart;
+  const ql=document.getElementById('quickLoop');      if(ql) ql.checked=state.quick.loop;
+  /* クイックタイプ・カスタムラベルを復元 */
+  if(state.quick.type){
+    document.querySelectorAll('.quick-type-btn').forEach(b=>b.classList.toggle('active',b.dataset.qtype===state.quick.type));
+    const qcl=document.getElementById('quickCustomLabel');
+    if(qcl){ qcl.value=state.quick.customLabel||''; if(state.quick.type==='custom') qcl.classList.remove('hidden'); }
+  }
+  const am1=document.getElementById('alertMin1'); if(am1) am1.checked=state.lecture.alert1m;
+  const ae=document.getElementById('alertEnd');   if(ae)  ae.checked=state.lecture.alertEnd;
+  const anx=document.getElementById('autoNext');  if(anx) anx.checked=state.lecture.autoNext;
+  renderPomoTimer(); renderPomoControls(); renderPomoPhaseButtons(); renderPomoSettings(); renderPomoStats();
+  const pan=document.getElementById('pomoAutoNext');  if(pan)  pan.checked=state.pomodoro.autoNext;
+  const pam1=document.getElementById('pomoAlertMin1'); if(pam1) pam1.checked=state.pomodoro.alertMin1;
+  const pae=document.getElementById('pomoAlertEnd');  if(pae)  pae.checked=state.pomodoro.alertEnd;
+  renderWeeklyChart();
+  renderLecFavs(); renderPomoFavs(); renderQuickHistory();
+  if(state.muted){
+    document.getElementById('soundOnIcon').style.display='none';
+    document.getElementById('soundOffIcon').style.display='block';
+    document.getElementById('muteLabel').textContent='音OFF';
+  }
+  renderProjection();
+  initEvents();
+  initClock();
+  initPrefersColorScheme();
+  applyWarnSettings();
+  initWarnSettings();
+  requestAnimationFrame(updateLogoColor);
+  console.info('%cKIKAGAKU タイムキーパー v4 起動完了','color:#1697E6;font-weight:bold;font-size:13px');
+}
+
+document.addEventListener('DOMContentLoaded',init);
+</script>
+</body>
+</html>
