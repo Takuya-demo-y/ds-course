@@ -1,0 +1,138 @@
+' ============================================================
+' 【演習4】シート操作演習 - 月別シート自動振り分けマクロ
+' ============================================================
+' 「全データ」シートの売上データを月ごとに振り分けて
+' 月別シートに転記するマクロを完成させてください。
+'
+' 【データ構造】全データシート
+'   A列: 日付（例: 2024/01/15）
+'   B列: 支店名
+'   C列: 商品カテゴリ
+'   D列: 担当者
+'   E列: 売上金額
+' ============================================================
+
+
+' ============================================================
+' STEP 1: 月別シートを準備する Sub
+' ============================================================
+' 1月～12月のシートを作成する。
+' 既に同名シートが存在する場合は削除してから作成する。
+
+Sub 月別シートを準備する()
+
+    Dim i         As Long
+    Dim sheetName As String
+    Dim ws        As Worksheet
+
+    Application.DisplayAlerts = False   ' 削除時の確認ダイアログを非表示
+
+    For i = 1 To 12
+        sheetName = i & "月"
+
+        ' TODO: シートが既に存在する場合は削除してください
+        '
+        ' 【ヒント】以下のパターンでシートの存在確認ができます
+        '   On Error Resume Next
+        '   Set ws = Worksheets(sheetName)
+        '   On Error GoTo 0
+        '   If Not ws Is Nothing Then
+        '       ws.Delete
+        '       Set ws = Nothing
+        '   End If
+
+        ' ここに実装してください
+
+
+        ' TODO: 新しいシートを末尾に追加し、シート名を設定してください
+        '
+        ' 【ヒント】
+        '   Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = sheetName
+
+        ' ここに実装してください
+
+
+        ' 追加したシートにヘッダーを設定する
+        With Worksheets(sheetName)
+            .Cells(1, 1).Value = "日付"
+            .Cells(1, 2).Value = "支店名"
+            .Cells(1, 3).Value = "商品カテゴリ"
+            .Cells(1, 4).Value = "担当者"
+            .Cells(1, 5).Value = "売上金額（円）"
+        End With
+
+    Next i
+
+    Application.DisplayAlerts = True
+    MsgBox "月別シートの準備が完了しました！（1月～12月）"
+
+End Sub
+
+
+' ============================================================
+' STEP 2: データを月別シートに振り分ける Sub
+' ============================================================
+
+Sub データを月別に振り分ける()
+
+    Dim srcWs       As Worksheet  ' 全データシート
+    Dim dstWs       As Worksheet  ' 転記先シート
+    Dim i           As Long
+    Dim lastRow     As Long
+    Dim dstLastRow  As Long
+    Dim dateVal     As Date
+    Dim monthNum    As Long
+    Dim sheetName   As String
+
+    Application.ScreenUpdating = False
+
+    Set srcWs = ThisWorkbook.Worksheets("全データ")
+    lastRow = srcWs.Cells(srcWs.Rows.Count, 1).End(xlUp).Row
+
+    For i = 2 To lastRow
+
+        dateVal   = srcWs.Cells(i, 1).Value
+        monthNum  = Month(dateVal)          ' Month 関数で月番号を取得
+        sheetName = monthNum & "月"
+
+        ' TODO: 転記先シートを取得し、次の空行に A～E 列を転記してください
+        '
+        ' 【ヒント】
+        '   Set dstWs = Worksheets(sheetName)
+        '   dstLastRow = dstWs.Cells(dstWs.Rows.Count, 1).End(xlUp).Row + 1
+        '   で転記先の次の空行が分かります
+        '
+        '   srcWs の i 行目の値を dstWs の dstLastRow 行目にコピーしてください
+        '   （A列～E列の5列分）
+
+        ' ここに実装してください
+
+
+    Next i
+
+    Application.ScreenUpdating = True
+    MsgBox "振り分けが完了しました！" & vbCrLf & _
+           "各月シートのデータ件数を確認してください。"
+
+End Sub
+
+
+' ============================================================
+' まとめて実行する Sub
+' ============================================================
+
+Sub 月別振り分け実行()
+    Call 月別シートを準備する
+    Call データを月別に振り分ける
+End Sub
+
+
+' ============================================================
+' ★ 発展課題
+' ============================================================
+'
+' 1. 各月シートのヘッダー行に背景色をつける
+' 2. 各月シートの最終行に合計売上を表示する
+' 3. E列に数値書式（#,##0）を設定する
+'
+' ============================================================

@@ -1,0 +1,165 @@
+' ============================================================
+' 【演習5】総合演習 - 支店別売上集計ツール
+' ============================================================
+' 2日目で学んだすべての要素を組み合わせて
+' 実務で使えるツールを完成させましょう。
+'
+' ファイル名形式: 支店名_YYYYMM.xlsx（例: 東京支店_202401.xlsx）
+' 各ファイルの「売上明細」シートの最終行 F 列に月間合計があります
+'
+' 【TODO 一覧】
+' [必須] TODO-1: エラーハンドリングの追加
+' [必須] TODO-2: Function の呼び出し（最終行取得）
+' [推奨] TODO-3: ScreenUpdating 等の最適化
+' [発展] TODO-4: 集計結果シートへの書式設定
+' ============================================================
+
+
+' ============================================================
+' 共通 Function
+' ============================================================
+
+' 最終行番号を返す Function
+Function 最終行取得(ws As Worksheet, col As Long) As Long
+    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+End Function
+
+' ファイル名から支店名を返す Function
+' 例: "東京支店_202401.xlsx" → "東京支店"
+Function 支店名を取得(fileName As String) As String
+    Dim parts() As String
+    parts = Split(Replace(fileName, ".xlsx", ""), "_")
+    支店名を取得 = parts(0)
+End Function
+
+' ファイル名から年月文字列を返す Function
+' 例: "東京支店_202401.xlsx" → "2024年01月"
+Function 年月を取得(fileName As String) As String
+    Dim parts() As String
+    parts = Split(Replace(fileName, ".xlsx", ""), "_")
+    年月を取得 = Left(parts(1), 4) & "年" & Right(parts(1), 2) & "月"
+End Function
+
+
+' ============================================================
+' メインプロシージャ
+' ============================================================
+
+Sub 支店別売上集計()
+
+    Dim folderPath  As String
+    Dim fileName    As String
+    Dim wb          As Workbook
+    Dim srcWs       As Worksheet
+    Dim resultWs    As Worksheet
+    Dim resultRow   As Long
+    Dim lastRow     As Long
+    Dim totalSales  As Long
+    Dim recordCount As Long
+
+    ' ----- TODO-3: 最適化設定（コメントを外してください）-----
+    ' Application.ScreenUpdating = False
+    ' Application.Calculation = xlCalculationManual
+    ' Application.DisplayAlerts = False
+
+    ' ----- TODO-1: エラーハンドリングを追加（コメントを外してください）-----
+    ' On Error GoTo ErrorHandler
+
+    ' ----- 初期化 -----
+    Set resultWs = ThisWorkbook.Worksheets("集計結果")
+    resultWs.Range("A2:E1000").ClearContents
+    resultRow = 2
+
+    folderPath = ThisWorkbook.Path & "\支店データ\"
+
+    ' ----- ファイル処理ループ -----
+    fileName = Dir(folderPath & "*.xlsx")
+
+    Do While fileName <> ""
+
+        On Error GoTo FileError   ' ファイルごとのエラーを個別にキャッチ
+
+        Set wb    = Workbooks.Open(folderPath & fileName, ReadOnly:=True)
+        Set srcWs = wb.Worksheets("売上明細")
+
+        ' TODO-2: 最終行取得 Function を使って lastRow に代入してください
+        '         ヒント: lastRow = 最終行取得(srcWs, 1)
+        lastRow = ' ここに実装してください
+
+        ' 月間合計（最終行の F 列）を取得
+        totalSales  = srcWs.Cells(lastRow, 6).Value
+        recordCount = lastRow - 1   ' ヘッダー除く明細件数
+
+        ' 集計結果シートに転記
+        resultWs.Cells(resultRow, 1).Value = 支店名を取得(fileName)
+        resultWs.Cells(resultRow, 2).Value = 年月を取得(fileName)
+        resultWs.Cells(resultRow, 3).Value = totalSales
+        resultWs.Cells(resultRow, 4).Value = recordCount
+        resultWs.Cells(resultRow, 5).Value = "成功"
+        resultRow = resultRow + 1
+
+        wb.Close SaveChanges:=False
+        Set wb = Nothing
+
+        On Error GoTo ErrorHandler  ' 個別ハンドラーを解除
+
+        fileName = Dir()
+
+    Loop
+
+    ' ----- 正常終了 -----
+    Call 後片付け
+    MsgBox "集計が完了しました！" & vbCrLf & _
+           (resultRow - 2) & " 件のファイルを処理しました。", vbInformation, "完了"
+    Exit Sub
+
+
+' ----- ファイル個別エラー（スキップして続行）-----
+FileError:
+    If Not wb Is Nothing Then
+        wb.Close SaveChanges:=False
+        Set wb = Nothing
+    End If
+    resultWs.Cells(resultRow, 1).Value = 支店名を取得(fileName)
+    resultWs.Cells(resultRow, 2).Value = 年月を取得(fileName)
+    resultWs.Cells(resultRow, 5).Value = "エラー: " & Err.Description
+    resultRow = resultRow + 1
+    Resume Next   ' 次のループ処理へ
+
+
+' ----- 全体エラー（処理を中止）-----
+ErrorHandler:
+    MsgBox "予期しないエラーが発生しました。" & vbCrLf & _
+           "エラー番号: " & Err.Number & vbCrLf & _
+           "内容: "       & Err.Description, vbCritical, "エラー"
+    Call 後片付け
+
+End Sub
+
+
+' ============================================================
+' 後片付け処理（正常終了・エラー終了の両方から呼ぶ）
+' ============================================================
+
+Sub 後片付け()
+    Application.ScreenUpdating = True
+    Application.Calculation    = xlCalculationAutomatic
+    Application.DisplayAlerts  = True
+End Sub
+
+
+' ============================================================
+' ★ 発展課題
+' ============================================================
+'
+' 1. 集計結果シートに書式を設定する
+'    ・ヘッダー行に背景色をつける
+'    ・売上金額列に数値書式（#,##0）を設定する
+'    ・成功 → 緑、エラー → 赤 で文字色を変える
+'
+' 2. 処理時間をメッセージに表示する
+'    （Timer 関数で開始・終了時刻を記録して差分を計算）
+'
+' 3. 支店ごとの合計をサマリーシートに別途まとめる
+'
+' ============================================================
