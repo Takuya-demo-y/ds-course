@@ -11,827 +11,798 @@
       --green:   #16a34a;
       --yellow:  #d97706;
       --red:     #dc2626;
+      --amber:   #b45309;
       --border:  #e2e8f0;
       --bg:      #f8fafc;
       --sidebar: #1e293b;
     }
-    *  { box-sizing: border-box; margin: 0; padding: 0; }
+    * { box-sizing:border-box; margin:0; padding:0; }
     body {
-      font-family: 'Yu Gothic UI','Hiragino Sans','Meiryo',sans-serif;
-      font-size: 15px; color: #1e293b; background: var(--bg);
-      display: flex; min-height: 100vh;
+      font-family:'Yu Gothic UI','Hiragino Sans','Meiryo',sans-serif;
+      font-size:15px; color:#1e293b; background:var(--bg);
+      display:flex; min-height:100vh;
     }
     /* ── Sidebar ── */
     #sidebar {
-      width: 240px; min-width: 240px; background: var(--sidebar);
-      position: fixed; top: 0; left: 0; height: 100vh;
-      overflow-y: auto; padding: 20px 0; z-index: 100;
+      width:252px; min-width:252px; background:var(--sidebar);
+      position:fixed; top:0; left:0; height:100vh;
+      overflow-y:auto; padding:20px 0; z-index:100;
     }
     #sidebar .logo {
-      padding: 0 20px 16px; border-bottom: 1px solid rgba(255,255,255,0.1);
-      color: #94a3b8; font-size: 12px; line-height: 1.6;
+      padding:0 20px 16px; border-bottom:1px solid rgba(255,255,255,0.1);
+      color:#94a3b8; font-size:12px; line-height:1.6;
     }
-    #sidebar .logo strong { color: #38bdf8; font-size: 14px; display: block; margin-bottom: 2px; }
-    #sidebar nav { padding: 12px 0; }
+    #sidebar .logo strong { color:#38bdf8; font-size:14px; display:block; margin-bottom:2px; }
+    #sidebar nav { padding:10px 0; }
     #sidebar nav a {
-      display: flex; align-items: center; gap: 8px;
-      padding: 8px 20px; color: #94a3b8; text-decoration: none;
-      font-size: 13px; transition: all 0.15s; border-left: 3px solid transparent;
+      display:flex; align-items:center; gap:8px;
+      padding:7px 20px; color:#94a3b8; text-decoration:none;
+      font-size:13px; transition:all 0.15s; border-left:3px solid transparent;
+      line-height:1.4;
     }
     #sidebar nav a:hover, #sidebar nav a.active {
-      color: #e2e8f0; background: rgba(255,255,255,0.06);
-      border-left-color: #38bdf8;
+      color:#e2e8f0; background:rgba(255,255,255,0.06);
+      border-left-color:#38bdf8;
     }
     #sidebar nav .nav-section {
-      padding: 14px 20px 4px; font-size: 11px; color: #475569;
-      text-transform: uppercase; letter-spacing: 0.08em;
+      padding:14px 20px 4px; font-size:11px; color:#475569;
+      text-transform:uppercase; letter-spacing:0.08em;
+    }
+    #sidebar nav .nav-sub {
+      padding:5px 20px 5px 34px; color:#64748b; font-size:12px;
+      display:flex; align-items:center; gap:6px;
+      border-left:3px solid transparent; cursor:default;
     }
     /* ── Main ── */
-    #main { margin-left: 240px; flex: 1; padding: 32px 40px; max-width: 920px; }
-    /* ── Sections ── */
-    section { margin-bottom: 48px; scroll-margin-top: 24px; }
-    h1 { font-size: 22px; font-weight: 800; color: #0f172a; margin-bottom: 6px; }
+    #main { margin-left:252px; flex:1; padding:32px 44px; max-width:940px; }
+    section { margin-bottom:52px; scroll-margin-top:24px; }
+    h1 { font-size:22px; font-weight:800; color:#0f172a; margin-bottom:6px; }
     h2 {
-      font-size: 18px; font-weight: 700; color: #1e293b;
-      margin: 32px 0 14px; padding-bottom: 8px;
-      border-bottom: 2px solid var(--border);
+      font-size:18px; font-weight:700; color:#1e293b;
+      margin:36px 0 14px; padding-bottom:8px;
+      border-bottom:2px solid var(--border);
     }
-    h2 .sec-icon { margin-right: 6px; }
-    h3 { font-size: 15px; font-weight: 700; color: #334155; margin: 20px 0 10px; }
-    p  { line-height: 1.8; margin: 8px 0; color: #334155; }
-    ul, ol { padding-left: 1.4em; line-height: 1.9; color: #334155; }
-    li { margin: 4px 0; }
-    /* ── Badges ── */
-    .badge {
-      display: inline-block; padding: 1px 10px; border-radius: 10px;
-      font-size: 11px; font-weight: 700; vertical-align: middle; margin-left: 6px;
-    }
-    .badge-time { background: #dbeafe; color: var(--accent); }
-    .badge-req  { background: #dcfce7; color: var(--green); }
-    .badge-warn { background: #fef9c3; color: var(--yellow); }
-    .badge-tip  { background: #f3e8ff; color: var(--accent2); }
+    h2 .sec-icon { margin-right:6px; }
+    h3 { font-size:15px; font-weight:700; color:#334155; margin:22px 0 10px; }
+    h4 { font-size:13px; font-weight:700; color:#475569; margin:14px 0 7px; }
+    p { line-height:1.85; color:#334155; margin-bottom:10px; }
+    ul,ol { padding-left:1.4em; line-height:2; color:#334155; margin-bottom:10px; }
+    li { margin:2px 0; }
     /* ── Cards ── */
-    .card-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin: 14px 0; }
     .card {
-      border: 1px solid var(--border); border-radius: 10px;
-      padding: 16px; background: #fff;
+      background:#fff; border:1px solid var(--border);
+      border-radius:10px; padding:16px 20px; margin:14px 0;
     }
-    .card h4 { font-size: 13px; margin-bottom: 8px; }
-    .card ul, .card p { font-size: 13px; }
-    /* ── Callout ── */
-    .callout {
-      border-radius: 8px; padding: 12px 16px; margin: 14px 0;
-      border-left: 4px solid; font-size: 13.5px; line-height: 1.75;
+    /* ── Alert boxes ── */
+    .alert {
+      border-radius:8px; padding:12px 16px; margin:12px 0;
+      font-size:14px; line-height:1.75;
     }
-    .callout-blue   { background:#eff6ff; border-color:var(--accent);  color:#1e3a8a; }
-    .callout-green  { background:#f0fdf4; border-color:var(--green);   color:#14532d; }
-    .callout-yellow { background:#fffbeb; border-color:var(--yellow);  color:#78350f; }
-    .callout-red    { background:#fef2f2; border-color:var(--red);     color:#7f1d1d; }
-    .callout strong { font-weight: 700; }
+    .alert-blue  { background:#eff6ff; border-left:4px solid var(--accent);  color:#1e40af; }
+    .alert-green { background:#f0fdf4; border-left:4px solid var(--green);   color:#14532d; }
+    .alert-amber { background:#fffbeb; border-left:4px solid var(--yellow);  color:#78350f; }
+    .alert-red   { background:#fef2f2; border-left:4px solid var(--red);     color:#7f1d1d; }
+    .alert-purple{ background:#f5f3ff; border-left:4px solid var(--accent2); color:#4c1d95; }
+    /* ── Slide reference ── */
+    .slide-ref {
+      display:inline-flex; align-items:center; gap:6px;
+      background:#f1f5f9; border:1px solid #cbd5e1;
+      border-radius:6px; padding:2px 10px; font-size:12px;
+      color:#475569; font-weight:600; margin-right:6px;
+    }
+    /* ── Talk box ── */
+    .talk {
+      background:#f0fdf4; border:1px solid #bbf7d0;
+      border-radius:8px; padding:14px 18px; margin:12px 0;
+      font-size:14px; line-height:1.85; color:#14532d;
+    }
+    .talk::before { content:"🗣 "; font-size:1.1em; }
+    /* ── Timer badge ── */
+    .timer {
+      display:inline-block; background:#dbeafe; color:#1e40af;
+      border-radius:20px; padding:2px 12px; font-size:12px;
+      font-weight:700; margin-left:8px;
+    }
+    .timer.g { background:#dcfce7; color:#15803d; }
+    .timer.y { background:#fef9c3; color:#854d0e; }
+    .timer.r { background:#fee2e2; color:#b91c1c; }
     /* ── Code ── */
     pre {
-      background: #1e293b; color: #e2e8f0; border-radius: 8px;
-      padding: 16px 18px; overflow-x: auto; margin: 12px 0;
-      font-size: 13px; line-height: 1.65; border-left: 4px solid #38bdf8;
+      background:#1e293b; color:#e2e8f0;
+      border-radius:8px; padding:14px 18px; overflow-x:auto;
+      font-size:13px; line-height:1.65; margin:10px 0;
     }
-    code { font-family: 'Consolas','Monaco','Courier New',monospace; font-size: 0.92em; }
+    code { font-family:'Consolas','Courier New',monospace; }
     p code, li code {
-      background: #f1f5f9; color: #7c3aed; padding: 1px 6px;
-      border-radius: 4px; font-size: 0.9em;
+      background:#f1f5f9; color:#0f172a;
+      border-radius:4px; padding:1px 6px; font-size:0.88em;
     }
     /* ── Table ── */
-    .tbl { width: 100%; border-collapse: collapse; margin: 14px 0; font-size: 13.5px; }
-    .tbl th {
-      background: #f1f5f9; font-weight: 700; color: #475569;
-      border: 1px solid var(--border); padding: 9px 12px; text-align: left;
+    table { width:100%; border-collapse:collapse; margin:12px 0; font-size:14px; }
+    th {
+      background:#f1f5f9; color:#334155; padding:8px 12px;
+      border:1px solid var(--border); text-align:left;
     }
-    .tbl td { border: 1px solid var(--border); padding: 8px 12px; vertical-align: top; }
-    .tbl tr:nth-child(even) td { background: #f8fafc; }
-    /* ── Timing bar ── */
-    .timing {
-      display: flex; align-items: center; gap: 10px;
-      background: #f1f5f9; border-radius: 8px; padding: 10px 16px;
-      margin: 12px 0; font-size: 13px;
+    td { border:1px solid var(--border); padding:8px 12px; }
+    tr:nth-child(even) td { background:#fafafa; }
+    /* ── Progress indicator ── */
+    .progress-steps {
+      display:flex; gap:0; margin:20px 0; border-radius:10px; overflow:hidden;
+      border:1px solid var(--border);
     }
-    .timing .time { font-weight: 700; color: var(--accent); min-width: 90px; }
-    .timing .label { flex: 1; color: #334155; }
-    .timing .dur { color: #64748b; font-size: 12px; }
-    /* ── Answer box ── */
-    details {
-      background: #fff; border: 1px solid var(--border);
-      border-radius: 8px; margin: 12px 0;
+    .ps {
+      flex:1; padding:10px 14px; text-align:center; font-size:13px;
+      background:#fff; color:#94a3b8; border-right:1px solid var(--border);
     }
-    details summary {
-      padding: 12px 16px; cursor: pointer; font-weight: 700;
-      color: var(--accent); font-size: 14px; list-style: none;
-      display: flex; align-items: center; gap: 8px;
+    .ps:last-child { border-right:none; }
+    .ps.done  { background:#f0fdf4; color:var(--green); font-weight:600; }
+    .ps.active{ background:#eff6ff; color:var(--accent); font-weight:700; }
+    /* ── Block header ── */
+    .block-header {
+      display:flex; align-items:center; gap:12px; margin:32px 0 16px;
+      padding:14px 20px; border-radius:10px; background:#fff;
+      border:2px solid var(--border);
     }
-    details summary::before { content: "▶"; font-size: 11px; color: #94a3b8; }
-    details[open] summary::before { content: "▼"; }
-    details .answer { padding: 0 16px 16px; }
-    /* ── Header ── */
-    .page-header {
-      background: linear-gradient(135deg, #1e293b 0%, #1e3a5f 100%);
-      color: white; border-radius: 12px; padding: 24px 28px; margin-bottom: 32px;
+    .block-num {
+      font-size:28px; font-weight:900; opacity:0.15; line-height:1;
     }
-    .page-header h1 { color: #fff; font-size: 20px; }
-    .page-header p  { color: #94a3b8; font-size: 13px; margin-top: 4px; }
-    .page-header .meta { display: flex; gap: 12px; margin-top: 12px; flex-wrap: wrap; }
-    .page-header .meta span {
-      background: rgba(255,255,255,0.1); padding: 3px 12px;
-      border-radius: 20px; font-size: 12px; color: #e2e8f0;
+    .block-title { font-size:17px; font-weight:700; }
+    .block-sub   { font-size:13px; color:#64748b; margin-top:2px; }
+    /* ── 3-step badge ── */
+    .step-badges { display:flex; gap:8px; margin:12px 0 16px; flex-wrap:wrap; }
+    .sb {
+      display:inline-flex; align-items:center; gap:6px;
+      border-radius:20px; padding:5px 14px; font-size:13px; font-weight:700;
     }
-    /* ── Print ── */
-    .print-btn {
-      position: fixed; bottom: 24px; right: 24px;
-      background: var(--accent); color: white; border: none;
-      border-radius: 30px; padding: 10px 20px; cursor: pointer;
-      font-size: 13px; font-weight: 700; box-shadow: 0 4px 12px rgba(37,99,235,0.4);
-      font-family: inherit;
+    .sb-1 { background:#eff6ff; color:var(--accent); border:1px solid #bfdbfe; }
+    .sb-2 { background:#f0fdf4; color:var(--green);  border:1px solid #bbf7d0; }
+    .sb-3 { background:#fffbeb; color:var(--amber);  border:1px solid #fde68a; }
+    /* ── Q&A box ── */
+    .qa { background:#fafafa; border:1px solid var(--border); border-radius:8px; margin:8px 0; }
+    .qa-q { padding:10px 14px; font-weight:700; color:#1e293b; border-bottom:1px solid var(--border); font-size:14px; }
+    .qa-q::before { content:"Q. "; color:var(--accent); }
+    .qa-a { padding:10px 14px; color:#475569; font-size:14px; line-height:1.75; }
+    .qa-a::before { content:"A. "; color:var(--green); font-weight:700; }
+    /* ── Top summary bar ── */
+    .summary-bar {
+      display:grid; grid-template-columns:repeat(4,1fr); gap:12px; margin:20px 0;
     }
-    .print-btn:hover { background: #1d4ed8; }
-    @media print {
-      #sidebar, .print-btn { display: none; }
-      #main { margin: 0; padding: 20px; }
-      details { page-break-inside: avoid; }
-      details[open] .answer { display: block; }
+    .sb-item {
+      background:#fff; border:1px solid var(--border); border-radius:8px;
+      padding:12px 14px; text-align:center;
     }
-    /* ── Q&A table ── */
-    .qa-item { margin: 14px 0; }
-    .qa-q { font-weight: 700; color: #334155; margin-bottom: 4px; }
-    .qa-q::before { content: "Q. "; color: var(--accent); }
-    .qa-a { color: #475569; padding-left: 16px; line-height: 1.8; }
-    .qa-a::before { content: "A. "; color: var(--green); font-weight: 700; }
-    /* ── Slide ref ── */
-    .slide-ref {
-      display: inline-block; background: #f1f5f9; border: 1px solid var(--border);
-      border-radius: 6px; padding: 2px 10px; font-size: 12px; color: #64748b;
-      margin-bottom: 10px;
-    }
-    /* ── Error table ── */
-    .err-code { font-family: monospace; font-weight: 700; color: var(--red); }
+    .sb-item .sb-num { font-size:22px; font-weight:800; color:var(--accent); }
+    .sb-item .sb-label { font-size:12px; color:#64748b; margin-top:2px; }
   </style>
 </head>
 <body>
 
-<!-- ═══════════ SIDEBAR ═══════════ -->
+<!-- ━━━ SIDEBAR ━━━ -->
 <nav id="sidebar">
   <div class="logo">
     <strong>講師完全ガイド</strong>
-    Excel VBA 研修 2日目
+    Excel VBA 研修 ─ 2日目
   </div>
   <nav>
     <div class="nav-section">概要</div>
-    <a href="#overview">📋 本日の概要</a>
-    <a href="#schedule">⏱ タイムスケジュール</a>
-    <a href="#prep">🗂 事前準備チェック</a>
+    <a href="#overview">📋 本日の全体像</a>
+    <a href="#schedule">🕐 タイムスケジュール</a>
+    <a href="#opening">🚀 オープニング</a>
 
-    <div class="nav-section">講義ブロック</div>
-    <a href="#block1">① デバッグ入門</a>
-    <a href="#block2">② エラーハンドリング</a>
-    <a href="#block3">③ Function</a>
-    <a href="#block4">④ シート操作</a>
-    <a href="#block5">⑤ 総合演習</a>
-    <a href="#closing">🏁 クロージング</a>
+    <div class="nav-section">Block 1</div>
+    <a href="#block1">🔍 デバッグ入門</a>
+    <div class="nav-sub">📖 座学</div>
+    <div class="nav-sub">🛠 ケース演習</div>
+    <div class="nav-sub">💼 業務落とし込み</div>
 
-    <div class="nav-section">参考資料</div>
-    <a href="#answers">✅ 演習の解答</a>
+    <div class="nav-section">Block 2</div>
+    <a href="#block2">🔧 Function</a>
+    <div class="nav-sub">📖 座学</div>
+    <div class="nav-sub">🛠 ケース演習</div>
+    <div class="nav-sub">💼 業務落とし込み</div>
+
+    <div class="nav-section">Block 3</div>
+    <a href="#block3">📊 シート操作</a>
+    <div class="nav-sub">📖 座学</div>
+    <div class="nav-sub">🛠 ケース演習</div>
+    <div class="nav-sub">💼 業務落とし込み</div>
+
+    <div class="nav-section">演習</div>
+    <a href="#comprehensive">⚡ 総合演習</a>
+    <a href="#closing">🎯 クロージング</a>
+
+    <div class="nav-section">参考</div>
     <a href="#qa">❓ よくある質問</a>
-    <a href="#errors">⚠ エラー対応表</a>
+    <a href="#trouble">🚨 トラブル対応</a>
   </nav>
 </nav>
 
-<!-- ═══════════ MAIN ═══════════ -->
+<!-- ━━━ MAIN ━━━ -->
 <main id="main">
 
-  <div class="page-header">
-    <h1>Excel VBA 研修 2日目 ─ 講師完全ガイド</h1>
-    <p>このドキュメントは講師専用です。受講者には配布しないでください。</p>
-    <div class="meta">
-      <span>🎯 対象：初学者〜中級者</span>
-      <span>⏱ 所要時間：8時間（09:00〜17:30）</span>
-      <span>👥 推奨人数：10〜20名</span>
-      <span>🖥 形式：スライド投影＋演習</span>
+<!-- ══════════════════ OVERVIEW ══════════════════ -->
+<section id="overview">
+  <h1>Excel VBA 研修 2日目 ─ 講師完全ガイド</h1>
+  <p style="color:#64748b; margin-bottom:20px;">このガイドには各スライドのトーク例・タイミング・Q&A・トラブル対応が含まれています。</p>
+
+  <div class="summary-bar">
+    <div class="sb-item"><div class="sb-num">34</div><div class="sb-label">スライド枚数</div></div>
+    <div class="sb-item"><div class="sb-num">3</div><div class="sb-label">学習ブロック</div></div>
+    <div class="sb-item"><div class="sb-num">4</div><div class="sb-label">演習セッション</div></div>
+    <div class="sb-item"><div class="sb-num">8h</div><div class="sb-label">研修時間</div></div>
+  </div>
+
+  <h2><span class="sec-icon">🎯</span>本日の伝えたいメッセージ</h2>
+  <div class="alert alert-blue">
+    VBAは「コードを書く技術」ではなく、<strong>「繰り返しの作業から解放され、本当に価値のある仕事に時間を使う」</strong>ための道具です。<br>
+    この研修を通じて、受講者が「自分の業務に使える」という自信（自己効力感）を持って帰ることを最優先とします。
+  </div>
+
+  <h2><span class="sec-icon">🗺</span>本日の学習構造</h2>
+  <p>各ブロックは必ず以下の <strong>3ステップ</strong> で進めてください。このリズムが受講者の定着を助けます。</p>
+  <div class="progress-steps">
+    <div class="ps active">① 座学<br><small>概念・たとえ話（コードなし）</small></div>
+    <div class="ps active">② ケース演習<br><small>手を動かして体験</small></div>
+    <div class="ps active">③ 業務落とし込み<br><small>自分事化・自己効力感</small></div>
+  </div>
+
+  <div class="alert alert-purple">
+    <strong>「業務への落とし込み」を絶対にカットしないでください。</strong><br>
+    時間が押してきたとき、講師は演習時間を削りがちですが、この研修では落とし込みタイムこそが受講者の「やれる気がする」という感覚を生む最重要パートです。
+  </div>
+</section>
+
+<!-- ══════════════════ SCHEDULE ══════════════════ -->
+<section id="schedule">
+  <h2><span class="sec-icon">🕐</span>タイムスケジュール</h2>
+
+  <table>
+    <tr>
+      <th style="width:130px;">時間</th>
+      <th>内容</th>
+      <th style="width:80px;">時間</th>
+      <th>スライド</th>
+    </tr>
+    <tr>
+      <td>09:00 〜 09:20</td>
+      <td><strong>オープニング</strong>：研修の目的・全体像・Day1 復習</td>
+      <td>20分</td>
+      <td>S1 〜 S5</td>
+    </tr>
+    <tr>
+      <td>09:20 〜 10:30</td>
+      <td><strong>Block 1 デバッグ</strong>：座学 → 演習1 → 業務落とし込み</td>
+      <td>70分</td>
+      <td>S6 〜 S11</td>
+    </tr>
+    <tr>
+      <td>10:30 〜 10:40</td>
+      <td>休憩</td>
+      <td>10分</td>
+      <td>─</td>
+    </tr>
+    <tr>
+      <td>10:40 〜 12:00</td>
+      <td><strong>Block 2 Function</strong>：座学 → 演習2 → 業務落とし込み</td>
+      <td>80分</td>
+      <td>S12 〜 S18</td>
+    </tr>
+    <tr>
+      <td>12:00 〜 13:00</td>
+      <td>昼食</td>
+      <td>60分</td>
+      <td>─</td>
+    </tr>
+    <tr>
+      <td>13:00 〜 14:30</td>
+      <td><strong>Block 3 シート操作</strong>：座学 → 演習3 → 業務落とし込み</td>
+      <td>90分</td>
+      <td>S19 〜 S26</td>
+    </tr>
+    <tr>
+      <td>14:30 〜 14:40</td>
+      <td>休憩</td>
+      <td>10分</td>
+      <td>─</td>
+    </tr>
+    <tr>
+      <td>14:40 〜 16:40</td>
+      <td><strong>総合演習</strong>：コード解説 + 演習 + 共有</td>
+      <td>120分</td>
+      <td>S27 〜 S30</td>
+    </tr>
+    <tr>
+      <td>16:40 〜 17:00</td>
+      <td><strong>クロージング</strong>：アクションプラン + 振り返り</td>
+      <td>20分</td>
+      <td>S31 〜 S34</td>
+    </tr>
+  </table>
+
+  <div class="alert alert-amber">
+    <strong>時間調整のルール：</strong><br>
+    ① ブロック内では<strong>座学を短縮してもよい</strong>が、演習と業務落とし込みは削らない<br>
+    ② Block 2 が押した場合は Block 3 の座学スライドを1枚省略可（S21 を飛ばす）<br>
+    ③ 総合演習が最低90分確保できない場合は Step 1・2 のみ必須として残りを宿題にする
+  </div>
+</section>
+
+<!-- ══════════════════ OPENING ══════════════════ -->
+<section id="opening">
+  <h2><span class="sec-icon">🚀</span>オープニング（09:00 〜 09:20）</h2>
+
+  <h3><span class="slide-ref">S1</span> タイトル</h3>
+  <div class="talk">
+    「おはようございます。昨日1日お疲れさまでした。昨日は『動くものを作る』をゴールに、VBAの基本文法をひと通り体験してもらいました。今日はそこからもう一歩進んで、職場に持ち帰って実際に使えるツールに仕上げることを目指します。」
+  </div>
+
+  <h3><span class="slide-ref">S2</span> 伝えたいメッセージ <span class="timer">3分</span></h3>
+  <div class="talk">
+    「まず今日の研修で一番伝えたいことをお話しします。VBAはコードを書く技術ではなく、毎日繰り返している単純作業から解放されて、本当に価値のある仕事に時間を使うための道具です。今日の終わりに、自分の業務のどこかに使えると感じてもらえれば、この研修は大成功です。」
+  </div>
+
+  <h3><span class="slide-ref">S3</span> 2日間のジャーニーマップ <span class="timer">3分</span></h3>
+  <div class="alert alert-blue">
+    <strong>ホールパートの「大きな地図」を見せるスライドです。</strong><br>
+    「今日はこの地図のどこにいるのか」を指差しながら説明してください。
+  </div>
+  <div class="talk">
+    「この図が2日間全体の地図です。昨日でDay 1のチェックが入りました。今日はDay 2、つまり使えるものに磨く段階です。そして研修の最後に、この矢印の先にある『自分の業務へ適用する』フェーズのための計画を立ててもらいます。」
+  </div>
+
+  <h3><span class="slide-ref">S4</span> ホールパート：本日の全体像 <span class="timer">5分</span></h3>
+  <div class="alert alert-blue">
+    <strong>「今日の地図」を全員に頭に入れてもらう最重要スライドです。時間をかけてください。</strong>
+  </div>
+  <div class="talk">
+    「今日は3ブロック構成で進みます。デバッグ・Function・シート操作。そして各ブロックは必ず同じ3ステップで進みます。まず座学でコードなしに概念を理解してもらい、次にケースで実際に手を動かして体験する、最後に自分たちの業務のどこで使えるかを考えてもらいます。この3番目のステップが一番大事です。」
+  </div>
+
+  <h3><span class="slide-ref">S5</span> Day1 復習 <span class="timer">5分</span></h3>
+  <div class="talk">
+    「昨日を簡単に振り返ります。基本文法、制御構文、ブック操作の3つでした。昨日の総合演習で複数ファイルを統合するマクロを書きましたね。今日はそのマクロを壊れにくく・読みやすくしていきます。」
+  </div>
+  <div class="alert alert-amber">
+    <strong>確認の一言：</strong>「昨日書いたマクロ、まだ覚えていますか？For ループで Dir を使ってファイルを順番に開いていくやつです。今日もあのパターンをベースに発展させていきます」と言って記憶を呼び起こしてから進む。
+  </div>
+</section>
+
+<!-- ══════════════════ BLOCK 1 ══════════════════ -->
+<section id="block1">
+  <div class="block-header">
+    <div class="block-num">01</div>
+    <div>
+      <div class="block-title">🔍 Block 1：デバッグ入門</div>
+      <div class="block-sub">09:20 〜 10:30（70分）　スライド S6 〜 S11</div>
     </div>
   </div>
 
-  <!-- ══ OVERVIEW ══ -->
-  <section id="overview">
-    <h2><span class="sec-icon">📋</span>本日の概要</h2>
+  <div class="step-badges">
+    <span class="sb sb-1">① 座学　S7〜S8　20分</span>
+    <span class="sb sb-2">② ケース演習　S9〜S10　35分</span>
+    <span class="sb sb-3">③ 業務落とし込み　S11　10分</span>
+  </div>
 
-    <h3>2日間のテーマ</h3>
-    <div class="card-grid">
-      <div class="card" style="border-top: 3px solid #7c3aed;">
-        <h4 style="color:#7c3aed;">1日目：動くものを作る</h4>
-        <ul>
-          <li>VBA の基本文法習得</li>
-          <li>条件分岐・繰り返し処理</li>
-          <li>複数ファイルの統合マクロ</li>
-        </ul>
-      </div>
-      <div class="card" style="border-top: 3px solid #2563eb;">
-        <h4 style="color:#2563eb;">2日目：使えるものを作る</h4>
-        <ul>
-          <li>デバッグ・エラーハンドリング</li>
-          <li>Function によるコードの再利用</li>
-          <li>壊れにくい実務ツールの完成</li>
-        </ul>
-      </div>
+  <h3><span class="slide-ref">S6</span> セクションヘッダー</h3>
+  <div class="talk">
+    「最初のブロックはデバッグです。コードが思い通りに動かないとき、どこを見ればいいかを学びます。実は今日の演習にはわざとバグを仕込んだコードが入っています。それを3つの武器で見つけてもらいます。」
+  </div>
+
+  <!-- 座学 -->
+  <h3><span class="slide-ref">S7</span> 【座学 1/2】エラーの3種類 <span class="timer">10分</span></h3>
+  <div class="alert alert-green">
+    <strong>座学スライドの鉄則：コードの解説はしない。</strong><br>
+    「なぜ必要か」「どんな状況で起きるか」のイメージを作ることに集中してください。
+  </div>
+  <div class="talk">
+    「エラーには3種類あります。コンパイルエラーは文法ミスなのでVBEがすぐに教えてくれます。一番怖いのは論理エラーです。エラーは出ないのに結果が間違っている。今日の演習でこの論理エラーを体験してもらいます。」
+  </div>
+  <div class="alert alert-amber">
+    「経験ある方に聞いてみてください：『コードは動いたのに、出てきた数字がおかしかった経験はありますか？』と。論理エラーの経験談を引き出すと理解が深まります。
+  </div>
+
+  <h3><span class="slide-ref">S8</span> 【座学 2/2】デバッグの3武器 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「レシピ通りに料理したのになぜかまずい。このとき全部捨てて作り直しますか？しないですよね。どこが悪いか確認するはずです。デバッグも同じです。3つの武器を使って『どこがおかしいか』を確認します。Debug.Print が記録する武器、ブレークポイントが一時停止する武器、F8が1行ずつ実行する武器です。」
+  </div>
+
+  <!-- ケース -->
+  <h3><span class="slide-ref">S9</span> 【ケース 1/2】Debug.Print の使い方 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「Debug.Print はコードの中に1行追加するだけです。Ctrl+G でイミディエイトウィンドウを開いて確認します。MsgBoxと違って処理が止まらないので、ループの中で変数の変化を追うのに最適です。確認が終わったらコメントアウトするだけで、削除しなくていいです。」
+  </div>
+
+  <h3><span class="slide-ref">S10</span> 【ケース 2/2】ブレークポイント・F8 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「ブレークポイントはコードを一時停止させる機能です。止まった状態で変数の値をマウスオーバーするだけで確認できます。そこからF8を押すと1行ずつ進められます。この『止めてから1行ずつ』が基本のデバッグパターンです。では演習に入りましょう。」
+  </div>
+
+  <div class="alert alert-red">
+    <strong>演習1 前の確認事項：</strong><br>
+    ① 全員の `01_デバッグ演習/デバッグ演習.xlsx` が開けているか確認<br>
+    ② `VBAコード_バグあり.txt` の内容を VBE に貼り付けるよう指示<br>
+    ③ 「今から20分で2箇所のバグを見つけてください」と明確に伝える<br>
+    ④ 解答は15分後に全体でシェアする、と事前予告しておく
+  </div>
+
+  <h4>演習1 の答え（講師向け）</h4>
+  <table>
+    <tr><th>バグ番号</th><th>場所</th><th>間違い</th><th>正解</th></tr>
+    <tr>
+      <td>バグ1</td>
+      <td>For ループの開始値</td>
+      <td><code>For i = 2 To lastRow</code> → <code>i = 0</code> など開始が間違い</td>
+      <td><code>For i = 2 To lastRow</code>（2行目からデータ）</td>
+    </tr>
+    <tr>
+      <td>バグ2</td>
+      <td>売上金額の列参照</td>
+      <td><code>Cells(i, 3)</code>（C列を参照）</td>
+      <td><code>Cells(i, 2)</code>（B列が正しい売上列）</td>
+    </tr>
+  </table>
+
+  <!-- 業務落とし込み -->
+  <h3><span class="slide-ref">S11</span> 【業務落とし込み】 <span class="timer y">10分</span></h3>
+  <div class="alert alert-purple">
+    <strong>この時間を必ず取ってください。</strong><br>
+    演習が終わったら「正解の確認」で終わらず、必ず「自分の業務に引き付けて考える時間」を設けます。
+  </div>
+  <div class="talk">
+    「正解を確認しましたね。では少し立ち止まってください。皆さんの業務の中で、マクロが動かなくて困った経験はありますか？ペアで30秒話してみてください。その経験、今日のデバッグの武器で解決できそうですか？」
+  </div>
+  <ul>
+    <li>ペアトーク → 1〜2名に発表してもらう（30秒程度）</li>
+    <li>「MsgBoxで確認していた人も多いと思いますが、Debug.Printの方がループ内では楽ですよ」と補足する</li>
+  </ul>
+</section>
+
+<!-- ══════════════════ BLOCK 2 ══════════════════ -->
+<section id="block2">
+  <div class="block-header" style="border-left:4px solid var(--accent2);">
+    <div class="block-num">02</div>
+    <div>
+      <div class="block-title">🔧 Block 2：Function（関数）</div>
+      <div class="block-sub">10:40 〜 12:00（80分）　スライド S12 〜 S18</div>
     </div>
+  </div>
 
-    <h3>本日のゴール（受講者に伝えること）</h3>
-    <div class="callout callout-blue">
-      <strong>「職場に持ち帰って実際に使える、壊れにくいツールを作る」</strong><br>
-      1日目は「動くものを作る」がゴールだった。今日はそれを「使えるもの」に昇華させる。
+  <div class="step-badges">
+    <span class="sb sb-1">① 座学　S13〜S14　20分</span>
+    <span class="sb sb-2">② ケース演習　S15〜S17　45分</span>
+    <span class="sb sb-3">③ 業務落とし込み　S18　10分</span>
+  </div>
+
+  <h3><span class="slide-ref">S12</span> セクションヘッダー</h3>
+  <div class="talk">
+    「Block 1 お疲れさまでした。次は Function です。同じ処理を何度も書かない仕組みを作ります。これを覚えると、マクロを修正するときに1か所直すだけで全部に反映されるようになります。」
+  </div>
+
+  <h3><span class="slide-ref">S13</span> 【座学 1/2】同じ処理を繰り返す問題 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「コンビニのレジマニュアルの話をします。新人が入るたびに口頭でゼロから説明するのと、マニュアルを作っておくのでは全然違います。マニュアルがあれば修正は1か所で済む。コードも同じで、同じ処理をFunction にまとめておけば、修正は1か所だけです。」
+  </div>
+
+  <h3><span class="slide-ref">S14</span> 【座学 2/2】Sub と Function の違い <span class="timer">10分</span></h3>
+  <div class="talk">
+    「Sub は『仕事をするだけ』、Function は『答えを返す』という違いです。判断基準は『答えを返す必要があるか？』です。例えば『この列の最終行は何行目？』という質問に答えてもらいたいときはFunction を使います。」
+  </div>
+  <div class="alert alert-amber">
+    よくある質問：「いつも Sub で書いてきたので Function が必要な場面がわかりません」<br>
+    → 「同じ処理を書いた瞬間にFunction候補」と伝える。コピペした瞬間に Function 化を検討するクセをつける。
+  </div>
+
+  <h3><span class="slide-ref">S15</span> 【ケース 1/3】Function の書き方 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「構文はシンプルです。一番のポイントは『関数名 = 戻り値』という書き方で答えを返すことです。Return文ではないので最初は違和感があるかもしれませんが、これがVBAの流儀です。End Function の前に必ず書いてください。」
+  </div>
+
+  <h3><span class="slide-ref">S16</span> 【ケース 2/3】Before / After <span class="timer">5分</span></h3>
+  <div class="talk">
+    「Before を見てください。同じコードが3回書かれています。もしこの処理に間違いがあったら3か所直す必要があります。After はFunction に切り出したので1か所だけです。コードの行数も短くなりますし、意図が読み取りやすくなります。」
+  </div>
+
+  <h3><span class="slide-ref">S17</span> 【ケース 3/3】演習2 <span class="timer">30分</span></h3>
+  <div class="alert alert-red">
+    <strong>演習2 前の確認事項：</strong><br>
+    ① `02_Function演習/売上評価データ.xlsx` が開けているか確認<br>
+    ② 「まず STEP 1 だけ作って Debug.Print でテストしてから STEP 2 に進む」と明確に伝える<br>
+    ③ 全員同時に STEP 3 まで終わらなくてOK。STEP 2 まで終われば合格
+  </div>
+
+  <h4>演習2 のサポートポイント</h4>
+  <ul>
+    <li><code>関数名 = 戻り値</code> を忘れる受講者が必ず出る → 「End Function の前にちゃんと書いてますか？」と声をかける</li>
+    <li>Function の As型の指定を忘れる → 「Function の後ろに As Long を書きましたか？」</li>
+    <li>STEP 3 で Function を呼び出す際に引数を間違える → 「<code>=売上評価(Cells(i,2).Value)</code> の形が正しい」と例示する</li>
+  </ul>
+
+  <h3><span class="slide-ref">S18</span> 【業務落とし込み】 <span class="timer y">10分</span></h3>
+  <div class="talk">
+    「演習で Function を体験してもらいました。では皆さん自身のマクロを思い浮かべてください。同じようなコードが複数箇所に書かれているものはありますか？もしあるとしたら、それをFunction にまとめると何という名前の関数になりそうですか？30秒考えて、近くの方と話してみてください。」
+  </div>
+  <ul>
+    <li>「最終行取得」「ファイル名から日付取得」「評価判定」などの名前が出てくれば成功</li>
+    <li>発表を1〜2名に促して、全体でアイデアをシェアする</li>
+  </ul>
+</section>
+
+<!-- ══════════════════ BLOCK 3 ══════════════════ -->
+<section id="block3">
+  <div class="block-header" style="border-left:4px solid var(--green);">
+    <div class="block-num">03</div>
+    <div>
+      <div class="block-title">📊 Block 3：シートの操作</div>
+      <div class="block-sub">13:00 〜 14:30（90分）　スライド S19 〜 S26</div>
     </div>
-
-    <h3>本日の設計方針</h3>
-    <ul>
-      <li>各ブロックは<strong>座学 → 演習</strong>のセットで構成</li>
-      <li>演習は<strong>穴埋め形式</strong>（骨格コードを配布・TODOを実装）</li>
-      <li>詰まった受講者には「どの行でエラーが出ているかF8で確認してください」と促す</li>
-      <li>発展課題を設けて、早い受講者を待たせない設計にしている</li>
-    </ul>
-  </section>
-
-  <!-- ══ SCHEDULE ══ -->
-  <section id="schedule">
-    <h2><span class="sec-icon">⏱</span>タイムスケジュール</h2>
-    <table class="tbl">
-      <tr><th>時間</th><th>内容</th><th>形式</th><th>スライド</th></tr>
-      <tr>
-        <td>09:00〜09:20 <span class="badge badge-time">20分</span></td>
-        <td>前日の復習・本日のゴール確認</td>
-        <td>座学</td>
-        <td>スライド 1〜5</td>
-      </tr>
-      <tr>
-        <td>09:20〜10:30 <span class="badge badge-time">70分</span></td>
-        <td>【1】デバッグ入門</td>
-        <td>座学30分 + 演習40分</td>
-        <td>スライド 6〜10</td>
-      </tr>
-      <tr>
-        <td>10:30〜10:40</td>
-        <td colspan="3" style="color:#94a3b8;">— 休憩 —</td>
-      </tr>
-      <tr>
-        <td>10:40〜12:00 <span class="badge badge-time">80分</span></td>
-        <td>【2】エラーハンドリング</td>
-        <td>座学35分 + 演習45分</td>
-        <td>スライド 11〜15</td>
-      </tr>
-      <tr>
-        <td>12:00〜13:00</td>
-        <td colspan="3" style="color:#94a3b8;">— 昼食 —</td>
-      </tr>
-      <tr>
-        <td>13:00〜14:10 <span class="badge badge-time">70分</span></td>
-        <td>【3】Function とコードの再利用</td>
-        <td>座学30分 + 演習40分</td>
-        <td>スライド 16〜21</td>
-      </tr>
-      <tr>
-        <td>14:10〜14:20</td>
-        <td colspan="3" style="color:#94a3b8;">— 休憩 —</td>
-      </tr>
-      <tr>
-        <td>14:20〜15:20 <span class="badge badge-time">60分</span></td>
-        <td>【4】シートの高度な操作</td>
-        <td>座学25分 + 演習35分</td>
-        <td>スライド 22〜26</td>
-      </tr>
-      <tr>
-        <td>15:20〜15:30</td>
-        <td colspan="3" style="color:#94a3b8;">— 休憩 —</td>
-      </tr>
-      <tr>
-        <td>15:30〜17:10 <span class="badge badge-time">100分</span></td>
-        <td>【5】総合演習</td>
-        <td>演習（巡回）</td>
-        <td>スライド 27〜29</td>
-      </tr>
-      <tr>
-        <td>17:10〜17:30 <span class="badge badge-time">20分</span></td>
-        <td>振り返り・質疑応答</td>
-        <td>座学</td>
-        <td>スライド 30〜33</td>
-      </tr>
-    </table>
-  </section>
-
-  <!-- ══ PREP ══ -->
-  <section id="prep">
-    <h2><span class="sec-icon">🗂</span>事前準備チェックリスト</h2>
-    <div class="card-grid">
-      <div class="card">
-        <h4>📁 配布ファイル</h4>
-        <ul>
-          <li>☐ <code>演習用ファイル/</code> フォルダを受講者の PC にコピー</li>
-          <li>☐ <code>受講生_ハンドアウト.md</code> を印刷または配布</li>
-          <li>☐ <code>VBAチートシート.md</code> を印刷または配布</li>
-          <li>☐ 1日目の総合演習コード（参考用）を手元に用意</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h4>🖥 PC・プロジェクター</h4>
-        <ul>
-          <li>☐ <code>スライド_2日目.html</code> をブラウザで開く</li>
-          <li>☐ プロジェクターへの接続確認（解像度 1920×1080 推奨）</li>
-          <li>☐ フォントの確認（Yu Gothic UI が表示されているか）</li>
-          <li>☐ スライドを全画面表示 <kbd>F</kbd> キー</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h4>🔧 受講者の Excel 設定</h4>
-        <ul>
-          <li>☐ 開発タブが表示されているか</li>
-          <li>☐ VBE で「変数の宣言を強制する」が ON か</li>
-          <li>☐ VBE で「自動構文チェック」が OFF か</li>
-          <li>☐ Excel のマクロ設定が「警告して有効にする」か</li>
-        </ul>
-      </div>
-      <div class="card">
-        <h4>📋 演習の動作確認</h4>
-        <ul>
-          <li>☐ 演習1〜5 が正常に動作することを確認</li>
-          <li>☐ 演習2 の支店データファイルのパスが正しいか確認</li>
-          <li>☐ 演習5 の支店データフォルダが正しく配置されているか</li>
-        </ul>
-      </div>
-    </div>
-
-    <div class="callout callout-yellow">
-      <strong>⚠ パスについての注意：</strong> 演習2・5 では <code>ThisWorkbook.Path</code> でパスを取得しています。
-      演習用ファイルを <code>デスクトップ</code> など日本語を含まないパスに配置するよう受講者に案内してください。
-    </div>
-  </section>
-
-  <!-- ══ BLOCK 1 ══ -->
-  <section id="block1">
-    <h2><span class="sec-icon">🔍</span>【1】デバッグ入門</h2>
-    <div class="timing"><span class="time">09:20〜10:30</span><span class="label">座学30分 ＋ 演習40分</span><span class="dur">計70分</span></div>
-    <span class="slide-ref">📊 スライド 6〜10</span>
-
-    <h3>座学のポイント（30分）</h3>
-
-    <h3 style="margin-top:18px;">スライド6：エラーの3種類</h3>
-    <p>🎤 <strong>トーク：</strong>「エラーが出たとき、みなさんはどう感じますか？パニックになる方も多いと思いますが、エラーメッセージは『ヒント』です。特に<strong>エラー番号</strong>はそのままGoogleで検索できます」</p>
-    <div class="callout callout-blue">
-      論理エラーを特に強調する。「エラーが出ないのに結果が間違い」は一番厄介で、今日の演習1がまさにこれ。
-    </div>
-
-    <h3>スライド7：<code>Debug.Print</code></h3>
-    <p>🎤 <strong>実演：</strong> VBE を開き、イミディエイトウィンドウを実際に見せながら <code>Debug.Print</code> を使う。<code>MsgBox</code> との違い（処理が止まらない）を強調する。</p>
-    <pre>Debug.Print "行:" & i & "  値:" & Cells(i, 1).Value</pre>
-
-    <h3>スライド8・9：ブレークポイント・ステップ実行</h3>
-    <p>🎤 <strong>実演：</strong> 実際に短いループコードを書いてブレークポイントを設定し、<kbd>F8</kbd> で1行ずつ動かして見せる。</p>
-    <div class="callout callout-yellow">
-      「コードを書いたらまず <kbd>F8</kbd> で動かす習慣をつけてほしい」と繰り返し伝える。
-    </div>
-
-    <h3>演習1の進め方（40分）</h3>
-    <div class="timing"><span class="time">0〜5分</span><span class="label">ファイルを開き、コードを VBE に貼り付ける手順を実演する</span></div>
-    <div class="timing"><span class="time">5〜20分</span><span class="label">STEP 1：<code>Debug.Print</code> を使って変数の値を確認させる</span></div>
-    <div class="timing"><span class="time">20〜35分</span><span class="label">STEP 2：ブレークポイントと <kbd>F8</kbd> で動きを追わせる</span></div>
-    <div class="timing"><span class="time">35〜40分</span><span class="label">STEP 3：バグを修正し、合計 ¥2,670,000 を確認させる</span></div>
-
-    <h3>巡回時の声掛け</h3>
-    <ul>
-      <li>「<code>Debug.Print i, Cells(i, 1).Value</code> をループの中に追加してみてください」</li>
-      <li>「1行目のデータは何ですか？ヘッダー行を処理してしまっていませんか？」</li>
-    </ul>
-
-    <details>
-      <summary>演習1 答え（クリックで展開）</summary>
-      <div class="answer">
-        <p><strong>バグ1：</strong> <code>For i = 1 To lastRow</code> → <code>For i = 2 To lastRow</code><br>
-        ループが1行目（ヘッダー行）から始まっているため、ヘッダーを数値として処理しようとしてしまう。</p>
-        <p><strong>バグ2：</strong> <code>Cells(i, 5).Value = 売上</code> → <code>Cells(i, 4).Value = 売上</code><br>
-        書き込み先の列番号が E列（5）になっているが、正しくは D列（4）。</p>
-        <pre>For i = 2 To lastRow     ' ← 2から始める
-    数量 = Cells(i, 2).Value
-    単価 = Cells(i, 3).Value
-    売上 = 数量 * 単価
-    Cells(i, 4).Value = 売上  ' ← 列4（D列）に書き込む
-Next i</pre>
-      </div>
-    </details>
-  </section>
-
-  <!-- ══ BLOCK 2 ══ -->
-  <section id="block2">
-    <h2><span class="sec-icon">🛡</span>【2】エラーハンドリング</h2>
-    <div class="timing"><span class="time">10:40〜12:00</span><span class="label">座学35分 ＋ 演習45分</span><span class="dur">計80分</span></div>
-    <span class="slide-ref">📊 スライド 11〜15</span>
-
-    <h3>座学のポイント（35分）</h3>
-
-    <h3 style="margin-top:18px;">スライド11：エラー処理なしの問題</h3>
-    <p>🎤 <strong>シナリオで語る：</strong>「ファイルが見つからない」「シートが削除されていた」など、実務でよくあるケースを具体的に話す。<code>ScreenUpdating = False</code> のまま終了すると何が起きるか実演すると効果的。</p>
-
-    <h3>スライド12：<code>On Error GoTo</code> の構造</h3>
-    <p>🎤 <strong>図で説明：</strong> スライドのフロー図を指差しながら「通常の流れ」と「エラーが起きたときの流れ」を説明する。</p>
-    <div class="callout callout-red">
-      <strong>必ず強調：</strong> <code>Exit Sub</code> がないと正常終了時も <code>ErrorHandler</code> が実行されてしまいます。
-      コードを書いて実際にデモで見せると効果的です。
-    </div>
-
-    <h3>スライド14：<code>On Error Resume Next</code></h3>
-    <p>🎤 「これは『エラーを無視する』コマンドではなく、『エラーを自分でチェックする』ための道具です。使い終わったら必ず <code>On Error GoTo 0</code> でリセットしてください」</p>
-
-    <h3>演習2の進め方（45分）</h3>
-    <div class="timing"><span class="time">0〜15分</span><span class="label">STEP 1：エラーハンドリングなしで実行 → エラーを体験させる</span></div>
-    <div class="timing"><span class="time">15〜30分</span><span class="label">STEP 2：<code>On Error GoTo ErrorHandler</code> を追加する</span></div>
-    <div class="timing"><span class="time">30〜45分</span><span class="label">STEP 3：後片付け処理（<code>ScreenUpdating</code> 等）を追加する</span></div>
-
-    <h3>巡回時の声掛け</h3>
-    <ul>
-      <li>「<code>Exit Sub</code> は入れましたか？」（最も多い忘れ）</li>
-      <li>「<code>ErrorHandler</code> の中にも <code>Application.ScreenUpdating = True</code> は入れましたか？」</li>
-      <li>「東京支店.xlsx を一時的に別の名前にリネームしてテストしてみてください」</li>
-    </ul>
-
-    <details>
-      <summary>演習2 答え（クリックで展開）</summary>
-      <div class="answer">
-        <pre>Sub 支店データ集計()
-    On Error GoTo ErrorHandler     ' TODO-1
-
-    Application.ScreenUpdating = False
-
-    ' ... 通常の処理 ...
-
-    Application.ScreenUpdating = True
-    MsgBox "完了しました！"
-    Exit Sub                       ' ← これを忘れないこと！
-
-ErrorHandler:
-    MsgBox "エラーが発生しました" & vbCrLf & _
-           "番号：" & Err.Number & vbCrLf & _
-           "内容：" & Err.Description
-    Application.ScreenUpdating = True   ' 後片付け
-End Sub</pre>
-      </div>
-    </details>
-  </section>
-
-  <!-- ══ BLOCK 3 ══ -->
-  <section id="block3">
-    <h2><span class="sec-icon">🔧</span>【3】Function とコードの再利用</h2>
-    <div class="timing"><span class="time">13:00〜14:10</span><span class="label">座学30分 ＋ 演習40分</span><span class="dur">計70分</span></div>
-    <span class="slide-ref">📊 スライド 16〜21</span>
-
-    <h3>座学のポイント（30分）</h3>
-
-    <h3 style="margin-top:18px;">スライド16：「同じ処理が3回ある」問題</h3>
-    <p>🎤 「同じコードが複数箇所にあると、修正のときに全部変えないといけない。バグを直したつもりが、直していない箇所が残る。それを防ぐのが Function です」</p>
-
-    <h3>スライド17：Sub と Function の違い</h3>
-    <div class="callout callout-yellow">
-      <strong>注意ポイント：</strong> <code>Function 名前 = 値</code> という戻り値の書き方が最初は違和感がある。
-      「関数名という<strong>変数</strong>に代入するイメージ」と説明すると理解しやすい。
-    </div>
-
-    <h3>スライド19：Before / After</h3>
-    <p>🎤 「Function を使う前と使った後で、コードの読みやすさがどう変わるか見てください。<code>最終行取得(ws, 1)</code> と書くだけで意図が伝わります」</p>
-
-    <h3>演習3の進め方（40分）</h3>
-    <div class="timing"><span class="time">0〜15分</span><span class="label">STEP 1：<code>Function 売上評価</code> を実装させる</span></div>
-    <div class="timing"><span class="time">15〜30分</span><span class="label">STEP 2：<code>Function 最終行取得</code> を実装させる</span></div>
-    <div class="timing"><span class="time">30〜40分</span><span class="label">STEP 3：2つの Function を使う <code>Sub</code> を完成させる</span></div>
-
-    <h3>巡回時の声掛け</h3>
-    <ul>
-      <li>「<code>売上評価 = "A"</code> のように、関数名に代入する形で戻り値を返してください」</li>
-      <li>「<code>lastRow = 最終行取得(ws, 4)</code> のように呼び出し、戻り値を変数に受け取ってください」</li>
-    </ul>
-
-    <details>
-      <summary>演習3 答え（クリックで展開）</summary>
-      <div class="answer">
-        <pre>Function 売上評価(売上金額 As Long) As String
-    If     売上金額 >= 1000000 Then
-        売上評価 = "A"
-    ElseIf 売上金額 >= 500000 Then
-        売上評価 = "B"
-    Else
-        売上評価 = "C"
-    End If
-End Function
-
-Function 最終行取得(ws As Worksheet, col As Long) As Long
-    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
-End Function
-
-Sub 評価を入力する()
-    Dim ws      As Worksheet
-    Dim i       As Long
-    Dim lastRow As Long
-
-    Set ws = ThisWorkbook.Worksheets("売上データ")
-    lastRow = 最終行取得(ws, 4)   ' D列（売上金額）を基準
-
-    For i = 2 To lastRow
-        ws.Cells(i, 5).Value = 売上評価(ws.Cells(i, 4).Value)
-    Next i
-
-    MsgBox "評価の入力が完了しました！"
-End Sub</pre>
-      </div>
-    </details>
-  </section>
-
-  <!-- ══ BLOCK 4 ══ -->
-  <section id="block4">
-    <h2><span class="sec-icon">📊</span>【4】シートの高度な操作</h2>
-    <div class="timing"><span class="time">14:20〜15:20</span><span class="label">座学25分 ＋ 演習35分</span><span class="dur">計60分</span></div>
-    <span class="slide-ref">📊 スライド 22〜26</span>
-
-    <h3>座学のポイント（25分）</h3>
-
-    <h3 style="margin-top:18px;">スライド22：シートの参照方法</h3>
-    <div class="callout callout-red">
-      <strong>最重要：</strong> <code>Set</code> を忘れると「オブジェクト変数または With ブロック変数が設定されていません」エラーが出る。
-      「オブジェクトの代入には <code>Set</code> が必要」はルールとして繰り返し伝える。
-    </div>
-
-    <h3>スライド23：シートの作成・削除</h3>
-    <p>🎤 「<code>Application.DisplayAlerts = False</code> を忘れると削除時に確認ダイアログが毎回出てしまいます。処理が終わったら <code>True</code> に戻すことを忘れずに」</p>
-
-    <h3>スライド24：<code>For Each</code></h3>
-    <p>🎤 「<code>For i = 1 To 12</code> のように件数がわかっているときは <code>For</code>、シートのように『いくつあるかわからない』コレクションをループするときは <code>For Each</code> を使います」</p>
-
-    <h3>演習4の進め方（35分）</h3>
-    <div class="timing"><span class="time">0〜20分</span><span class="label">STEP 1：月別シートを自動生成する Sub を実装させる</span></div>
-    <div class="timing"><span class="time">20〜35分</span><span class="label">STEP 2：データを月ごとに振り分ける Sub を実装させる</span></div>
-
-    <h3>巡回時の声掛け</h3>
-    <ul>
-      <li>「<code>On Error Resume Next</code> の後に <code>On Error GoTo 0</code> は入れましたか？」</li>
-      <li>「<code>Month(dateVal)</code> で月番号が取れます。<code>Debug.Print Month(dateVal)</code> で確認してみてください」</li>
-      <li>「転記先の次の空行は <code>dstWs.Cells(dstWs.Rows.Count, 1).End(xlUp).Row + 1</code> で取れます」</li>
-    </ul>
-
-    <details>
-      <summary>演習4 STEP1 答え（クリックで展開）</summary>
-      <div class="answer">
-        <pre>For i = 1 To 12
-    sheetName = i & "月"
-
-    ' 存在確認と削除
-    On Error Resume Next
-    Set ws = Worksheets(sheetName)
-    On Error GoTo 0
-    If Not ws Is Nothing Then
-        ws.Delete
-        Set ws = Nothing
-    End If
-
-    ' 追加
-    Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = sheetName
-
-    ' ヘッダー設定（テンプレートに記載）
-Next i</pre>
-      </div>
-    </details>
-
-    <details>
-      <summary>演習4 STEP2 答え（クリックで展開）</summary>
-      <div class="answer">
-        <pre>For i = 2 To lastRow
-    dateVal   = srcWs.Cells(i, 1).Value
-    monthNum  = Month(dateVal)
-    sheetName = monthNum & "月"
-
-    Set dstWs = Worksheets(sheetName)
-    dstLastRow = dstWs.Cells(dstWs.Rows.Count, 1).End(xlUp).Row + 1
-
-    dstWs.Cells(dstLastRow, 1).Value = srcWs.Cells(i, 1).Value
-    dstWs.Cells(dstLastRow, 2).Value = srcWs.Cells(i, 2).Value
-    dstWs.Cells(dstLastRow, 3).Value = srcWs.Cells(i, 3).Value
-    dstWs.Cells(dstLastRow, 4).Value = srcWs.Cells(i, 4).Value
-    dstWs.Cells(dstLastRow, 5).Value = srcWs.Cells(i, 5).Value
-Next i</pre>
-      </div>
-    </details>
-  </section>
-
-  <!-- ══ BLOCK 5 ══ -->
-  <section id="block5">
-    <h2><span class="sec-icon">🏆</span>【5】総合演習</h2>
-    <div class="timing"><span class="time">15:30〜17:10</span><span class="label">演習（ファシリテーター巡回）</span><span class="dur">計100分</span></div>
-    <span class="slide-ref">📊 スライド 27〜29</span>
-
-    <h3>演習の進め方</h3>
-    <div class="callout callout-blue">
-      <strong>Step 1・2 が全員必須、Step 3〜5 は余裕がある方向けの発展課題です。</strong><br>
-      Step 1〜2 が完了した時点で、全体に「ここまでは全員確認してください」とアナウンスする。
-    </div>
-
-    <table class="tbl">
-      <tr><th>Step</th><th>作業内容</th><th>今日の学び</th><th>目安時間</th></tr>
-      <tr>
-        <td><strong>Step 1</strong> <span class="badge badge-req">必須</span></td>
-        <td>エラーハンドリングを追加する</td>
-        <td>On Error GoTo</td>
-        <td>20分</td>
-      </tr>
-      <tr>
-        <td><strong>Step 2</strong> <span class="badge badge-req">必須</span></td>
-        <td>最終行取得を Function に切り出す</td>
-        <td>Function の活用</td>
-        <td>20分</td>
-      </tr>
-      <tr>
-        <td><strong>Step 3</strong> <span class="badge badge-warn">推奨</span></td>
-        <td>ScreenUpdating 等をコメントアウトから外す</td>
-        <td>パフォーマンス設定</td>
-        <td>20分</td>
-      </tr>
-      <tr>
-        <td><strong>Step 4</strong> <span class="badge badge-tip">発展</span></td>
-        <td>集計結果シートに書式を設定する</td>
-        <td>シート操作・書式設定</td>
-        <td>20分</td>
-      </tr>
-      <tr>
-        <td><strong>Step 5</strong> <span class="badge badge-tip">発展</span></td>
-        <td>デバッグして動作確認・仕上げ</td>
-        <td>デバッグ総合</td>
-        <td>20分</td>
-      </tr>
-    </table>
-
-    <h3>巡回時のよくある詰まりと声掛け</h3>
-    <table class="tbl">
-      <tr><th>症状</th><th>声掛け</th></tr>
-      <tr>
-        <td>On Error GoTo を追加したのに止まる</td>
-        <td>「<code>Exit Sub</code> は入れましたか？」</td>
-      </tr>
-      <tr>
-        <td>Function の呼び出しでエラーが出る</td>
-        <td>「<code>lastRow = 最終行取得(srcWs, 1)</code> のように変数に受け取っていますか？」</td>
-      </tr>
-      <tr>
-        <td>ファイルが開けない（パスエラー）</td>
-        <td>「<code>Debug.Print folderPath</code> でパスを確認してください。末尾に <code>\\</code> はありますか？」</td>
-      </tr>
-      <tr>
-        <td>ScreenUpdating が戻っていない</td>
-        <td>「エラーが起きたときの処理にも <code>Call 後片付け</code> は入れましたか？」</td>
-      </tr>
-      <tr>
-        <td>ループが終わらない</td>
-        <td>「<code>fileName = Dir()</code> はループの最後に書きましたか？」</td>
-      </tr>
-    </table>
-  </section>
-
-  <!-- ══ CLOSING ══ -->
-  <section id="closing">
-    <h2><span class="sec-icon">🏁</span>クロージング</h2>
-    <div class="timing"><span class="time">17:10〜17:30</span><span class="label">振り返り・質疑応答</span><span class="dur">計20分</span></div>
-    <span class="slide-ref">📊 スライド 30〜33</span>
-
-    <h3>2日間の全体マップの提示（5分）</h3>
-    <p>スライドで2日間の学習マップを振り返る。「どこで使えそうか」を受講者自身が言葉にする時間を設ける。</p>
-
-    <h3>今後の学習ロードマップ（5分）</h3>
-    <div class="callout callout-green">
-      <strong>締めのメッセージ：</strong>「VBAで全部やろうとしないことも大事です。Power Query や Python の方が向いているケースもあります。まず今回学んだ内容を職場の1つの作業に適用してみることが最短の成長です」
-    </div>
-
-    <h3>振り返りワーク（10分）</h3>
-    <ol>
-      <li>今日学んだことで職場のどの作業に使えそうか（具体的な作業名を1つ以上）</li>
-      <li>実装するとしたら、まず何から始めるか</li>
-      <li>今日の研修で一番「なるほど！」と思ったことは何か</li>
-    </ol>
-    <p>2〜3分ペアで話し合ってもらい、1〜2組に発表してもらう。</p>
-  </section>
-
-  <!-- ══ ANSWERS ══ -->
-  <section id="answers">
-    <h2><span class="sec-icon">✅</span>演習の解答まとめ</h2>
-    <p>各演習の詳細な解答は各ブロックの「答え（クリックで展開）」を参照してください。</p>
-
-    <h3>演習1 ─ デバッグ</h3>
-    <p>バグ1：<code>For i = 1 →</code> <code>For i = 2</code>（ヘッダー行をスキップ）<br>
-    バグ2：<code>Cells(i, 5) →</code> <code>Cells(i, 4)</code>（D列に書き込む）</p>
-
-    <h3>演習2 ─ エラーハンドリング</h3>
-    <p><code>On Error GoTo ErrorHandler</code> をSubの先頭に追加。<code>Exit Sub</code> を忘れずに。ErrorHandler の最後に <code>Application.ScreenUpdating = True</code>。</p>
-
-    <h3>演習3 ─ Function</h3>
-    <p>3つのSTEPは独立しているので、STEP 1 と 2 を単体でテストしてから STEP 3 に進むよう案内すると良い。</p>
-
-    <h3>演習4 ─ シート操作</h3>
-    <p>STEP 1 完了後に「全月シートが作成されたか」を確認してから STEP 2 に進むよう案内する。</p>
-
-    <h3>演習5 ─ 総合演習</h3>
-    <p>VBAコード_テンプレート.txt の TODO コメントを上から順に実装していく。パスの問題が発生しやすいので巡回時に確認する。</p>
-  </section>
-
-  <!-- ══ Q&A ══ -->
-  <section id="qa">
-    <h2><span class="sec-icon">❓</span>よくある質問と回答</h2>
-
-    <div class="qa-item">
-      <div class="qa-q"><code>Call</code> は省略できますか？</div>
-      <div class="qa-a"><code>Call プロシージャ名</code> は <code>プロシージャ名</code> だけでも動きます。ただし <code>Call</code> をつけると「Sub の呼び出し」だと明示できるので読みやすくなります。</div>
-    </div>
-
-    <div class="qa-item">
-      <div class="qa-q">Function と Sub はどちらを使えばよいですか？</div>
-      <div class="qa-a">「結果を返す必要があるか」で判断します。計算・判定など「何かを返す処理」は <code>Function</code>、実行するだけの処理は <code>Sub</code> を使います。</div>
-    </div>
-
-    <div class="qa-item">
-      <div class="qa-q"><code>ThisWorkbook</code> と <code>ActiveWorkbook</code> の違いは？</div>
-      <div class="qa-a"><code>ThisWorkbook</code> はそのマクロが書かれているブック（固定）。<code>ActiveWorkbook</code> は現在アクティブなブック（変動する）。外部ファイルを開く処理では <code>ThisWorkbook</code> を使わないと意図しないブックを操作してしまうことがある。</div>
-    </div>
-
-    <div class="qa-item">
-      <div class="qa-q"><code>On Error GoTo 0</code> と <code>On Error GoTo ErrorHandler</code> の違いは？</div>
-      <div class="qa-a"><code>On Error GoTo 0</code> は「エラーハンドリングを解除してデフォルト状態に戻す」コードです。<code>On Error Resume Next</code> や個別 <code>On Error GoTo</code> を使った後の範囲を限定するために使います。</div>
-    </div>
-
-    <div class="qa-item">
-      <div class="qa-q"><code>ByVal</code> と <code>ByRef</code> はどちらを使えばよいですか？</div>
-      <div class="qa-a">迷ったら <code>ByVal</code> を使います。<code>ByRef</code> は「意図して元の変数を変えたいとき」だけ使います。VBA のデフォルトは <code>ByRef</code> なので、明示的に書く習慣が大切です。</div>
-    </div>
-
-    <div class="qa-item">
-      <div class="qa-q">マクロが非常に遅いのですが、なぜですか？</div>
-      <div class="qa-a">主な原因は「セルへのアクセス回数が多い」こと。<code>Application.ScreenUpdating = False</code> で改善することも多いですが、根本的な解決は「配列にデータを一括格納してから処理する」方法です（配列は中級以降で学ぶテーマです）。</div>
-    </div>
-  </section>
-
-  <!-- ══ ERRORS ══ -->
-  <section id="errors">
-    <h2><span class="sec-icon">⚠</span>エラー対応表</h2>
-    <p>演習中に頻出するエラーと対応方法です。</p>
-    <table class="tbl">
-      <tr><th>エラーメッセージ</th><th>主な原因</th><th>対応</th></tr>
-      <tr>
-        <td>オブジェクト変数または With ブロック変数が設定されていません</td>
-        <td><code>Set</code> を忘れてオブジェクト変数に代入している</td>
-        <td><code>Set ws = Worksheets(...)</code> と書くよう促す</td>
-      </tr>
-      <tr>
-        <td>インデックスが有効範囲にありません <span class="err-code">9</span></td>
-        <td>存在しないシート名やインデックスを指定している</td>
-        <td>シート名のタイポを確認させる。<code>Debug.Print Worksheets.Count</code> でシート数を確認させる</td>
-      </tr>
-      <tr>
-        <td>実行時エラー '1004'</td>
-        <td>セルへのアクセスや操作が無効（シートが保護されている等）</td>
-        <td>エラーが出た行を <kbd>F8</kbd> で特定させる</td>
-      </tr>
-      <tr>
-        <td>ファイルが見つかりません <span class="err-code">53</span></td>
-        <td>パスの区切り文字（<code>\\</code> vs <code>/</code>）の問題、またはファイルが存在しない</td>
-        <td><code>Debug.Print folderPath & fileName</code> でパスを確認させる</td>
-      </tr>
-      <tr>
-        <td>変数が定義されていません</td>
-        <td><code>Option Explicit</code> が有効なのに <code>Dim</code> を忘れた</td>
-        <td>変数宣言を追加させる</td>
-      </tr>
-      <tr>
-        <td>型が一致しません <span class="err-code">13</span></td>
-        <td>文字列を数値として計算しようとしている</td>
-        <td><code>Debug.Print TypeName(Cells(i, 3).Value)</code> で型を確認させる</td>
-      </tr>
-      <tr>
-        <td>プロシージャの呼び出し、または引数が不正です <span class="err-code">5</span></td>
-        <td>Function への引数の型や数が間違っている</td>
-        <td>Function の定義と呼び出し部分の引数を照合させる</td>
-      </tr>
-    </table>
-  </section>
-
-</main>
-
-<button class="print-btn" onclick="window.print()">🖨 印刷 / PDF保存</button>
+  </div>
+
+  <div class="step-badges">
+    <span class="sb sb-1">① 座学　S20〜S22　25分</span>
+    <span class="sb sb-2">② ケース演習　S23〜S25　50分</span>
+    <span class="sb sb-3">③ 業務落とし込み　S26　10分</span>
+  </div>
+
+  <h3><span class="slide-ref">S19</span> セクションヘッダー</h3>
+  <div class="talk">
+    「午後の最初はシート操作です。毎月手動でシートを作っている方、いませんか？今日その作業を自動化する方法を学びます。」
+  </div>
+
+  <h3><span class="slide-ref">S20</span> 【座学 1/3】手動作成の限界 <span class="timer">8分</span></h3>
+  <div class="talk">
+    「毎月1月から12月のフォルダ、あるいはシートを手動で作っている方がいると思います。名前のタイポ、作り忘れ、毎月の繰り返し作業。マクロが自動で作れば、何度でも正確に、ボタン1つで再実行できます。」
+  </div>
+
+  <h3><span class="slide-ref">S21</span> 【座学 2/3】変数でシートを管理 <span class="timer">8分</span></h3>
+  <div class="talk">
+    「『山田さんにお願い』と言うと、山田さんが変わったら全員に周知が必要です。でも『集計担当にお願い』と言えば誰が担当になっても指示は変わりません。シートも同じで、変数に入れて使うとシート名が変わっても1か所直すだけです。Setが必要なことだけ覚えてください。」
+  </div>
+
+  <h3><span class="slide-ref">S22</span> 【座学 3/3】ファイルを開く前に確認 <span class="timer">8分</span></h3>
+  <div class="talk">
+    「ドアを開ける前にノックするという話です。ファイルを開く前に存在確認をする。昨日学んだ If と Dir の組み合わせで書けます。新しい文法は一切不要です。」
+  </div>
+  <div class="alert alert-green">
+    <strong>受講者の安心感を作るポイント：</strong><br>
+    「これは1日目に学んだ知識だけで書けます」という言葉を必ず言ってください。「新しいことを覚えなくていい」という安心感が学習意欲を高めます。
+  </div>
+
+  <h3><span class="slide-ref">S23</span> 【ケース 1/3】シート操作コード <span class="timer">10分</span></h3>
+  <div class="talk">
+    「シートの参照・作成・削除のコードを見ていきましょう。一番のポイントは On Error Resume Next の直後に必ず On Error GoTo 0 でリセットすることです。この2行はセットで覚えてください。」
+  </div>
+  <div class="alert alert-red">
+    <strong>注意：</strong> <code>On Error GoTo 0</code> のリセット忘れは実務では頻発する重大ミスです。「ここだけは絶対に忘れないでください」と強調してください。
+  </div>
+
+  <h3><span class="slide-ref">S24</span> 【ケース 2/3】ファイル存在確認 <span class="timer">10分</span></h3>
+  <div class="talk">
+    「昨日の Do While と Dir の組み合わせパターンです。その中に If Dir() でファイルの存在確認を追加しました。これだけで安全なファイル処理ができます。新しいことは何もありません。」
+  </div>
+
+  <h3><span class="slide-ref">S25</span> 【ケース 3/3】演習3 <span class="timer">30分</span></h3>
+  <div class="alert alert-red">
+    <strong>演習3 前の確認事項：</strong><br>
+    ① `03_シート操作演習/月次売上データ.xlsx` が開けているか確認<br>
+    ② STEP 1（シート生成）が終わったら必ず確認してからSTEP 2 に進むよう伝える<br>
+    ③ `Month(Cells(i,1).Value)` で月番号が取れることをホワイトボードに書いておく
+  </div>
+
+  <h4>演習3 のサポートポイント</h4>
+  <ul>
+    <li>STEP 1 で12枚のシートが生成されることを確認 → 確認できたらSTEP 2 に進む合図を出す</li>
+    <li>STEP 2 で <code>Worksheets(Month(d) & "月")</code> のシート指定を間違える人が多い → 「月番号の後ろに『月』という文字列をつなげる」と説明</li>
+    <li>型エラーが出た場合 → 日付列が文字列として保存されている可能性。<code>CDate()</code> で変換する</li>
+  </ul>
+
+  <h3><span class="slide-ref">S26</span> 【業務落とし込み】 <span class="timer y">10分</span></h3>
+  <div class="talk">
+    「毎月、毎週、手動でシートを作ったりファイルをコピーしている作業はありますか？今日学んだ知識でどこまで自動化できそうか考えてみてください。具体的なイメージが浮かんだ方は、ぜひシェアしてください。」
+  </div>
+</section>
+
+<!-- ══════════════════ COMPREHENSIVE ══════════════════ -->
+<section id="comprehensive">
+  <h2><span class="sec-icon">⚡</span>総合演習（14:40 〜 16:40）</h2>
+
+  <h3><span class="slide-ref">S27</span> セクションヘッダー</h3>
+  <div class="talk">
+    「いよいよ総合演習です。今日学んだデバッグ・Function・シート操作と、昨日学んだDir・Do While・ブック操作をすべて組み合わせて、支店別売上集計ツールを完成させます。2日間の集大成です。」
+  </div>
+
+  <h3><span class="slide-ref">S28</span> 総合演習の全体像 <span class="timer">5分</span></h3>
+  <div class="talk">
+    「処理の流れを確認しましょう。ボタンを押すと、フォルダからファイルを取得して、存在確認してから開いて、集計して、転記する。昨日の演習と似た構造ですが、今日学んだFunction とシート操作が加わっています。」
+  </div>
+
+  <h3><span class="slide-ref">S29</span> 最適化コード <span class="timer">10分</span></h3>
+  <div class="talk">
+    「実務で大量ファイルを処理するときは、ScreenUpdating を False にするだけで処理速度が劇的に変わります。ただし、必ず最後に True に戻すこと。これを忘れると Excelの画面が更新されなくなります。エラーが起きたときも True に戻す必要があるので注意してください。」
+  </div>
+
+  <h3><span class="slide-ref">S30</span> 演習5 指示 <span class="timer">90分</span></h3>
+  <div class="alert alert-red">
+    <strong>演習前の準備：</strong><br>
+    ① `04_総合演習/集計ツール_ベース.xlsx` を全員が開いていることを確認<br>
+    ② Step 1・2 が全員必須、Step 3〜5 は余裕がある方向けと明確に伝える<br>
+    ③ 詰まった人のために、ホワイトボードに以下のヒントを書いておく：<br>
+    　　・<code>If Dir(filePath) &lt;&gt; "" Then</code><br>
+    　　・<code>lastRow = 最終行取得(srcWs, 1)</code>
+  </div>
+
+  <h4>総合演習 巡回チェックポイント</h4>
+  <table>
+    <tr><th>Step</th><th>確認すること</th><th>詰まりやすいポイント</th></tr>
+    <tr>
+      <td>Step 1</td>
+      <td>ファイルが存在しないときスキップされるか</td>
+      <td><code>Dir()</code> の引数にフルパスを渡しているか</td>
+    </tr>
+    <tr>
+      <td>Step 2</td>
+      <td>Function が値を返しているか</td>
+      <td><code>関数名 = 値</code> の書き忘れ</td>
+    </tr>
+    <tr>
+      <td>Step 3</td>
+      <td>ScreenUpdating が True に戻っているか</td>
+      <td>エラー時に True に戻す処理の有無</td>
+    </tr>
+  </table>
+</section>
+
+<!-- ══════════════════ CLOSING ══════════════════ -->
+<section id="closing">
+  <h2><span class="sec-icon">🎯</span>クロージング（16:40 〜 17:00）</h2>
+
+  <h3><span class="slide-ref">S31</span> 業務アクションプランニング <span class="timer y">15分</span></h3>
+  <div class="alert alert-purple">
+    <strong>この時間が「自己効力感」を生む最重要パートです。</strong><br>
+    演習の正解共有よりも、この時間を大切にしてください。
+  </div>
+  <div class="talk">
+    「2日間本当にお疲れさまでした。最後に一番大事な時間を取ります。今日学んだことを使って、皆さん自身の業務の何を自動化したいか考えてください。3つだけ考えてほしいことがあります。自動化したい業務は何か、今日の知識でどこまでできそうか、明日できる最初の1ステップは何か。5分でペアと話して、1〜2組に発表してもらいます。」
+  </div>
+  <ul>
+    <li>具体的な業務名が出るよう「例えば月次の売上集計」「勤怠データの転記」と例示して誘導する</li>
+    <li>「完璧なマクロを作る必要はない。まず骨格を書いてみるだけでいい」と敷居を下げる</li>
+    <li>発表後は「それなら今日の〇〇のパターンがそのまま使えますね」と繋げてあげる</li>
+  </ul>
+
+  <h3><span class="slide-ref">S32</span> 2日間の学習マップ <span class="timer">3分</span></h3>
+  <div class="talk">
+    「2日間でここまで来ました。動くものを作って、使えるものに磨いた。あとはこの矢印の先、自分の業務に適用するだけです。最初の一歩は小さくていいです。まず一つの作業を自動化してみてください。」
+  </div>
+
+  <h3><span class="slide-ref">S33</span> 今後のロードマップ</h3>
+  <div class="talk">
+    「次に学べることをご紹介します。エラーハンドリングの On Error GoTo は今日の知識で応用できます。配列や Dictionary は大量データを高速処理する技術です。UserFormで入力フォームを作れば、誰でも使えるツールが作れます。ただし全部やろうとしなくていいです。まず今日のアクションプランを実行することが先決です。」
+  </div>
+
+  <h3><span class="slide-ref">S34</span> 終了</h3>
+  <div class="talk">
+    「2日間ありがとうございました。質問は随時受け付けています。ぜひ職場に帰ったら今日のアクションプランの最初の一歩を踏み出してみてください。応援しています。」
+  </div>
+</section>
+
+<!-- ══════════════════ Q&A ══════════════════ -->
+<section id="qa">
+  <h2><span class="sec-icon">❓</span>よくある質問 Q&A</h2>
+
+  <h3>デバッグ関連</h3>
+  <div class="qa">
+    <div class="qa-q">Debug.Print を書いたのに何も表示されません</div>
+    <div class="qa-a"><code>Ctrl + G</code> でイミディエイトウィンドウを開きましたか？VBE の表示メニューからでも開けます。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">ブレークポイントを設定したのに止まりません</div>
+    <div class="qa-a">実行は <code>F5</code> を使っていますか？ボタンから実行している場合はブレークポイントが機能します。VBE の「実行」メニューから実行してもOKです。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">F8 でステップ実行中に変数の値が表示されません</div>
+    <div class="qa-a">マウスを変数名の上にゆっくりホバーさせてみてください。ポップアップが出るまで1〜2秒かかることがあります。または「ローカルウィンドウ」（表示メニューから）で一覧確認できます。</div>
+  </div>
+
+  <h3>Function 関連</h3>
+  <div class="qa">
+    <div class="qa-q">Function が常に 0 を返します</div>
+    <div class="qa-a"><code>関数名 = 戻り値</code> の代入が書かれていますか？<code>Return</code> ではなく関数名に代入するのが VBA の流儀です。<code>End Function</code> の前に必ず書いてください。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">Function を呼び出すとき引数は省略できますか？</div>
+    <div class="qa-a">省略したい引数は定義時に <code>Optional 引数名 As 型 = デフォルト値</code> とします。全部の引数は省略できません。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">Sub と Function は同じファイルに書いていいですか？</div>
+    <div class="qa-a">はい、同じ標準モジュールに書いてOKです。ただし大きくなってきたら <code>modUtil</code> という共通モジュールに Function をまとめると管理しやすくなります。</div>
+  </div>
+
+  <h3>シート操作関連</h3>
+  <div class="qa">
+    <div class="qa-q">Set を忘れたらどうなりますか？</div>
+    <div class="qa-a">「オブジェクト変数または With ブロック変数が設定されていません」というエラー（エラー番号91）が出ます。<code>Dim ws As Worksheet</code> の後は必ず <code>Set ws = ...</code> と書きましょう。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">DisplayAlerts を False にしたまま処理が止まってしまいました</div>
+    <div class="qa-a">VBE のイミディエイトウィンドウで <code>Application.DisplayAlerts = True</code> と入力して Enter を押せば元に戻ります。</div>
+  </div>
+  <div class="qa">
+    <div class="qa-q">On Error Resume Next の後に On Error GoTo 0 を書く理由は？</div>
+    <div class="qa-a"><code>On Error Resume Next</code> はすべてのエラーを無視し続けます。リセットしないと、後続の処理で起きたエラーも全部無視されてしまいます。「1行だけ無視する」という使い方のために、直後に必ずリセットしてください。</div>
+  </div>
+</section>
+
+<!-- ══════════════════ TROUBLE ══════════════════ -->
+<section id="trouble">
+  <h2><span class="sec-icon">🚨</span>トラブル対応</h2>
+
+  <table>
+    <tr>
+      <th style="width:200px;">症状</th>
+      <th style="width:160px;">原因</th>
+      <th>対処法</th>
+    </tr>
+    <tr>
+      <td>Excel が画面更新されない（グレーのまま）</td>
+      <td>ScreenUpdating が False のまま</td>
+      <td>イミディエイトウィンドウで <code>Application.ScreenUpdating = True</code> を実行</td>
+    </tr>
+    <tr>
+      <td>確認ダイアログが出なくなった</td>
+      <td>DisplayAlerts が False のまま</td>
+      <td>イミディエイトウィンドウで <code>Application.DisplayAlerts = True</code> を実行</td>
+    </tr>
+    <tr>
+      <td>演習ファイルが見つからない</td>
+      <td>フォルダのパスが違う</td>
+      <td><code>ThisWorkbook.Path</code> で現在のパスを確認。演習ファイルと同じフォルダに集計ツールを置く</td>
+    </tr>
+    <tr>
+      <td>シートが生成されない（演習3）</td>
+      <td>Worksheets.Add の構文ミス</td>
+      <td><code>Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = 名前</code> の形を確認</td>
+    </tr>
+    <tr>
+      <td>Function が 0 を返す</td>
+      <td>関数名への代入が未記述</td>
+      <td><code>End Function</code> の前に <code>関数名 = 戻り値</code> が書かれているか確認</td>
+    </tr>
+    <tr>
+      <td>型の不一致エラー（エラー番号13）</td>
+      <td>日付が文字列で保存されている</td>
+      <td><code>CDate()</code> で変換。または <code>DateSerial()</code> を使う</td>
+    </tr>
+    <tr>
+      <td>ブレークポイントで止まらない</td>
+      <td>コンパイルエラーがある</td>
+      <td>まずデバッグ→コンパイルでエラー確認。文法エラーがある場合はブレークポイントが機能しない</td>
+    </tr>
+  </table>
+
+  <div class="alert alert-blue" style="margin-top:24px;">
+    <strong>講師向け緊急対応の基本：</strong><br>
+    ① イミディエイトウィンドウ（Ctrl+G）でその場でコードを実行して状態を確認する<br>
+    ② デバッグ → コンパイルで文法エラーを一括確認する<br>
+    ③ わからない場合は「少し調べます」と正直に言い、調べてから答えるのが信頼につながります
+  </div>
+</section>
+
+</main><!-- #main -->
 
 <script>
-  // Sidebar active link on scroll
-  const sections = document.querySelectorAll('section[id]');
+  // アクティブリンクのハイライト
   const links = document.querySelectorAll('#sidebar nav a');
   const observer = new IntersectionObserver(entries => {
     entries.forEach(e => {
       if (e.isIntersecting) {
-        links.forEach(a => a.classList.remove('active'));
-        const active = document.querySelector(`#sidebar nav a[href="#${e.target.id}"]`);
+        links.forEach(l => l.classList.remove('active'));
+        const id = e.target.id;
+        const active = document.querySelector(`#sidebar a[href="#${id}"]`);
         if (active) active.classList.add('active');
       }
     });
-  }, { rootMargin: '-20% 0px -70% 0px' });
-  sections.forEach(s => observer.observe(s));
+  }, { threshold: 0.3 });
+  document.querySelectorAll('section[id]').forEach(s => observer.observe(s));
 </script>
 </body>
 </html>

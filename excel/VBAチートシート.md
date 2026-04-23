@@ -175,32 +175,52 @@ Debug.Print "行:" & i & "  列:" & j
 
 ---
 
-## エラーハンドリング
+## エラーを「防ぐ」：Day 2 で学んだ方法
+
+> **Day 2 の研修では「防ぐ」アプローチを使います。**  
+> `On Error GoTo` は中級者向けの発展トピックとして、今後の学習ロードマップに位置づけています。
 
 ```vba
-' 基本パターン
+' ✅ ファイルを開く前に存在確認（If + Dir で防ぐ ← Day 2 で学んだ方法）
+If Dir(filePath) <> "" Then
+    Workbooks.Open filePath
+    ' 処理
+Else
+    MsgBox filePath & " が見つかりません。スキップします。"
+End If
+
+' ✅ シートの存在確認（On Error Resume Next を限定的に使う）
+Dim ws As Worksheet
+On Error Resume Next
+Set ws = Worksheets("シート名")
+On Error GoTo 0              ' ← 必ずここでリセット！セットで覚える
+If Not ws Is Nothing Then
+    ' シートが存在する場合の処理
+End If
+```
+
+---
+
+## エラーハンドリング（中級：発展トピック）
+
+> ⚠️ **注意：** 以下は Day 2 のカリキュラム範囲外です。  
+> 基礎固めが終わったら次のステップとして学んでください。
+
+```vba
+' 発展：On Error GoTo パターン（より堅牢なエラー対応）
 Sub サンプル()
-    On Error GoTo ErrorHandler
+    On Error GoTo ErrorHandler   ' ① エラー発生時にここへジャンプすると宣言
 
     ' 処理
     Workbooks.Open "C:\data.xlsx"
 
-    Exit Sub                     ' ← これがないと ErrorHandler も実行される！
-
+    Exit Sub                     ' ② 正常終了（ErrorHandler をスキップ）
+                                 '    ← これを忘れると正常時も ErrorHandler が実行される！
 ErrorHandler:
     MsgBox "エラー番号：" & Err.Number & vbCrLf _
          & "内容："       & Err.Description
-    Application.ScreenUpdating = True
+    Application.ScreenUpdating = True   ' ③ 後片付けを忘れずに
 End Sub
-
-' シートの存在確認（定番パターン）
-Dim ws As Worksheet
-On Error Resume Next
-Set ws = Worksheets("シート名")
-On Error GoTo 0
-If Not ws Is Nothing Then
-    ' シートが存在する場合の処理
-End If
 
 ' Err オブジェクト
 Err.Number       ' エラー番号
