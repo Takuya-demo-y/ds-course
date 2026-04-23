@@ -1,0 +1,1217 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Excel VBA 研修 2日目</title>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/theme/night.min.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/atom-one-dark.min.css">
+  <style>
+    :root {
+      --accent:  #38bdf8;
+      --green:   #4ade80;
+      --yellow:  #fbbf24;
+      --amber:   #f59e0b;
+      --red:     #f87171;
+      --purple:  #a78bfa;
+      --border:  rgba(255,255,255,0.12);
+      --card-bg: rgba(255,255,255,0.07);
+    }
+    .reveal { font-family:'Yu Gothic UI','Hiragino Sans','Meiryo',sans-serif !important; }
+    .reveal h1,.reveal h2,.reveal h3,.reveal h4 {
+      font-family:'Yu Gothic UI','Hiragino Sans','Meiryo',sans-serif !important;
+    }
+
+    /* ━━━ スライド種別バッジ ━━━ */
+    .badge-type {
+      display:inline-block; padding:3px 14px; border-radius:20px;
+      font-size:0.38em; font-weight:700; letter-spacing:0.08em; vertical-align:middle;
+      margin-right:8px;
+    }
+    .b-za  { background:rgba(56,189,248,0.2);  color:var(--accent);  border:1px solid var(--accent); }
+    .b-en  { background:rgba(74,222,128,0.2);  color:var(--green);   border:1px solid var(--green); }
+    .b-mu  { background:rgba(245,158,11,0.25); color:var(--amber);   border:1px solid var(--amber); }
+
+    /* ━━━ ジャーニーマップ ━━━ */
+    .journey {
+      display:flex; align-items:stretch; justify-content:center;
+      gap:0; margin:16px auto; width:94%;
+    }
+    .j-step {
+      flex:1; background:var(--card-bg); border:1px solid var(--border);
+      border-radius:0; padding:14px 10px; text-align:center; position:relative;
+      font-size:0.44em;
+    }
+    .j-step:first-child { border-radius:10px 0 0 10px; }
+    .j-step:last-child  { border-radius:0 10px 10px 0; }
+    .j-step .j-label { color:#94a3b8; font-size:0.85em; margin-bottom:4px; }
+    .j-step .j-title { color:#e2e8f0; font-weight:700; font-size:1.05em; }
+    .j-step .j-desc  { color:#64748b; font-size:0.8em; margin-top:4px; line-height:1.5; }
+    .j-step.active    { background:rgba(56,189,248,0.15); border-color:var(--accent); }
+    .j-step.done      { background:rgba(74,222,128,0.1);  border-color:rgba(74,222,128,0.4); }
+    .j-step.active .j-title { color:var(--accent); }
+    .j-step.done .j-title   { color:var(--green); }
+    .j-arrow {
+      display:flex; align-items:center; color:var(--accent);
+      font-size:1.2em; padding:0 2px; z-index:1;
+    }
+
+    /* ━━━ ホールパート構造図 ━━━ */
+    .whole-part {
+      display:grid; grid-template-columns:repeat(3,1fr);
+      gap:12px; margin:14px auto; width:92%;
+    }
+    .wp-block {
+      background:var(--card-bg); border:1px solid var(--border);
+      border-radius:10px; overflow:hidden;
+    }
+    .wp-block .wp-head {
+      padding:10px 14px; font-size:0.5em; font-weight:700; color:#fff;
+    }
+    .wp-block .wp-steps { padding:10px 14px; }
+    .wp-step {
+      display:flex; align-items:center; gap:8px;
+      font-size:0.42em; padding:5px 0; border-bottom:1px solid var(--border);
+      color:#e2e8f0;
+    }
+    .wp-step:last-child { border-bottom:none; }
+    .wp-icon { font-size:1.2em; }
+
+    /* ━━━ 進捗インジケーター ━━━ */
+    .progress-bar {
+      display:flex; gap:10px; justify-content:center;
+      margin-bottom:14px;
+    }
+    .pb-item {
+      font-size:0.42em; padding:4px 16px; border-radius:20px;
+      color:#64748b; border:1px solid rgba(255,255,255,0.1);
+    }
+    .pb-item.done    { background:rgba(74,222,128,0.1);  color:var(--green);  border-color:rgba(74,222,128,0.3); }
+    .pb-item.current { background:rgba(56,189,248,0.15); color:var(--accent); border-color:var(--accent); font-weight:700; }
+
+    /* ━━━ 座学カード ━━━ */
+    .concept-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-top:16px; }
+    .concept-card {
+      background:var(--card-bg); border:1px solid var(--border);
+      border-radius:10px; padding:18px 14px; text-align:center;
+    }
+    .concept-card .icon { font-size:1.8em; margin-bottom:8px; }
+    .concept-card h4 { font-size:0.55em; color:var(--accent); margin:0 0 6px; }
+    .concept-card p  { font-size:0.43em; color:#cbd5e1; line-height:1.7; margin:0; }
+
+    /* ━━━ 比較ボックス ━━━ */
+    .compare { display:flex; gap:14px; margin:14px auto; width:90%; }
+    .cmp {
+      flex:1; border-radius:10px; padding:14px 16px; text-align:left; font-size:0.46em;
+    }
+    .cmp h4 { margin:0 0 8px; font-size:1.05em; }
+    .cmp ul { padding-left:1.2em; line-height:2; margin:0; }
+    .cmp.bad  { background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.35); }
+    .cmp.good { background:rgba(74,222,128,0.1);  border:1px solid rgba(74,222,128,0.35); }
+    .cmp.a    { background:rgba(56,189,248,0.1);  border:1px solid rgba(56,189,248,0.35); }
+    .cmp.b    { background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35); }
+    .cmp.bad h4  { color:var(--red); }
+    .cmp.good h4 { color:var(--green); }
+    .cmp.a h4    { color:var(--accent); }
+    .cmp.b h4    { color:var(--purple); }
+
+    /* ━━━ アナロジー ━━━ */
+    .analogy {
+      background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.35);
+      border-radius:10px; padding:14px 20px; margin:12px auto; font-size:0.48em;
+      text-align:left; width:88%; color:#e2e8f0; line-height:1.85;
+    }
+    .analogy .label { color:var(--purple); font-weight:700; margin-bottom:5px; font-size:0.95em; }
+
+    /* ━━━ ビッグポイント ━━━ */
+    .big-pt {
+      background:var(--card-bg); border-left:4px solid var(--accent);
+      border-radius:0 8px 8px 0; padding:14px 20px; margin:12px auto;
+      font-size:0.5em; width:86%; color:#e2e8f0; line-height:1.8; text-align:left;
+    }
+    .big-pt strong { color:var(--accent); }
+
+    /* ━━━ 業務落とし込みカード ━━━ */
+    .mu-card {
+      background:rgba(245,158,11,0.08); border:1px solid rgba(245,158,11,0.35);
+      border-radius:12px; padding:18px 22px; margin:10px auto; width:88%;
+      text-align:left; font-size:0.5em; color:#e2e8f0; line-height:1.9;
+    }
+    .mu-card h4 { color:var(--amber); margin:0 0 10px; font-size:1.1em; }
+    .mu-card ul { padding-left:1.3em; margin:0; }
+    .mu-card li { margin:6px 0; }
+    .mu-write {
+      background:rgba(245,158,11,0.05); border:1px dashed rgba(245,158,11,0.4);
+      border-radius:8px; padding:12px 16px; margin-top:10px; font-size:0.9em;
+      color:#fde68a;
+    }
+    .mu-write::before { content:"✍️ "; }
+
+    /* ━━━ コードブロック ━━━ */
+    .reveal pre {
+      width:95%; margin:8px auto; border-radius:8px;
+      box-shadow:0 4px 20px rgba(0,0,0,0.5);
+      border-left:4px solid var(--accent);
+    }
+    .reveal pre code { font-size:0.6em; line-height:1.65; max-height:360px; }
+    .reveal pre.sm code { font-size:0.54em; }
+
+    /* ━━━ コード注釈 ━━━ */
+    .code-note {
+      background:rgba(251,191,36,0.12); border:1px solid rgba(251,191,36,0.35);
+      border-radius:6px; padding:7px 14px; font-size:0.43em;
+      color:#fde68a; margin:6px auto; width:92%; text-align:left;
+    }
+    .code-note::before { content:"💡 "; }
+    .warn-note {
+      background:rgba(248,113,113,0.1); border:1px solid rgba(248,113,113,0.35);
+      border-radius:6px; padding:7px 14px; font-size:0.43em;
+      color:#fca5a5; margin:6px auto; width:92%; text-align:left;
+    }
+    .warn-note::before { content:"⚠️ "; }
+
+    /* ━━━ ステップリスト ━━━ */
+    .steps { list-style:none; padding:0; margin:10px auto; width:90%; text-align:left; }
+    .steps li {
+      display:flex; align-items:flex-start; gap:12px;
+      font-size:0.48em; padding:9px 0; border-bottom:1px solid var(--border);
+    }
+    .steps li:last-child { border-bottom:none; }
+    .sn {
+      background:var(--accent); color:#0f172a; border-radius:50%;
+      width:24px; height:24px; min-width:24px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:0.95em; margin-top:2px;
+    }
+    .sn.g { background:var(--green); }
+    .sn.y { background:var(--yellow); }
+    .steps li .sub { color:#94a3b8; font-size:0.9em; margin-top:2px; }
+
+    /* ━━━ ゴールボックス ━━━ */
+    .goal-box {
+      background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.35);
+      border-radius:10px; padding:12px 18px; font-size:0.48em;
+      width:88%; margin:8px auto; color:#e2e8f0; line-height:1.8; text-align:left;
+    }
+    .goal-box ul { padding-left:1.2em; margin:6px 0 0; }
+
+    /* ━━━ テーブル ━━━ */
+    .reveal table { width:90%; margin:0 auto; border-collapse:collapse; font-size:0.46em; }
+    .reveal table th {
+      background:rgba(56,189,248,0.18); color:var(--accent);
+      border:1px solid var(--border); padding:9px 13px;
+    }
+    .reveal table td { border:1px solid var(--border); padding:8px 13px; background:var(--card-bg); }
+    .reveal table tr:nth-child(even) td { background:rgba(255,255,255,0.03); }
+
+    /* ━━━ キーボード ━━━ */
+    .key {
+      display:inline-block; background:#334155; color:#e2e8f0;
+      border:1px solid #475569; border-bottom:3px solid #1e293b;
+      border-radius:5px; padding:1px 8px; font-family:monospace; font-size:0.82em;
+    }
+
+    /* ━━━ セクションヘッダー ━━━ */
+    .sec-num { font-size:3.6em; font-weight:900; color:rgba(56,189,248,0.1); line-height:1; margin:0; }
+    .sec-sub  { font-size:0.55em; color:#64748b; }
+
+    /* ━━━ フロー図 ━━━ */
+    .flow-h { display:flex; align-items:center; justify-content:center; gap:6px; flex-wrap:wrap; }
+    .fb {
+      background:var(--card-bg); border:1px solid var(--border); border-radius:8px;
+      padding:10px 14px; font-size:0.45em; color:#e2e8f0; text-align:center;
+    }
+    .fb.ok  { border-color:var(--green); }
+    .fb.err { border-color:var(--red); background:rgba(248,113,113,0.08); }
+    .fa { color:var(--accent); font-size:1.3em; }
+
+    /* ━━━ misc ━━━ */
+    .reveal .progress { color:var(--accent); }
+    .reveal .slide-number { background:rgba(0,0,0,0.4); font-size:14px; }
+    .hl-b { color:var(--accent);  font-weight:700; }
+    .hl-g { color:var(--green);   font-weight:700; }
+    .hl-y { color:var(--yellow);  font-weight:700; }
+    .hl-r { color:var(--red);     font-weight:700; }
+    .hl-a { color:var(--amber);   font-weight:700; }
+
+    /* ━━━ 3ステップ表示 ━━━ */
+    .three-steps {
+      display:flex; gap:0; margin:14px auto; width:90%;
+    }
+    .ts {
+      flex:1; text-align:center; padding:14px 10px; position:relative;
+    }
+    .ts::after {
+      content:"▶"; position:absolute; right:-10px; top:50%; transform:translateY(-50%);
+      color:rgba(255,255,255,0.2); font-size:1.4em; z-index:1;
+    }
+    .ts:last-child::after { content:""; }
+    .ts .ts-num {
+      width:34px; height:34px; border-radius:50%; margin:0 auto 8px;
+      display:flex; align-items:center; justify-content:center;
+      font-weight:700; font-size:0.6em;
+    }
+    .ts .ts-label { font-size:0.5em; font-weight:700; margin-bottom:4px; }
+    .ts .ts-desc  { font-size:0.42em; color:#94a3b8; line-height:1.6; }
+    .ts.step1 .ts-num { background:rgba(56,189,248,0.2); color:var(--accent); border:2px solid var(--accent); }
+    .ts.step1 .ts-label { color:var(--accent); }
+    .ts.step2 .ts-num { background:rgba(74,222,128,0.2); color:var(--green);  border:2px solid var(--green); }
+    .ts.step2 .ts-label { color:var(--green); }
+    .ts.step3 .ts-num { background:rgba(245,158,11,0.2); color:var(--amber);  border:2px solid var(--amber); }
+    .ts.step3 .ts-label { color:var(--amber); }
+  </style>
+</head>
+<body>
+<div class="reveal">
+<div class="slides">
+
+
+<!-- ══════════════════════════════════
+  OPENING
+══════════════════════════════════ -->
+
+<!-- S1: タイトル -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0f172a 100%)">
+  <p style="font-size:0.5em; font-weight:900; background:linear-gradient(90deg,var(--accent),var(--purple)); -webkit-background-clip:text; -webkit-text-fill-color:transparent; margin-bottom:6px;">DAY 2</p>
+  <h1 style="font-size:1.45em; color:#fff; margin-bottom:0.2em;">Excel VBA 研修</h1>
+  <p style="font-size:0.85em; color:var(--accent); font-weight:700; margin-bottom:0.3em;">VBAで「使えるものを作る」</p>
+  <p style="font-size:0.45em; color:#475569;">デバッグ　／　Function　／　シート操作　／　総合演習</p>
+</section>
+
+<!-- S2: 伝えたいメッセージ -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">この研修で伝えたいこと</h2>
+  <div style="margin:20px auto; width:90%;">
+    <div style="background:rgba(56,189,248,0.08); border:2px solid rgba(56,189,248,0.3); border-radius:14px; padding:20px 28px; text-align:center; margin-bottom:18px;">
+      <p style="font-size:0.65em; color:#e2e8f0; line-height:2; margin:0;">
+        VBAは「コードを書く技術」ではなく、<br>
+        <strong style="color:var(--accent); font-size:1.15em;">「繰り返しの作業から解放され、本当に価値のある仕事に時間を使う」</strong><br>
+        ための道具です。
+      </p>
+    </div>
+    <div class="flow-h" style="margin-top:16px;">
+      <div class="fb err" style="font-size:0.5em; padding:14px 18px;">
+        <div style="font-size:1.2em; margin-bottom:4px;">😰</div>
+        <strong>今</strong><br>
+        毎日同じ作業の繰り返し<br>
+        <span style="color:#94a3b8; font-size:0.85em;">ミス・残業・疲弊</span>
+      </div>
+      <div class="fa" style="font-size:2em;">→</div>
+      <div class="fb" style="font-size:0.5em; padding:14px 18px; border-color:var(--accent);">
+        <div style="font-size:1.2em; margin-bottom:4px;">⚙️</div>
+        <strong style="color:var(--accent);">VBAで自動化</strong><br>
+        今日学ぶこと<br>
+        <span style="color:#94a3b8; font-size:0.85em;">動く → 使える → 自分の業務へ</span>
+      </div>
+      <div class="fa" style="font-size:2em;">→</div>
+      <div class="fb ok" style="font-size:0.5em; padding:14px 18px;">
+        <div style="font-size:1.2em; margin-bottom:4px;">😊</div>
+        <strong style="color:var(--green);">未来</strong><br>
+        本当に価値ある仕事に集中<br>
+        <span style="color:#94a3b8; font-size:0.85em;">時間・精度・自信</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- S3: 2日間ジャーニーマップ（ホールパート：大きな地図） -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">2日間の学習ジャーニー</h2>
+  <p style="font-size:0.46em; color:#64748b; margin:4px 0 16px;">まず全体の地図を確認します。今日はどこにいるのか？</p>
+  <div class="journey">
+    <div class="j-step done">
+      <div class="j-label">Day 0</div>
+      <div class="j-title">✅ Why？</div>
+      <div class="j-desc">なぜVBAか<br>何ができるか</div>
+    </div>
+    <div class="j-arrow">›</div>
+    <div class="j-step done">
+      <div class="j-label">Day 1</div>
+      <div class="j-title">✅ 動くものを作る</div>
+      <div class="j-desc">Sub / If / For<br>ブック操作 / Dir</div>
+    </div>
+    <div class="j-arrow">›</div>
+    <div class="j-step active">
+      <div class="j-label">Day 2 ← 今日</div>
+      <div class="j-title">★ 使えるものに磨く</div>
+      <div class="j-desc">デバッグ / Function<br>シート操作</div>
+    </div>
+    <div class="j-arrow">›</div>
+    <div class="j-step">
+      <div class="j-label">実践</div>
+      <div class="j-title">自分の業務へ</div>
+      <div class="j-desc">今日学んだことを<br>自分の仕事に適用</div>
+    </div>
+  </div>
+  <div class="big-pt" style="margin-top:16px;">
+    Day 1 で「動くもの」はできました。今日の目標は<strong>「職場で実際に使えるツール」</strong>に仕上げること。
+  </div>
+</section>
+
+<!-- S4: ホールパート：本日の全体像 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">ホールパート：本日の全体像</h2>
+  <p style="font-size:0.41em; color:#64748b; margin:2px 0 10px;">各ブロックは同じ3ステップで進みます</p>
+
+  <!-- 3ステップ説明 -->
+  <div class="three-steps" style="margin-bottom:12px;">
+    <div class="ts step1">
+      <div class="ts-num">1</div>
+      <div class="ts-label">座学</div>
+      <div class="ts-desc">概念をコードなしで理解する</div>
+    </div>
+    <div class="ts step2">
+      <div class="ts-num">2</div>
+      <div class="ts-label">ケース演習</div>
+      <div class="ts-desc">手を動かして体験する</div>
+    </div>
+    <div class="ts step3">
+      <div class="ts-num">3</div>
+      <div class="ts-label">業務への落とし込み</div>
+      <div class="ts-desc">自分の業務に当てはめる</div>
+    </div>
+  </div>
+
+  <!-- 3ブロック構成 -->
+  <div class="whole-part" style="margin-bottom:12px;">
+    <div class="wp-block">
+      <div class="wp-head" style="background:rgba(56,189,248,0.2);">🔍 Block 1　デバッグ入門</div>
+      <div class="wp-steps">
+        <div class="wp-step"><span class="wp-icon">📖</span>エラーの3種類を理解する</div>
+        <div class="wp-step"><span class="wp-icon">🛠</span>Debug.Print・F8 を使う</div>
+        <div class="wp-step"><span class="wp-icon">💼</span>自分の業務で活かすポイント</div>
+      </div>
+    </div>
+    <div class="wp-block">
+      <div class="wp-head" style="background:rgba(167,139,248,0.2);">🔧 Block 2　Function</div>
+      <div class="wp-steps">
+        <div class="wp-step"><span class="wp-icon">📖</span>Sub と Function の違い</div>
+        <div class="wp-step"><span class="wp-icon">🛠</span>評価関数・最終行関数を作る</div>
+        <div class="wp-step"><span class="wp-icon">💼</span>自分の業務で活かすポイント</div>
+      </div>
+    </div>
+    <div class="wp-block">
+      <div class="wp-head" style="background:rgba(74,222,128,0.15);">📊 Block 3　シート操作</div>
+      <div class="wp-steps">
+        <div class="wp-step"><span class="wp-icon">📖</span>シートを動的に作成・切替</div>
+        <div class="wp-step"><span class="wp-icon">🛠</span>月別シートの自動生成</div>
+        <div class="wp-step"><span class="wp-icon">💼</span>自分の業務で活かすポイント</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- タイムスケジュール -->
+  <div style="display:flex; gap:0; width:92%; margin:0 auto; border-radius:8px; overflow:hidden; border:1px solid rgba(255,255,255,0.1); font-size:0.38em;">
+    <div style="flex:1; padding:7px 10px; background:rgba(56,189,248,0.1); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">09:00</div>
+      <div style="color:#e2e8f0; font-weight:700;">オープニング</div>
+      <div style="color:#475569;">〜09:20</div>
+    </div>
+    <div style="flex:1.5; padding:7px 10px; background:rgba(56,189,248,0.15); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">09:20</div>
+      <div style="color:var(--accent); font-weight:700;">Block 1 デバッグ</div>
+      <div style="color:#475569;">〜10:30（70分）</div>
+    </div>
+    <div style="flex:0.6; padding:7px 10px; background:rgba(255,255,255,0.03); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#475569; margin-bottom:2px;">10:30</div>
+      <div style="color:#475569;">休憩</div>
+      <div style="color:#475569;">10分</div>
+    </div>
+    <div style="flex:1.5; padding:7px 10px; background:rgba(167,139,248,0.12); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">10:40</div>
+      <div style="color:var(--purple); font-weight:700;">Block 2 Function</div>
+      <div style="color:#475569;">〜12:00（80分）</div>
+    </div>
+    <div style="flex:0.8; padding:7px 10px; background:rgba(255,255,255,0.03); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#475569; margin-bottom:2px;">12:00</div>
+      <div style="color:#475569;">昼食</div>
+      <div style="color:#475569;">60分</div>
+    </div>
+    <div style="flex:1.8; padding:7px 10px; background:rgba(74,222,128,0.1); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">13:00</div>
+      <div style="color:var(--green); font-weight:700;">Block 3 シート操作</div>
+      <div style="color:#475569;">〜14:30（90分）</div>
+    </div>
+    <div style="flex:2.2; padding:7px 10px; background:rgba(245,158,11,0.1); border-right:1px solid rgba(255,255,255,0.08); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">14:40</div>
+      <div style="color:var(--amber); font-weight:700;">総合演習</div>
+      <div style="color:#475569;">〜16:40（120分）</div>
+    </div>
+    <div style="flex:0.8; padding:7px 10px; background:rgba(255,255,255,0.05); text-align:center;">
+      <div style="color:#64748b; margin-bottom:2px;">16:40</div>
+      <div style="color:#e2e8f0; font-weight:700;">振り返り</div>
+      <div style="color:#475569;">17:00 終了</div>
+    </div>
+  </div>
+</section>
+
+<!-- S5: 1日目の復習 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">1日目の振り返り</h2>
+  <div class="concept-grid" style="margin-top:16px;">
+    <div class="concept-card"><div class="icon">📝</div><h4>基本文法</h4><p>Sub / 変数 / Cells / MsgBox</p></div>
+    <div class="concept-card"><div class="icon">🔀</div><h4>制御構文</h4><p>If / For / Do While</p></div>
+    <div class="concept-card"><div class="icon">📂</div><h4>ブック操作</h4><p>Open / Close / Dir</p></div>
+  </div>
+  <div class="big-pt" style="margin-top:16px;">
+    1日目の総合演習で「複数ファイルを統合するマクロ」を作りました。<br>
+    今日はそれを<strong>「壊れにくく・読みやすく・自分の業務に使えるもの」</strong>に仕上げます。
+  </div>
+  <div style="margin-top:14px; font-size:0.46em; color:#64748b; text-align:center;">
+    ─── それでは Block 1 から始めましょう ───
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+  BLOCK 1: DEBUG
+══════════════════════════════════ -->
+
+<!-- S6: セクションヘッダー -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a,#0d1f3c)">
+  <div class="progress-bar">
+    <span class="pb-item current">① デバッグ</span>
+    <span class="pb-item">② Function</span>
+    <span class="pb-item">③ シート操作</span>
+    <span class="pb-item">総合演習</span>
+  </div>
+  <p class="sec-num">01</p>
+  <h2 style="font-size:1.6em; color:#fff;">デバッグ入門</h2>
+  <p class="sec-sub">コードが動かないとき、どこを見ればよいか？</p>
+  <div class="three-steps" style="margin-top:20px; width:80%; margin-left:auto; margin-right:auto;">
+    <div class="ts step1"><div class="ts-num">1</div><div class="ts-label">座学</div></div>
+    <div class="ts step2"><div class="ts-num">2</div><div class="ts-label">ケース演習</div></div>
+    <div class="ts step3"><div class="ts-num">3</div><div class="ts-label">業務落とし込み</div></div>
+  </div>
+</section>
+
+<!-- S7: [座学] エラーとは -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 1/2</span> エラーは「道しるべ」</h2>
+  <div style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);border-radius:10px;padding:12px 18px;margin:10px 0;font-size:0.78em;color:#fbbf24;">
+    💬 <strong>発問：</strong> マクロが動かなかったとき、これまでどう対処していましたか？<br>
+    <span style="color:#cbd5e1;font-size:0.92em;">（コードを全部消した／諦めた／誰かに頼った…どれですか？）</span>
+  </div>
+  <div class="analogy" style="margin-top:10px;">
+    <div class="label">🍳 たとえ話：レシピ通りに作ったのに、料理がおいしくない</div>
+    材料も揃っている。手順も間違っていない。でも何かがおかしい。<br>
+    このとき必要なのは「全部捨てて作り直す」ではなく、<br>
+    <strong>「どこが間違っているかを冷静に確認する作業」</strong> ── それがデバッグです。<br>
+    <span style="color:#94a3b8;font-size:0.85em;">エラーは「壊れた」サインではなく、「ここを直して」というヒントです。</span>
+  </div>
+  <div class="concept-grid" style="margin-top:14px;">
+    <div class="concept-card" style="border-top:3px solid var(--red);">
+      <div class="icon">🔴</div>
+      <h4>コンパイルエラー</h4>
+      <p>実行<strong>前</strong>に発覚<br>文法の間違い<br><br>例：括弧の閉じ忘れ</p>
+    </div>
+    <div class="concept-card" style="border-top:3px solid var(--yellow);">
+      <div class="icon">🟠</div>
+      <h4>実行時エラー</h4>
+      <p>実行<strong>中</strong>に発生<br>番号付きのエラーが出る<br><br>例：ファイルが見つからない</p>
+    </div>
+    <div class="concept-card" style="border-top:3px solid var(--purple);">
+      <div class="icon">🟡</div>
+      <h4>論理エラー</h4>
+      <p>エラーは<strong>出ない</strong><br>でも結果が間違い<br><br>例：列番号が1つずれていた</p>
+    </div>
+  </div>
+  <div class="big-pt" style="margin-top:12px;">
+    <strong>最も厄介なのは論理エラー。</strong> 今日の演習で実際に体験します。
+  </div>
+</section>
+
+<!-- S8: [座学] デバッグの3武器 -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 2/2</span> デバッグの3つの武器</h2>
+  <div class="concept-grid" style="margin-top:18px;">
+    <div class="concept-card" style="border-top:3px solid var(--accent);">
+      <div class="icon">📋</div>
+      <h4>武器① 記録する</h4>
+      <p>処理の途中で変数の値を<br>「ログ」として記録する<br><br>
+      処理が止まらないので<br>ループ内の確認に最適</p>
+    </div>
+    <div class="concept-card" style="border-top:3px solid var(--green);">
+      <div class="icon">⏸</div>
+      <h4>武器② 一時停止</h4>
+      <p>任意の行で処理を<br>一時停止させる<br><br>
+      停止中に変数の値を<br>マウスオーバーで確認</p>
+    </div>
+    <div class="concept-card" style="border-top:3px solid var(--yellow);">
+      <div class="icon">👣</div>
+      <h4>武器③ 1行ずつ実行</h4>
+      <p>コードを1行ずつ<br>手動で進める<br><br>
+      どの行で値が変わるかを<br>目で追いながら特定できる</p>
+    </div>
+  </div>
+  <div class="big-pt" style="margin-top:14px;">
+    <strong>大事な習慣：</strong> コードを書いたら、いきなり実行せず、まず1行ずつ動かして確認する。
+  </div>
+</section>
+
+<!-- S9: [ケース] Debug.Print コード解説 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 1/2</span> 武器① Debug.Print の使い方</h2>
+  <pre><code class="language-vba">Sub 売上計算()
+    Dim i As Long
+    For i = 1 To 10
+
+        ' ↓ この1行を追加するだけ。Ctrl+G でイミディエイトウィンドウに出力される
+        Debug.Print "行:" & i & "  商品名:" & Cells(i, 1).Value
+
+        Cells(i, 4).Value = Cells(i, 2).Value * Cells(i, 3).Value
+    Next i
+End Sub</code></pre>
+  <div class="code-note">
+    Debug.Print は処理を止めずに値を記録できる。MsgBox と違ってクリックが不要なのでループ内での確認に最適。
+  </div>
+  <div style="display:flex; gap:12px; margin-top:10px;">
+    <div class="concept-card" style="flex:1; text-align:left; font-size:0.9em;">
+      <h4>開き方</h4>
+      <p><span class="key">Ctrl</span>+<span class="key">G</span> → イミディエイトウィンドウ</p>
+    </div>
+    <div class="concept-card" style="flex:1; text-align:left; font-size:0.9em;">
+      <h4>確認が終わったら</h4>
+      <p><code>'</code> でコメントアウト<br>（消さなくてよい）</p>
+    </div>
+    <div class="concept-card" style="flex:1; text-align:left; font-size:0.9em;">
+      <h4>何を出力するか</h4>
+      <p>ループカウンター変数 i<br>セルの値・計算途中の値</p>
+    </div>
+  </div>
+</section>
+
+<!-- S10: [ケース] ブレークポイント・F8 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 2/2</span> 武器② ブレークポイント　武器③ ステップ実行</h2>
+  <div style="display:flex; gap:16px; margin-top:14px;">
+    <div style="flex:1;">
+      <p style="font-size:0.48em; color:var(--green); font-weight:700; margin-bottom:6px;">② ブレークポイント <span class="key">F9</span></p>
+      <div style="font-size:0.42em; background:var(--card-bg); border-radius:8px; padding:12px 14px; border:1px solid var(--border); line-height:2.2;">
+        1. 止めたい行の左端をクリック<br>
+        → 赤丸 <span style="color:var(--red);">●</span> が表示される<br>
+        2. <span class="key">F5</span> で実行 → その行で停止<br>
+        3. 変数にマウスオーバー → 値が表示
+      </div>
+    </div>
+    <div style="flex:1;">
+      <p style="font-size:0.48em; color:var(--yellow); font-weight:700; margin-bottom:6px;">③ ステップ実行 <span class="key">F8</span></p>
+      <div style="font-size:0.42em; background:var(--card-bg); border-radius:8px; padding:12px 14px; border:1px solid var(--border); line-height:2.2;">
+        F8 を押すたびに1行ずつ実行<br>
+        → 黄色ハイライトが次の行へ<br>
+        → どの行で値が変わるかを<br>　 目で追いながら確認できる
+      </div>
+    </div>
+  </div>
+  <div style="background:rgba(56,189,248,0.08); border:1px solid rgba(56,189,248,0.3); border-radius:8px; padding:12px 16px; font-size:0.46em; margin-top:12px; text-align:left; width:92%; margin-left:auto; margin-right:auto; color:#e2e8f0;">
+    🔑 <strong>組み合わせ技：</strong> ブレークポイントで止めた後、<span class="key">F8</span> で1行ずつ進めながら確認するのが基本パターン
+  </div>
+  <div class="goal-box" style="margin-top:10px;">
+    <strong>演習1 の目標：</strong> バグを2箇所見つけて修正 → D2:D11 の合計が <span class="hl-g">¥2,670,000</span><br>
+    ファイル：<code>01_デバッグ演習/デバッグ演習.xlsx</code>　コード：<code>VBAコード_バグあり.txt</code>
+  </div>
+</section>
+
+<!-- S11: [業務落とし込み] デバッグ -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#1c1000 100%)">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-mu">業務への落とし込み</span> デバッグを自分の仕事に活かす</h2>
+  <div class="mu-card" style="margin-top:14px;">
+    <h4>💭 考えてみましょう</h4>
+    <ul>
+      <li>これまでマクロが思い通りに動かなかったとき、あなたはどう対処していましたか？</li>
+      <li>今日学んだ「Debug.Print」「F8」を使えば、あのときの問題は解決できそうですか？</li>
+    </ul>
+    <div class="mu-write">
+      過去に困ったコードの問題を1つ思い浮かべ、<br>
+      デバッグの3武器のうちどれを使えば解決できそうか考えてみましょう。
+    </div>
+  </div>
+  <div class="mu-card" style="margin-top:10px;">
+    <h4>🎯 すぐに使えるシーン</h4>
+    <ul>
+      <li>「合計が合わない」→ ループ内で <code>Debug.Print</code> して計算過程を確認</li>
+      <li>「ある行だけ動きがおかしい」→ ブレークポイントでその行の前後を確認</li>
+      <li>「どこで止まるか分からない」→ <span class="key">F8</span> で1行ずつ追う</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+  BLOCK 2: FUNCTION
+══════════════════════════════════ -->
+
+<!-- S12: セクションヘッダー -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a,#1a0f2e)">
+  <div class="progress-bar">
+    <span class="pb-item done">① デバッグ ✓</span>
+    <span class="pb-item current">② Function</span>
+    <span class="pb-item">③ シート操作</span>
+    <span class="pb-item">総合演習</span>
+  </div>
+  <p class="sec-num">02</p>
+  <h2 style="font-size:1.6em; color:#fff;">Function（関数）</h2>
+  <p class="sec-sub">同じ処理を何度も書かない仕組みを作る</p>
+  <div class="three-steps" style="margin-top:20px; width:80%; margin-left:auto; margin-right:auto;">
+    <div class="ts step1"><div class="ts-num">1</div><div class="ts-label">座学</div></div>
+    <div class="ts step2"><div class="ts-num">2</div><div class="ts-label">ケース演習</div></div>
+    <div class="ts step3"><div class="ts-num">3</div><div class="ts-label">業務落とし込み</div></div>
+  </div>
+</section>
+
+<!-- S13: [座学] 問題提起 -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 1/2</span> 「同じ処理を繰り返す」問題</h2>
+  <div style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);border-radius:10px;padding:10px 16px;margin:8px 0 10px;font-size:0.76em;color:#fbbf24;">
+    💬 <strong>発問：</strong> 同じ計算や処理を、コードの中に何度もコピペして書いたことはありますか？<br>
+    <span style="color:#cbd5e1;font-size:0.92em;">そのとき「なんかスッキリしないな…」と感じませんでしたか？</span>
+  </div>
+  <div class="analogy" style="margin-top:8px;">
+    <div class="label">🏪 たとえ話：コンビニのレジマニュアル</div>
+    新人が入るたびに「口頭でゼロから説明する」と、説明者によって内容がバラバラ。<br>
+    <strong>「マニュアルを一度作っておけば」</strong>、誰でも使えるし、修正は1か所だけで全員に反映される。<br><br>
+    コードも同じ。同じ処理を「Function（関数）」にまとめることで、<br>
+    <strong>修正は1か所・呼び出しは何度でも</strong> できるようになる。
+  </div>
+  <div class="compare" style="margin-top:14px;">
+    <div class="cmp bad">
+      <h4>❌ 今の状態</h4>
+      <ul>
+        <li>同じ処理が3か所にコピペされている</li>
+        <li>1か所直しても残り2か所は古いまま</li>
+        <li>コードが長くて読みにくい</li>
+      </ul>
+    </div>
+    <div class="cmp good">
+      <h4>✅ Function を使うと</h4>
+      <ul>
+        <li>処理が1か所にまとまる</li>
+        <li>直す場所が1か所だけになる</li>
+        <li>コードが短く、意図が伝わりやすい</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- S14: [座学] Sub vs Function -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 2/2</span> Sub と Function の違い</h2>
+  <div class="compare" style="margin-top:18px;">
+    <div class="cmp a">
+      <h4>📋 Sub ─「仕事をするだけ」</h4>
+      <ul>
+        <li>呼ばれたら処理を実行する</li>
+        <li>結果を<strong>返さない</strong></li>
+        <li>ボタンで動かすメインの処理</li>
+      </ul>
+      <br>
+      <p style="color:#94a3b8; font-size:0.9em;">例：データを転記して、完了メッセージを出す</p>
+    </div>
+    <div class="cmp b">
+      <h4>🔄 Function ─「答えを返す」</h4>
+      <ul>
+        <li>呼ばれたら処理して<strong>結果を返す</strong></li>
+        <li>「何かを調べて答えを教えてほしい」場面</li>
+        <li>何度でも使い回せる</li>
+      </ul>
+      <br>
+      <p style="color:#94a3b8; font-size:0.9em;">例：「この列の最終行は何行目？」<br>「この売上金額は何評価？」</p>
+    </div>
+  </div>
+  <div class="big-pt" style="margin-top:14px;">
+    <strong>判断基準：</strong> 「答えを返す必要があるか？」→ あれば Function、なければ Sub
+  </div>
+</section>
+
+<!-- S15: [ケース] Functionの書き方 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 1/3</span> Function の書き方</h2>
+  <pre><code class="language-vba">' ─── Function の定義 ───────────────────────────────────────
+Function 最終行取得(ws As Worksheet, col As Long) As Long
+'        ↑ 関数名     ↑ 引数（渡す値）                ↑ 返す値の型
+
+    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+'   ↑ 関数名 = 戻り値  ← この書き方で「答え」を返す
+
+End Function
+
+' ─── 呼び出し側（Sub の中から使う）──────────────────────────
+Sub 集計()
+    Dim lastRow As Long
+    lastRow = 最終行取得(ActiveSheet, 1)  ' A列の最終行番号が返ってくる
+    Debug.Print lastRow                   ' 確認
+End Sub</code></pre>
+  <div class="code-note">
+    「関数名 = 戻り値」という書き方が最初は不思議に感じる。「関数名という変数に結果を代入する」イメージで覚える。
+  </div>
+  <div class="warn-note">
+    戻り値の代入を忘れると Function が 0 や空文字を返してしまう。End Function の前に必ず書く。
+  </div>
+</section>
+
+<!-- S16: [ケース] Before/After -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 2/3</span> Before / After で比べる</h2>
+  <div style="display:flex; gap:12px; margin-top:12px;">
+    <div style="flex:1; background:rgba(248,113,113,0.08); border:1px solid rgba(248,113,113,0.3); border-radius:8px; padding:12px;">
+      <p style="font-size:0.44em; color:var(--red); font-weight:700; margin-bottom:6px;">❌ Before（重複コード）</p>
+      <pre style="margin:0; border-left:none; box-shadow:none; background:#111827;"><code class="language-vba" style="font-size:0.88em;">Sub 集計()
+    ' 同じコードが3回登場
+    row1 = Cells(Rows.Count, 1) _
+             .End(xlUp).Row
+    row2 = Cells(Rows.Count, 2) _
+             .End(xlUp).Row
+    row3 = Cells(Rows.Count, 3) _
+             .End(xlUp).Row
+End Sub</code></pre>
+    </div>
+    <div style="flex:1; background:rgba(74,222,128,0.08); border:1px solid rgba(74,222,128,0.3); border-radius:8px; padding:12px;">
+      <p style="font-size:0.44em; color:var(--green); font-weight:700; margin-bottom:6px;">✅ After（Function に切り出す）</p>
+      <pre style="margin:0; border-left:none; box-shadow:none; background:#111827;"><code class="language-vba" style="font-size:0.88em;">Function 最終行取得(
+    ws As Worksheet,
+    col As Long) As Long
+  最終行取得 = ws.Cells(
+    ws.Rows.Count, col
+  ).End(xlUp).Row
+End Function
+
+Sub 集計()
+  row1 = 最終行取得(ws, 1)
+  row2 = 最終行取得(ws, 2)
+  row3 = 最終行取得(ws, 3)
+End Sub</code></pre>
+    </div>
+  </div>
+</section>
+
+<!-- S17: [ケース] 演習2 指示 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 3/3</span> 演習2 ─ Function を作る</h2>
+  <div class="goal-box" style="margin-top:12px;">
+    <strong>目標：</strong> 評価を返す Function と最終行取得 Function を作り、売上データのE列に A/B/C を入力する<br>
+    ファイル：<code>02_Function演習/売上評価データ.xlsx</code>
+  </div>
+  <ul class="steps" style="margin-top:12px;">
+    <li><span class="sn">1</span><div><strong>Function 売上評価 を作る</strong><br><span class="sub">引数：売上金額（Long）　戻り値：評価ランク（String）<br>100万以上→A / 50万以上→B / それ以下→C</span></div></li>
+    <li><span class="sn">2</span><div><strong>Function 最終行取得 を作る</strong><br><span class="sub">引数：ワークシート・列番号　戻り値：最終行番号（Long）</span></div></li>
+    <li><span class="sn g">3</span><div><strong>2つの Function を使う Sub を完成させる</strong><br><span class="sub">E列に評価が入力されることを確認する</span></div></li>
+  </ul>
+  <div class="code-note" style="margin-top:10px;">
+    STEP 1 と 2 は単体で動作確認してから STEP 3 に進む。<code>Debug.Print 売上評価(1200000)</code> で確認できる。
+  </div>
+</section>
+
+<!-- S18: [業務落とし込み] Function -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#1c1000 100%)">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-mu">業務への落とし込み</span> Function を自分の仕事に活かす</h2>
+  <div class="mu-card" style="margin-top:14px;">
+    <h4>💭 考えてみましょう</h4>
+    <ul>
+      <li>あなたが今持っているマクロで、<strong>同じ処理が複数箇所に書かれているもの</strong>はありますか？</li>
+      <li>それを Function に切り出すとしたら、何という名前の関数になりそうですか？</li>
+    </ul>
+    <div class="mu-write">
+      自分のマクロの中から「Function にできそうな処理」を1つ見つけ、<br>
+      「Function 〇〇（引数）As 型」の形でアイデアを書いてみましょう。
+    </div>
+  </div>
+  <div class="mu-card" style="margin-top:10px;">
+    <h4>🎯 よくあるシーン</h4>
+    <ul>
+      <li>「最終行取得」→ 複数シートを扱うマクロで毎回書いている人が多い</li>
+      <li>「評価判定」→ 点数・金額・日数などを段階評価するケース</li>
+      <li>「ファイル名から日付を取得」→ ファイル名に年月が入っている場合</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+  BLOCK 3: SHEET OPERATIONS
+══════════════════════════════════ -->
+
+<!-- S19: セクションヘッダー -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a,#0f1e0f)">
+  <div class="progress-bar">
+    <span class="pb-item done">① デバッグ ✓</span>
+    <span class="pb-item done">② Function ✓</span>
+    <span class="pb-item current">③ シート操作</span>
+    <span class="pb-item">総合演習</span>
+  </div>
+  <p class="sec-num">03</p>
+  <h2 style="font-size:1.6em; color:#fff;">シートの操作</h2>
+  <p class="sec-sub">シートを動的に作成・切り替えながら処理する</p>
+  <div class="three-steps" style="margin-top:20px; width:80%; margin-left:auto; margin-right:auto;">
+    <div class="ts step1"><div class="ts-num">1</div><div class="ts-label">座学</div></div>
+    <div class="ts step2"><div class="ts-num">2</div><div class="ts-label">ケース演習</div></div>
+    <div class="ts step3"><div class="ts-num">3</div><div class="ts-label">業務落とし込み</div></div>
+  </div>
+</section>
+
+<!-- S20: [座学] 問題提起 -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 1/3</span> 手動でシートを作ることの限界</h2>
+  <div style="background:rgba(251,191,36,0.15);border:1px solid rgba(251,191,36,0.4);border-radius:10px;padding:10px 16px;margin:8px 0 10px;font-size:0.76em;color:#fbbf24;">
+    💬 <strong>発問：</strong> 毎月・毎週、手動でシートを追加したり、ファイルをコピーしている作業はありますか？<br>
+    <span style="color:#cbd5e1;font-size:0.92em;">それって、何分くらいかかっていますか？</span>
+  </div>
+  <div class="analogy" style="margin-top:8px;">
+    <div class="label">📁 たとえ話：毎月フォルダを手動で作る</div>
+    「1月」「2月」…「12月」のフォルダを毎月手動で作ると、<br>
+    → 名前のタイポ、作り忘れ、毎月同じ単純作業の繰り返し。<br><br>
+    <strong>マクロが自動で作れば、何度でも正確に・ボタン1つで再実行できる。</strong>
+  </div>
+  <div class="compare" style="margin-top:14px;">
+    <div class="cmp bad">
+      <h4>❌ 手動の問題</h4>
+      <ul>
+        <li>毎月同じ作業を繰り返す</li>
+        <li>「3月」シートの作り忘れ</li>
+        <li>シート名のスペルミス</li>
+      </ul>
+    </div>
+    <div class="cmp good">
+      <h4>✅ マクロ化のメリット</h4>
+      <ul>
+        <li>ボタン1つで12ヶ月分を生成</li>
+        <li>常に同じ名前・同じ順番</li>
+        <li>来年も同じマクロが使える</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- S21: [座学] シートを変数で管理 -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 2/3</span> シートを「変数」で管理するという考え方</h2>
+  <div class="analogy">
+    <div class="label">🏷️ たとえ話：担当者の名前ではなく「役割」で呼ぶ</div>
+    「山田さんにお願い」と言うと、山田さんが変わったら全員に周知が必要。<br>
+    「<strong>集計担当</strong>にお願い」と言えば、誰が担当になっても指示の仕方は変わらない。<br><br>
+    コードも同じ。シートを変数（名前）に入れておけば、シート名が変わっても変数名だけ直せばよい。
+  </div>
+  <div class="compare" style="margin-top:14px;">
+    <div class="cmp bad">
+      <h4>❌ 直接名前で指定</h4>
+      <ul>
+        <li>シート名が変わるたびに全箇所修正</li>
+        <li>どのシートを操作しているか読みにくい</li>
+      </ul>
+    </div>
+    <div class="cmp good">
+      <h4>✅ 変数に入れてから操作</h4>
+      <ul>
+        <li>修正は1か所だけで済む</li>
+        <li><code>Set が必要</code> ← これだけ覚える</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- S22: [座学] ファイル開く前確認 -->
+<section data-background-color="#1a2744">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-za">座学 3/3</span> エラーを「防ぐ」考え方</h2>
+  <div class="analogy">
+    <div class="label">🚪 たとえ話：ドアを開ける前にノックする</div>
+    ドアを勢いよく開けてぶつかるより、<br>
+    <strong>「誰かいますか？」と確認してから開ける</strong>のが安全。<br><br>
+    ファイルを開くときも同じ。「このファイルは存在するか？」を確認してから処理する。<br>
+    1日目で学んだ <code>If</code> と <code>Dir</code> の組み合わせで書けます。
+  </div>
+  <div class="flow-h" style="margin-top:16px;">
+    <div class="fb" style="font-size:0.46em; padding:12px 16px;">ファイル一覧を取得<br>（Dir）</div>
+    <div class="fa">→</div>
+    <div class="fb" style="font-size:0.46em; padding:12px 16px; border-color:var(--yellow);">ファイルが存在するか確認<br>（If Dir &lt;&gt; ""）</div>
+    <div class="fa">→</div>
+    <div class="fb ok" style="font-size:0.46em; padding:12px 16px;">あれば処理<br>Workbooks.Open</div>
+    <div class="fa">→</div>
+    <div class="fb err" style="font-size:0.46em; padding:12px 16px;">なければ<br>スキップ＋メッセージ</div>
+  </div>
+  <div class="big-pt" style="margin-top:12px;">
+    新しい文法は不要。<strong>1日目に学んだ If と Dir だけで「安全に開く」が書けます。</strong>
+  </div>
+</section>
+
+<!-- S23: [ケース] シート操作コード -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 1/3</span> シートの参照・作成・削除</h2>
+  <pre class="sm"><code class="language-vba">' ✅ シートを変数に入れて操作する（Set が必要）
+Dim ws As Worksheet
+Set ws = ThisWorkbook.Worksheets("集計")
+ws.Cells(1, 1).Value = "タイトル"
+
+' ✅ シートの存在確認と削除→再作成
+Dim sheetName As String
+sheetName = "集計"
+
+Application.DisplayAlerts = False   ' 削除確認ダイアログを非表示
+On Error Resume Next
+Set ws = Worksheets(sheetName)
+On Error GoTo 0                     ' ← 必ずここでリセット！
+
+If Not ws Is Nothing Then
+    ws.Delete
+    Set ws = Nothing
+End If
+
+Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = sheetName
+Application.DisplayAlerts = True    ' ← 忘れずに元に戻す</code></pre>
+  <div class="code-note">
+    <code>On Error Resume Next</code> は「この1行だけエラーを無視」という限定的な使い方。直後に <code>On Error GoTo 0</code> でリセットを忘れずに。
+  </div>
+</section>
+
+<!-- S24: [ケース] ファイル存在確認コード -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 2/3</span> ファイルを「開く前に確認する」パターン</h2>
+  <pre><code class="language-vba">Sub ファイルを安全に開く()
+    Dim folderPath As String
+    Dim fileName   As String
+    Dim filePath   As String
+
+    folderPath = ThisWorkbook.Path & "\支店データ\"
+    fileName   = Dir(folderPath & "*.xlsx")   ' 1日目で学んだ Dir
+
+    Do While fileName <> ""
+
+        filePath = folderPath & fileName
+
+        ' ★ 開く前に存在確認する（Dir で確認）
+        If Dir(filePath) <> "" Then
+            Workbooks.Open filePath
+            ' 処理
+            ActiveWorkbook.Close SaveChanges:=False
+        Else
+            MsgBox fileName & " が見つかりません。スキップします。"
+        End If
+
+        fileName = Dir()   ' 次のファイルへ
+    Loop
+End Sub</code></pre>
+  <div class="code-note">
+    <code>Dir(filePath) &lt;&gt; ""</code> でファイルの存在を確認。<strong>1日目に学んだ If と Dir だけで書ける</strong>ので新しい文法は不要。
+  </div>
+</section>
+
+<!-- S25: [ケース] 演習3 指示 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">ケース演習 3/3</span> 演習3 ─ シート操作</h2>
+  <div class="goal-box" style="margin-top:10px;">
+    <strong>目標：</strong> 1年分のデータを月ごとに別シートへ自動で振り分けるマクロを完成させる<br>
+    ファイル：<code>03_シート操作演習/月次売上データ.xlsx</code>
+  </div>
+  <ul class="steps" style="margin-top:12px;">
+    <li><span class="sn">1</span><div><strong>月別シートを自動生成する（STEP 1・20分）</strong><br><span class="sub">1月〜12月のシートを作成。既存の場合は削除して再作成する</span></div></li>
+    <li><span class="sn g">2</span><div><strong>データを月別シートに振り分ける（STEP 2・15分）</strong><br><span class="sub"><code>Month(日付)</code> で月番号を取得して対応シートに転記する</span></div></li>
+  </ul>
+  <div style="background:rgba(167,139,250,0.1); border:1px solid rgba(167,139,250,0.3); border-radius:8px; padding:10px 14px; font-size:0.43em; margin-top:10px; color:#c4b5fd; text-align:left; width:92%; margin-left:auto; margin-right:auto;">
+    💡 <strong>ヒント：</strong> 日付から月番号を取り出すには <code>Month(Cells(i,1).Value)</code>。例：2024/03/15 → 3<br>
+    For Each ws の代わりに <code>Worksheets(月番号 &amp; "月")</code> でシートを直接指定してもOK。
+  </div>
+</section>
+
+<!-- S26: [業務落とし込み] シート操作 -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#001a05 100%)">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-mu">業務への落とし込み</span> シート操作を自分の仕事に活かす</h2>
+  <div class="mu-card" style="margin-top:14px;">
+    <h4>💭 考えてみましょう</h4>
+    <ul>
+      <li>毎月・毎週・毎日、<strong>手動でシートを作ったり、ファイルをコピーしている作業</strong>はありますか？</li>
+      <li>今日学んだ知識でその作業を自動化できそうですか？</li>
+      <li>「ファイルが見つからないとき」の対処を自動化できれば、どのくらい時間が節約できますか？</li>
+    </ul>
+    <div class="mu-write">
+      自分の業務で「毎回手動で作っているシートやファイル」を1つ挙げ、<br>
+      自動化のアイデアを一言で書いてみましょう。（例：「月次報告書のシートを自動生成したい」）
+    </div>
+  </div>
+  <div class="mu-card" style="margin-top:10px;">
+    <h4>🎯 よくあるシーン</h4>
+    <ul>
+      <li>「部署別・担当者別にシートを自動分割」→ For Each / ループパターンで実装可能</li>
+      <li>「月次フォルダからデータを自動収集」→ Dir + If Dir() で安全に実装可能</li>
+    </ul>
+  </div>
+</section>
+
+
+<!-- ══════════════════════════════════
+  BLOCK 4: COMPREHENSIVE
+══════════════════════════════════ -->
+
+<!-- S27: セクションヘッダー -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a,#1a1200)">
+  <div class="progress-bar">
+    <span class="pb-item done">① デバッグ ✓</span>
+    <span class="pb-item done">② Function ✓</span>
+    <span class="pb-item done">③ シート操作 ✓</span>
+    <span class="pb-item current">総合演習</span>
+  </div>
+  <p class="sec-num" style="color:rgba(245,158,11,0.15);">04</p>
+  <h2 style="font-size:1.6em; color:#fff;">総合演習</h2>
+  <p class="sec-sub">2日間の知識を組み合わせて実務ツールを完成させる</p>
+</section>
+
+<!-- S28: 総合演習 全体像 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em; color:var(--accent);">総合演習の全体像</h2>
+  <div class="flow-h" style="margin-top:14px; gap:5px;">
+    <div class="fb ok" style="font-size:0.42em; padding:11px 12px; text-align:center;">① ボタンを押す</div>
+    <div class="fa" style="font-size:1.1em;">→</div>
+    <div class="fb" style="font-size:0.42em; padding:11px 12px;">② フォルダのファイル一覧を取得<br><span style="color:#64748b; font-size:0.85em;">Dir（1日目）</span></div>
+    <div class="fa" style="font-size:1.1em;">→</div>
+    <div class="fb" style="font-size:0.42em; padding:11px 12px; border-color:var(--yellow);">③ ファイルが存在するか確認<br><span style="color:#64748b; font-size:0.85em;">If Dir() ≠ ""（今日）</span></div>
+    <div class="fa" style="font-size:1.1em;">→</div>
+    <div class="fb ok" style="font-size:0.42em; padding:11px 12px;">④ ファイルを開いて月間合計を取得<br><span style="color:#64748b; font-size:0.85em;">最終行取得Function（今日）</span></div>
+    <div class="fa" style="font-size:1.1em;">→</div>
+    <div class="fb ok" style="font-size:0.42em; padding:11px 12px;">⑤ 集計結果シートに転記<br>⑥ 完了メッセージ</div>
+  </div>
+  <div class="concept-grid" style="margin-top:14px;">
+    <div class="concept-card"><div class="icon">🔄</div><h4>1日目の知識</h4><p>Dir / Do While<br>Workbooks.Open/Close</p></div>
+    <div class="concept-card"><div class="icon">🐛</div><h4>デバッグ（今日①）</h4><p>動かないときは<br>Debug.Print と F8</p></div>
+    <div class="concept-card"><div class="icon">🔧</div><h4>Function（今日②）</h4><p>最終行取得を<br>Function に切り出す</p></div>
+  </div>
+</section>
+
+<!-- S29: 最適化コード解説 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-en">コード解説</span> 処理を速くする・安全にする定番コード</h2>
+  <pre><code class="language-vba">Sub 支店別売上集計()
+
+    ' ─── 処理前：画面更新・自動計算を一時停止（速度向上）───
+    Application.ScreenUpdating = False   ' 画面をフリーズさせて高速化
+    Application.DisplayAlerts  = False   ' 確認ダイアログを非表示
+
+    ' ─── 実際の処理 ───
+    ' ...
+
+    ' ─── 処理後：必ず元に戻す ───
+    Application.ScreenUpdating = True    ' ← これを忘れると画面が固まったまま！
+    Application.DisplayAlerts  = True
+
+    MsgBox "完了しました！", vbInformation
+
+End Sub</code></pre>
+  <div class="code-note">
+    ScreenUpdating = False にすると画面更新がなくなり処理が劇的に速くなる。100ファイル処理なら体感速度が大きく変わる。
+  </div>
+  <div class="warn-note">
+    エラーが起きても True に戻す処理を入れること。忘れると Excel の画面が更新されなくなる。
+  </div>
+</section>
+
+<!-- S30: 演習5 指示 -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.88em; color:var(--yellow);">✏️ 総合演習 ─ 支店別売上集計ツール</h2>
+  <div class="goal-box" style="margin-top:10px;">
+    <strong>目標：</strong> 4支店 × 6ヶ月 = 24ファイルを集計して集計結果シートに一覧表示する<br>
+    ファイル：<code>04_総合演習/集計ツール_ベース.xlsx</code>　コード：<code>VBAコード_テンプレート.txt</code>
+  </div>
+  <ul class="steps" style="margin-top:10px;">
+    <li><span class="sn">1</span><div><strong>ファイルの存在確認を追加</strong><br><span class="sub">ファイルがなければスキップ（<code>If Dir() &lt;&gt; ""</code>）</span></div></li>
+    <li><span class="sn">2</span><div><strong>最終行取得を Function に切り出す</strong><br><span class="sub"><code>最終行取得(srcWs, 1)</code> の形で呼び出す</span></div></li>
+    <li><span class="sn y">3</span><div><strong>ScreenUpdating 等で最適化（発展）</strong><br><span class="sub">処理前に停止・処理後に元に戻す</span></div></li>
+    <li><span class="sn y">4</span><div><strong>集計結果に書式設定・デバッグして仕上げ（発展）</strong></div></li>
+  </ul>
+</section>
+
+
+<!-- ══════════════════════════════════
+  CLOSING
+══════════════════════════════════ -->
+
+<!-- S31: 最終落とし込み：アクションプランニング -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#1c0f00 100%)">
+  <h2 style="font-size:0.88em;"><span class="badge-type b-mu">最終 業務への落とし込み</span> 自分の業務に自動化を計画する</h2>
+  <div class="mu-card" style="margin-top:12px;">
+    <h4>🎯 自動化アクションプラン（ペアワーク 5分）</h4>
+    <ul>
+      <li><strong>自動化したい業務は何ですか？</strong><br>
+        <span style="color:#94a3b8; font-size:0.9em;">（例：毎月の売上集計、勤怠データの転記、複数部署のファイル統合）</span></li>
+      <li><strong>今日学んだ知識でどこまでできそうですか？</strong><br>
+        <span style="color:#94a3b8; font-size:0.9em;">（デバッグ・Function・シート操作のうちどれを使う？）</span></li>
+      <li><strong>まず最初に何をしますか？（明日できる最初の1ステップ）</strong><br>
+        <span style="color:#94a3b8; font-size:0.9em;">（例：データを確認する、骨格となるSubを書いてみる）</span></li>
+    </ul>
+    <div class="mu-write">
+      ペアで共有したあと、1〜2組に発表してもらいます。<br>
+      具体的であればあるほど、明日から動けます。
+    </div>
+  </div>
+</section>
+
+<!-- S32: 2日間の学習マップ -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">2日間で身についたこと</h2>
+  <div class="journey" style="margin-top:16px;">
+    <div class="j-step done">
+      <div class="j-label">Day 1</div>
+      <div class="j-title">✅ 動くものを作った</div>
+      <div class="j-desc">Sub / If / For<br>ブック操作 / Dir<br>複数ファイル統合</div>
+    </div>
+    <div class="j-arrow">›</div>
+    <div class="j-step done">
+      <div class="j-label">Day 2</div>
+      <div class="j-title">✅ 使えるものに磨いた</div>
+      <div class="j-desc">デバッグ / Function<br>シート操作<br>ファイル存在確認</div>
+    </div>
+    <div class="j-arrow">›</div>
+    <div class="j-step active">
+      <div class="j-label">次のステップ</div>
+      <div class="j-title">★ 自分の業務へ適用</div>
+      <div class="j-desc">計画したアクションを<br>明日から実践する</div>
+    </div>
+  </div>
+  <div class="big-pt" style="margin-top:16px; border-left-color:var(--green);">
+    <strong>大切なこと：</strong> まず「職場の1つの作業」に適用してみる。<br>
+    小さな成功体験が次の学習意欲と自信につながります。
+  </div>
+</section>
+
+<!-- S33: 今後のロードマップ -->
+<section data-background-color="#0f172a">
+  <h2 style="font-size:0.9em; color:var(--accent);">今後の学習ロードマップ</h2>
+  <table style="margin-top:14px;">
+    <tr><th>レベル</th><th>テーマ</th><th>できるようになること</th></tr>
+    <tr><td>中級へ</td><td>エラーハンドリング（On Error GoTo）</td><td>より堅牢なエラー対応</td></tr>
+    <tr><td>中級へ</td><td>配列・Dictionary</td><td>大量データの高速処理</td></tr>
+    <tr><td>上級へ</td><td>UserForm</td><td>オリジナル入力フォームの作成</td></tr>
+    <tr><td>実務応用</td><td>Power Query との使い分け</td><td>VBAでやるべきことの選別</td></tr>
+  </table>
+  <div class="big-pt" style="margin-top:14px; border-left-color:var(--purple);">
+    <strong>VBAで全部やろうとしないことも大事。</strong><br>
+    Power QueryやPythonが向いているケースもあります。今日学んだ知識がその判断にも役立ちます。
+  </div>
+</section>
+
+<!-- S34: 終了スライド -->
+<section data-background-gradient="linear-gradient(135deg,#0f172a 0%,#1e3a5f 55%,#0f172a 100%)">
+  <h2 style="font-size:1.2em; color:var(--accent); margin-bottom:0.3em;">お疲れさまでした！</h2>
+  <p style="font-size:0.55em; color:#94a3b8; line-height:2; margin-bottom:0.8em;">
+    2日間の研修を通じて、<br>
+    「動くものを作る力」と「使えるものに磨く力」が身につきました。<br>
+    ぜひ明日からの業務に活かしてください。
+  </p>
+  <div style="font-size:0.42em; color:#334155; margin-top:16px;">
+    <span class="key">←</span><span class="key">→</span> スライド移動　<span class="key">F</span> 全画面　<span class="key">S</span> 講師ノート　<span class="key">?</span> ヘルプ
+  </div>
+</section>
+
+
+</div><!-- .slides -->
+</div><!-- .reveal -->
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/reveal.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/highlight/highlight.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/reveal.js/4.6.1/plugin/notes/notes.min.js"></script>
+<script>
+  Reveal.initialize({
+    hash: true, slideNumber: 'c/t', progress: true,
+    transition: 'slide', center: true, controls: true,
+    controlsTutorial: false,
+    plugins: [ RevealHighlight, RevealNotes ]
+  });
+</script>
+</body>
+</html>
