@@ -1,0 +1,1370 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>VBAとはじめて話す本</title>
+  <style>
+    :root{--blue:#2563eb;--blue-l:#eff6ff;--blue-b:#bfdbfe;--purple:#7c3aed;--purple-l:#f5f3ff;--purple-b:#ddd6fe;--green:#16a34a;--green-l:#f0fdf4;--green-b:#bbf7d0;--amber:#d97706;--amber-l:#fffbeb;--amber-b:#fde68a;--red:#dc2626;--red-l:#fff1f2;--red-b:#fecdd3;--teal:#0d9488;--teal-l:#f0fdfa;--teal-b:#99f6e4;--border:#e2e8f0;--text:#1e293b;--muted:#64748b;--light:#f8fafc;}
+    *{box-sizing:border-box;margin:0;padding:0;}
+    body{font-family:'Yu Gothic UI','Hiragino Sans','Meiryo',sans-serif;font-size:15px;color:var(--text);background:#fff;line-height:1.9;}
+    .site-header{background:#fff;border-bottom:3px solid var(--border);padding:32px 20px 24px;text-align:center;}
+    .header-badge{display:inline-block;font-size:11px;font-weight:700;background:var(--blue-l);color:var(--blue);border-radius:20px;padding:3px 14px;margin-bottom:12px;}
+    .site-header h1{font-size:28px;font-weight:900;color:#0f172a;margin-bottom:8px;}
+    .site-header .sub{font-size:14px;color:var(--muted);margin-bottom:16px;}
+    .day-chips{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;}
+    .chip{display:inline-flex;align-items:center;gap:5px;padding:4px 16px;border-radius:20px;font-size:12px;font-weight:700;}
+    .chip-d1{background:#e0f2fe;color:#0369a1;}.chip-d2{background:var(--purple-b);color:var(--purple);}
+    .page-wrap{max-width:800px;margin:0 auto;padding:0 24px 100px;}
+    .section{margin-top:64px;scroll-margin-top:24px;opacity:0;transform:translateY(28px);transition:opacity .55s ease,transform .55s ease;}
+    .section.visible{opacity:1;transform:translateY(0);}
+    .sec-head{display:flex;align-items:flex-start;gap:14px;margin-bottom:20px;}
+    .sec-emoji{font-size:34px;line-height:1;flex-shrink:0;margin-top:2px;}
+    .sec-title{font-size:22px;font-weight:900;color:#0f172a;}
+    .sec-intro{font-size:14px;color:var(--muted);margin-top:3px;}
+    .sec-badge{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:8px;margin-left:8px;vertical-align:middle;}
+    .sb-d1{background:#e0f2fe;color:#0369a1;}.sb-d2{background:var(--purple-b);color:var(--purple);}
+    h3{font-size:14px;font-weight:700;color:#334155;margin:22px 0 8px;display:flex;align-items:center;gap:6px;}
+    h3::before{content:'';width:4px;height:14px;background:var(--blue);border-radius:2px;display:inline-block;flex-shrink:0;}
+    .story{background:var(--amber-l);border:1.5px solid var(--amber-b);border-radius:14px;padding:16px 20px;margin:14px 0;font-size:14px;color:#78350f;line-height:1.9;}
+    .story strong{color:#92400e;}
+    .question{background:#f0f9ff;border:1.5px solid #bae6fd;border-radius:14px;padding:16px 20px;margin:14px 0;font-size:14px;color:#0c4a6e;line-height:1.9;}
+    .question strong{color:#075985;}
+    .jitsumu{background:var(--green-l);border:1.5px solid var(--green-b);border-radius:14px;padding:16px 20px;margin:14px 0;font-size:14px;color:#14532d;line-height:1.9;}
+    .jitsumu strong{color:#166534;}
+    .tricky{background:var(--purple-l);border:1.5px solid var(--purple-b);border-radius:14px;padding:16px 20px;margin:14px 0;font-size:14px;color:#581c87;line-height:1.9;}
+    .tricky strong{color:#6b21a8;}
+    .caution{background:var(--red-l);border:1.5px solid var(--red-b);border-radius:14px;padding:16px 20px;margin:14px 0;font-size:14px;color:#881337;line-height:1.9;}
+    .caution strong{color:#9f1239;}
+    .chat{background:var(--teal-l);border:1.5px solid var(--teal-b);border-radius:14px;padding:18px 22px;margin:14px 0;font-size:14px;color:#134e4a;line-height:1.95;}
+    .chat strong{color:#0f766e;}
+    .chat-head{font-size:11px;font-weight:700;color:var(--teal);margin-bottom:8px;letter-spacing:.08em;}
+    .steps{background:var(--light);border:1.5px solid var(--border);border-radius:14px;padding:18px 22px;margin:14px 0;}
+    .step-item{display:flex;align-items:flex-start;gap:14px;margin:10px 0;}
+    .step-num{width:28px;height:28px;border-radius:50%;background:var(--blue);color:#fff;display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:700;flex-shrink:0;margin-top:2px;}
+    .step-title{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:3px;}
+    .step-desc{font-size:13px;color:#475569;line-height:1.75;}
+    pre{background:#0f172a;color:#e2e8f0;border-radius:12px;padding:18px 20px;font-size:13px;line-height:1.75;overflow-x:auto;margin:14px 0;}
+    code{font-family:'Consolas','Courier New',monospace;}
+    p code,li code,td code,span code{background:#f1f5f9;color:#0f172a;border-radius:4px;padding:1px 6px;font-size:.87em;}
+    .ck{color:#93c5fd;}.cs{color:#86efac;}.cn{color:#fdba74;}.cc{color:#64748b;}
+    table{width:100%;border-collapse:collapse;margin:14px 0;font-size:14px;}
+    th{background:var(--light);color:#334155;border:1px solid var(--border);padding:9px 14px;text-align:left;font-weight:700;}
+    td{border:1px solid var(--border);padding:9px 14px;}
+    tr:nth-child(even) td{background:#fafafa;}
+    kbd{display:inline-block;background:#f1f5f9;border:1px solid #94a3b8;border-bottom:3px solid #64748b;border-radius:5px;padding:1px 8px;font-family:'Consolas','Courier New',monospace;font-size:12px;color:#1e293b;}
+    p{color:#334155;margin-bottom:10px;}ul,ol{padding-left:1.5em;color:#334155;}li{margin:5px 0;}
+    hr{border:none;border-top:1px solid var(--border);margin:24px 0;}
+    .compare-grid{display:grid;grid-template-columns:1fr auto 1fr;gap:12px;align-items:center;margin:20px 0;}
+    .compare-card{border-radius:14px;padding:22px 18px;text-align:center;border:2px solid transparent;transition:box-shadow .2s;}
+    .compare-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.08);}
+    .compare-card.blue{background:var(--blue-l);border-color:var(--blue-b);}
+    .compare-card.purple{background:var(--purple-l);border-color:var(--purple-b);}
+    .compare-icon{font-size:36px;margin-bottom:8px;}
+    .compare-name{font-size:18px;font-weight:900;margin-bottom:6px;}
+    .compare-card.blue .compare-name{color:var(--blue);}
+    .compare-card.purple .compare-name{color:var(--purple);}
+    .compare-desc{font-size:14px;font-weight:700;margin-bottom:8px;color:#1e293b;}
+    .compare-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 10px;border-radius:20px;margin:2px;}
+    .compare-card.blue .compare-tag{background:var(--blue-b);color:#1d4ed8;}
+    .compare-card.purple .compare-tag{background:var(--purple-b);color:#6d28d9;}
+    .vs-badge{width:40px;height:40px;border-radius:50%;background:#f1f5f9;color:var(--muted);display:flex;align-items:center;justify-content:center;font-size:13px;font-weight:900;flex-shrink:0;}
+    .cards-3{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+    .card3{border-radius:14px;padding:18px 16px;text-align:center;border:1.5px solid var(--border);}
+    .card3-icon{font-size:28px;margin-bottom:8px;}
+    .card3-title{font-size:14px;font-weight:700;color:#0f172a;margin-bottom:6px;}
+    .card3-desc{font-size:12px;color:var(--muted);line-height:1.7;}
+    .card3-tag{display:inline-block;font-size:11px;font-weight:700;padding:2px 9px;border-radius:20px;margin-top:8px;}
+    .tag-blue{background:var(--blue-l);color:var(--blue);}.tag-green{background:var(--green-l);color:var(--green);}.tag-amber{background:var(--amber-l);color:var(--amber);}
+    .var-demo{display:flex;align-items:center;gap:24px;padding:24px;background:var(--light);border-radius:16px;margin:20px 0;flex-wrap:wrap;}
+    .var-boxes{display:flex;gap:16px;flex-wrap:wrap;}
+    .var-box{width:90px;border-radius:10px;border:2px solid var(--border);overflow:hidden;transition:border-color .3s,box-shadow .3s;}
+    .var-box.highlight{border-color:var(--blue);box-shadow:0 0 0 4px var(--blue-b);}
+    .var-box-label{background:#334155;color:#fff;font-size:12px;font-weight:700;text-align:center;padding:4px;font-family:monospace;}
+    .var-box-type{background:#475569;color:#94a3b8;font-size:10px;text-align:center;padding:2px;font-family:monospace;}
+    .var-box-value{background:#fff;color:#0f172a;font-size:20px;font-weight:900;text-align:center;padding:14px 8px;font-family:monospace;transition:all .4s ease;}
+    .var-box-value.changed{background:#fef9c3;color:var(--amber);animation:pop .35s ease;}
+    @keyframes pop{0%{transform:scale(1)}50%{transform:scale(1.2)}100%{transform:scale(1)}}
+    .demo-controls{display:flex;flex-direction:column;gap:8px;flex:1;min-width:200px;}
+    .demo-controls p{font-size:13px;color:var(--muted);margin:0;}
+    .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 18px;border-radius:8px;font-size:13px;font-weight:700;cursor:pointer;border:none;transition:all .15s;font-family:inherit;}
+    .btn-blue{background:var(--blue);color:#fff;}.btn-blue:hover{background:#1d4ed8;}
+    .btn-outline{background:#fff;color:#334155;border:1.5px solid var(--border);}.btn-outline:hover{background:var(--light);}
+    .btn-sm{padding:5px 12px;font-size:12px;}
+    .excel-grid{border:2px solid #64748b;border-radius:8px;overflow:hidden;font-family:monospace;font-size:13px;width:100%;}
+    .excel-grid table{margin:0;}
+    .excel-grid th{background:#d9e1e8;color:#334155;text-align:center;padding:6px 12px;font-size:12px;border:1px solid #b0bec5;}
+    .excel-grid td{padding:6px 12px;text-align:center;border:1px solid #cfd8dc;min-width:80px;}
+    .excel-grid .row-header{background:#d9e1e8;font-weight:700;color:#334155;}
+    .excel-grid .cell-hl{background:#fff9c4;border:2px solid #f59e0b !important;font-weight:700;color:#92400e;}
+    .excel-grid .cell-data{background:#fff;}
+    .excel-grid .cell-cursor{background:#dbeafe;border:2px solid var(--blue) !important;font-weight:700;color:var(--blue);}
+    .flow-box{border-radius:10px;padding:12px 20px;text-align:center;font-size:14px;font-weight:700;margin:0 auto;max-width:280px;}
+    .flow-box.start{background:#1e293b;color:#fff;border-radius:30px;}
+    .flow-box.condition{background:#fef9c3;border:2px solid #f59e0b;color:#78350f;}
+    .flow-box.action-yes{background:var(--blue-l);border:2px solid var(--blue-b);color:#1d4ed8;}
+    .flow-box.action-no{background:#f1f5f9;border:2px solid var(--border);color:#475569;}
+    .flow-box.end{background:#334155;color:#fff;border-radius:30px;}
+    .flow-arrow{text-align:center;color:var(--muted);font-size:20px;line-height:1;}
+    .flow-label{font-size:11px;font-weight:700;padding:2px 8px;border-radius:4px;}
+    .flow-label.yes{background:var(--blue-l);color:var(--blue);}.flow-label.no{background:#f1f5f9;color:var(--muted);}
+    .stepper-track{background:var(--light);border-radius:14px;padding:20px;border:1.5px solid var(--border);}
+    .stepper-files{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px;}
+    .stepper-file{padding:8px 14px;border-radius:8px;font-size:13px;font-weight:700;border:2px solid var(--border);background:#fff;color:var(--muted);transition:all .3s;}
+    .stepper-file.active{background:var(--blue-l);border-color:var(--blue);color:var(--blue);transform:scale(1.05);}
+    .stepper-file.done{background:var(--green-l);border-color:var(--green-b);color:var(--green);text-decoration:line-through;opacity:.6;}
+    .stepper-result{background:#fff;border:1.5px solid var(--border);border-radius:10px;padding:12px 16px;font-family:monospace;font-size:14px;min-height:44px;margin:12px 0;}
+    .ret-val{color:var(--blue);font-weight:700;}.ret-empty{color:var(--muted);}
+    .stepper-controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap;}
+    .stepper-status{font-size:13px;color:var(--muted);}
+    .ba-tabs{display:flex;border-radius:10px 10px 0 0;overflow:hidden;border:1.5px solid var(--border);border-bottom:none;}
+    .ba-tab{flex:1;padding:10px 0;text-align:center;font-size:13px;font-weight:700;cursor:pointer;background:var(--light);color:var(--muted);transition:all .15s;border:none;}
+    .ba-tab.active.bad{background:var(--red-l);color:var(--red);}
+    .ba-tab.active.good{background:var(--green-l);color:var(--green);}
+    .ba-panel{display:none;border:1.5px solid var(--border);border-radius:0 0 10px 10px;padding:20px;font-family:monospace;font-size:13px;line-height:1.75;white-space:pre;overflow-x:auto;}
+    .ba-panel.show{display:block;}.ba-panel.bad{background:#fff8f8;color:#991b1b;}.ba-panel.good{background:#f0fdf4;color:#14532d;}
+    .timeline{display:flex;align-items:stretch;border-radius:14px;overflow:hidden;border:1.5px solid var(--border);}
+    .tl-stage{flex:1;padding:18px 14px;text-align:center;}
+    .tl-stage+.tl-stage{border-left:1.5px solid rgba(255,255,255,.4);}
+    .tl-icon{font-size:26px;margin-bottom:8px;}.tl-title{font-size:13px;font-weight:700;margin-bottom:6px;}.tl-body{font-size:12px;line-height:1.7;}
+    .tl-code{display:inline-block;font-family:monospace;font-size:11px;background:rgba(255,255,255,.5);border-radius:4px;padding:2px 6px;margin-top:4px;}
+    .tl-stage.before{background:#fef2f2;color:#7f1d1d;}.tl-stage.during{background:#eff6ff;color:#1e3a5f;}.tl-stage.after{background:#f0fdf4;color:#14532d;}
+    .tl-arrow{display:flex;align-items:center;color:var(--muted);font-size:20px;padding:0 4px;background:#fff;}
+    .str-demo{background:var(--light);border-radius:14px;padding:24px;margin:20px 0;text-align:center;}
+    .str-chars{display:flex;justify-content:center;gap:4px;flex-wrap:wrap;margin-bottom:16px;}
+    .str-char{width:36px;height:42px;display:flex;flex-direction:column;align-items:center;justify-content:center;border-radius:6px;font-family:monospace;border:2px solid var(--border);background:#fff;transition:all .2s;font-size:16px;font-weight:700;position:relative;}
+    .str-char-idx{font-size:9px;color:var(--muted);font-weight:400;line-height:1;position:absolute;bottom:2px;}
+    .str-char.hl-left{background:#dbeafe;border-color:var(--blue);color:var(--blue);}
+    .str-char.hl-right{background:var(--purple-b);border-color:var(--purple);color:var(--purple);}
+    .str-char.hl-mid{background:var(--green-b);border-color:var(--green);color:var(--green);}
+    .str-char.hl-trim{background:var(--red-b);border-color:var(--red);color:var(--red);}
+    .str-btns{display:flex;gap:8px;flex-wrap:wrap;justify-content:center;}
+    .str-result{margin-top:12px;font-family:monospace;font-size:14px;color:var(--muted);min-height:22px;}
+    .str-result span{color:var(--blue);font-weight:700;}
+    .dialog-row{display:flex;gap:16px;margin:20px 0;flex-wrap:wrap;}
+    .dialog-mock{flex:1;min-width:220px;border-radius:10px;overflow:hidden;border:1.5px solid var(--border);box-shadow:0 4px 16px rgba(0,0,0,.08);}
+    .dialog-titlebar{background:#475569;color:#fff;padding:7px 14px;font-size:13px;font-weight:700;}
+    .dialog-body{background:#fff;padding:20px;}
+    .d-icon{font-size:28px;float:left;margin-right:12px;}.d-msg{font-size:14px;color:#334155;line-height:1.7;}
+    .dialog-footer{background:var(--light);padding:10px 16px;display:flex;justify-content:flex-end;gap:8px;border-top:1px solid var(--border);}
+    .dialog-btn{padding:5px 16px;border-radius:5px;font-size:13px;font-weight:700;border:1.5px solid var(--border);background:#fff;color:#334155;}
+    .dialog-btn.primary{background:var(--blue);color:#fff;border-color:var(--blue);}
+    .debug-cards{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;margin:20px 0;}
+    .debug-card{border-radius:14px;padding:20px 16px;text-align:center;border:2px solid transparent;transition:box-shadow .2s;}
+    .debug-card:hover{box-shadow:0 6px 24px rgba(0,0,0,.1);}
+    .debug-card.c1{background:#eff6ff;border-color:var(--blue-b);}.debug-card.c2{background:var(--amber-l);border-color:var(--amber-b);}.debug-card.c3{background:var(--green-l);border-color:var(--green-b);}
+    .debug-key{display:inline-block;font-family:monospace;font-size:13px;font-weight:700;background:#1e293b;color:#fff;padding:3px 10px;border-radius:6px;margin-bottom:10px;}
+    .debug-name{font-size:14px;font-weight:700;margin-bottom:6px;}
+    .debug-card.c1 .debug-name{color:var(--blue);}.debug-card.c2 .debug-name{color:var(--amber);}.debug-card.c3 .debug-name{color:var(--green);}
+    .debug-desc{font-size:12px;color:var(--muted);line-height:1.7;}
+    .debug-when{display:inline-block;font-size:11px;font-weight:700;padding:3px 9px;border-radius:20px;margin-top:8px;}
+    .debug-card.c1 .debug-when{background:var(--blue-b);color:#1d4ed8;}.debug-card.c2 .debug-when{background:var(--amber-b);color:#92400e;}.debug-card.c3 .debug-when{background:var(--green-b);color:#166534;}
+    .error-cards{display:flex;flex-direction:column;gap:10px;margin:20px 0;}
+    .error-card{display:flex;align-items:flex-start;gap:16px;border-radius:12px;padding:16px 18px;border:1.5px solid transparent;}
+    .error-card.e1{background:#fef2f2;border-color:#fecaca;}.error-card.e2{background:#fff7ed;border-color:#fed7aa;}.error-card.e3{background:#fefce8;border-color:#fef08a;}
+    .error-dot{font-size:24px;flex-shrink:0;margin-top:2px;}
+    .error-name{font-size:14px;font-weight:700;margin-bottom:4px;}
+    .error-card.e1 .error-name{color:#991b1b;}.error-card.e2 .error-name{color:#9a3412;}.error-card.e3 .error-name{color:#713f12;}
+    .error-when{font-size:13px;color:var(--muted);margin-bottom:4px;}.error-tip{font-size:13px;line-height:1.7;}
+    .error-card.e1 .error-tip{color:#7f1d1d;}.error-card.e2 .error-tip{color:#7c2d12;}.error-card.e3 .error-tip{color:#713f12;}
+    .flow-compare{display:grid;grid-template-columns:1fr 1fr;gap:16px;margin:20px 0;}
+    .flow-panel{border-radius:12px;padding:18px;border:2px solid transparent;}
+    .flow-panel.bad{background:#fef2f2;border-color:#fecaca;}.flow-panel.good{background:var(--green-l);border-color:var(--green-b);}
+    .flow-panel-title{font-size:13px;font-weight:700;margin-bottom:14px;}
+    .flow-panel.bad .flow-panel-title{color:var(--red);}.flow-panel.good .flow-panel-title{color:var(--green);}
+    .flow-step{display:flex;align-items:flex-start;gap:10px;margin:8px 0;}
+    .flow-step-num{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0;}
+    .flow-panel.bad .flow-step-num{background:var(--red);color:#fff;}.flow-panel.good .flow-step-num{background:var(--green);color:#fff;}
+    .flow-step-text{font-size:13px;line-height:1.7;}
+    .flow-step-code{font-family:monospace;font-size:12px;background:rgba(255,255,255,.7);border-radius:4px;padding:2px 6px;}
+    .flow-result{margin-top:12px;padding:10px 14px;border-radius:8px;font-size:13px;font-weight:700;text-align:center;}
+    .flow-panel.bad .flow-result{background:var(--red);color:#fff;}.flow-panel.good .flow-result{background:var(--green);color:#fff;}
+    .decision-flow{background:var(--light);border-radius:16px;padding:24px;margin:20px 0;}
+    .decision-q{text-align:center;font-size:16px;font-weight:700;color:#0f172a;margin-bottom:20px;background:#fef9c3;border:2px solid #f59e0b;border-radius:10px;padding:12px 20px;display:inline-block;width:100%;}
+    .decision-row{display:flex;gap:16px;}
+    .decision-branch{flex:1;border-radius:12px;padding:16px;text-align:center;}
+    .decision-branch.yes{background:var(--purple-l);border:2px solid var(--purple-b);}.decision-branch.no{background:var(--blue-l);border:2px solid var(--blue-b);}
+    .decision-answer{font-size:18px;font-weight:900;margin-bottom:8px;}
+    .decision-branch.yes .decision-answer{color:var(--purple);}.decision-branch.no .decision-answer{color:var(--blue);}
+    .decision-examples{font-size:12px;color:var(--muted);line-height:1.8;}
+    #toc-btn{position:fixed;bottom:28px;right:28px;background:var(--blue);color:#fff;border:none;width:48px;height:48px;border-radius:50%;cursor:pointer;font-size:20px;box-shadow:0 4px 16px rgba(37,99,235,.35);display:flex;align-items:center;justify-content:center;z-index:100;}
+    #toc-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.4);z-index:200;align-items:center;justify-content:center;}
+    #toc-overlay.open{display:flex;}
+    #toc-panel{background:#fff;border-radius:20px;padding:28px;width:340px;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.2);}
+    #toc-panel h2{font-size:16px;font-weight:900;margin-bottom:16px;color:#0f172a;}
+    #toc-panel a{display:flex;align-items:center;gap:10px;padding:9px 12px;border-radius:8px;text-decoration:none;color:#334155;font-size:14px;transition:background .12s;}
+    #toc-panel a:hover{background:var(--blue-l);color:var(--blue);}
+    .toc-chip{font-size:10px;font-weight:700;padding:1px 7px;border-radius:8px;margin-left:auto;flex-shrink:0;}
+    .toc-d1{background:#e0f2fe;color:#0369a1;}.toc-d2{background:var(--purple-b);color:var(--purple);}
+    .toc-close{display:block;margin-top:16px;width:100%;padding:10px;background:var(--light);border:none;border-radius:8px;font-size:14px;font-weight:700;cursor:pointer;color:var(--muted);}
+    .viz-title{font-size:12px;font-weight:700;letter-spacing:.06em;color:var(--muted);text-transform:uppercase;margin-bottom:12px;margin-top:20px;}
+    @media(max-width:640px){.compare-grid{grid-template-columns:1fr;}.vs-badge{display:none;}.cards-3,.debug-cards,.flow-compare{grid-template-columns:1fr;}.decision-row{flex-direction:column;}.timeline,.tl-arrow{flex-direction:column;}}
+  </style>
+</head>
+
+<body>
+<header class="site-header">
+  <div class="header-badge">Excel VBA 研修 1日目・2日目</div>
+  <h1>&#x1F4D7; VBAとはじめて話す本</h1>
+  <p class="sub">難しい言葉は後回し。まずは「なんとなくわかる」から始めましょう。</p>
+  <div class="day-chips">
+    <span class="chip chip-d1">&#x1F4D8; 1日目の内容</span>
+    <span class="chip chip-d2">&#x1F4D9; 2日目の内容</span>
+  </div>
+</header>
+
+<div class="page-wrap">
+
+<!-- ═══ 基本のかたち ════════════════════════════════════════ -->
+<section class="section" id="basics">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F4DD;</span>
+    <div>
+      <div class="sec-title">基本のかたち <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">VBAコードを書く「箱」の作り方。まずここから始めましょう。</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    みなさん、VBAを使う前は毎月の集計作業をどうやっていましたか？<br>
+    「同じファイルを何十回もコピペして…」「合計欄を手で直して…」という方、けっこういますよね。<br>
+    実はそれ、今日学ぶたった数行のコードで自動化できます。<strong>「なんでもっと早く知らなかったんだ！」という声、毎回聞きます笑</strong><br>
+    焦らずいきましょう。まず VBA の「コードを書く箱」の作り方から始めます。
+  </div>
+
+  <div class="story">
+    <strong>&#x1F4D6; Sub は「レシピカード」だと思ってください。</strong><br>
+    カードには名前があって、中に手順が書いてある。VBAも同じです。<code>Sub 名前()</code> がカードの表紙、<code>End Sub</code> が裏表紙。その間に「何をするか」を書くだけ。
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title"><code>Sub プロシージャ名()</code> と書く</div>
+        <div class="step-desc">これが「箱の名前と入口」。ここからコードが始まります。名前は日本語でもOKです。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">中に処理を書く</div>
+        <div class="step-desc">インデント（字下げ）を使うと読みやすくなります。VBEは自動でつけてくれます。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title"><code>End Sub</code> で閉じる</div>
+        <div class="step-desc">これが「箱の出口」。コツは最初に <code>Sub ...</code> と <code>End Sub</code> を両方書いて、中身を後から埋めること。</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="viz-title">&#x1F4CA; Sub と Function の違い</p>
+  <div class="compare-grid">
+    <div class="compare-card blue">
+      <div class="compare-icon">&#x1F3C3;</div>
+      <div class="compare-name">Sub</div>
+      <div class="compare-desc">仕事をこなすだけ</div>
+      <span class="compare-tag">戻り値なし</span>
+      <span class="compare-tag">ボタンから実行できる</span>
+      <span class="compare-tag">メインの処理に使う</span>
+    </div>
+    <div class="vs-badge">VS</div>
+    <div class="compare-card purple">
+      <div class="compare-icon">&#x1F50D;</div>
+      <div class="compare-name">Function</div>
+      <div class="compare-desc">仕事して、答えを返す</div>
+      <span class="compare-tag">戻り値あり</span>
+      <span class="compare-tag">他のコードから呼び出す</span>
+      <span class="compare-tag">何度でも使い回せる</span>
+    </div>
+  </div>
+
+  <pre><code><span class="cc">' Sub：処理をまとめる入れ物。ボタンから実行できる</span>
+<span class="ck">Sub</span> 月次集計()
+    MsgBox <span class="cs">"集計が完了しました"</span>
+<span class="ck">End Sub</span>
+
+<span class="cc">' Function：「答えを返せる」特別な入れ物</span>
+<span class="ck">Function</span> 売上評価(金額 <span class="ck">As Long</span>) <span class="ck">As String</span>
+    <span class="ck">If</span> 金額 >= <span class="cn">1000000</span> <span class="ck">Then</span>
+        売上評価 = <span class="cs">"A"</span>
+    <span class="ck">Else</span>
+        売上評価 = <span class="cs">"B"</span>
+    <span class="ck">End If</span>
+<span class="ck">End Function</span></code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; Sub と Function、どう使い分けるの？</strong><br>
+    シンプルな判断基準はこれです：<strong>「答えを返してほしいか？」</strong><br>
+    「最終行は何行目？」「この金額は何評価？」→ 答えが必要 → <strong>Function</strong><br>
+    「ファイルを開いて転記して閉じる」→ ただ仕事するだけ → <strong>Sub</strong>
+  </div>
+
+  <div class="jitsumu">
+    <strong>&#x1F3E2; 実務での使い方：</strong><br>
+    「毎月の集計ボタン」→ Sub で書いてボタンに登録。「最終行を調べる」「売上評価を計算する」→ Function に切り出して使い回す。この組み合わせが業務マクロの基本パターンです。
+  </div>
+</section>
+
+<!-- ═══ 変数 ════════════════════════════════════════════════ -->
+<section class="section" id="vars">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F4E6;</span>
+    <div>
+      <div class="sec-title">変数って何？ <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">値を一時的に保存する「名前のついた箱」を作る</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    「変数」という言葉、数学の x や y を思い出して「難しそう…」と感じた方、いますか？<br>
+    大丈夫です。プログラミングの変数は<strong>「名前のついた箱」——それだけです。</strong><br>
+    たとえば「今月の最終行は何行目か」という数字を覚えておきたいとき、その数字をどこかに保存しておかないといけないですよね。そのための箱が変数です。<br>
+    ちなみに変数名をつけるのって、意外と楽しいんですよ。センスが出ます笑
+  </div>
+
+  <div class="story">
+    <strong>&#x1F4E6; 変数は「ラベルを貼った引き出し」です。</strong><br>
+    「整数を入れる i という引き出し」→ <code>Dim i As Long</code><br>
+    「文字列を入れる name という引き出し」→ <code>Dim name As String</code><br>
+    一度作った引き出しには何度でも違う値を入れ替えられます。
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title"><code>Dim 変数名 As 型</code> と書く（宣言）</div>
+        <div class="step-desc">「この名前の箱を用意してください」という宣言です。Sub の先頭にまとめて書くのが慣習です。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title"><code>変数名 = 値</code> で値を入れる（代入）</div>
+        <div class="step-desc">箱に値を入れます。同じ箱に何度でも入れ替えられます。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">変数名を書くと中の値が使える（参照）</div>
+        <div class="step-desc"><code>Cells(i, 1)</code> のように書けば、i の中の数字がそのまま使われます。</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="viz-title">&#x1F3AE; インタラクティブ：変数に値が入る様子を確認</p>
+  <div class="var-demo">
+    <div class="var-boxes" id="varBoxes">
+      <div class="var-box" id="vb-i">
+        <div class="var-box-label">i</div>
+        <div class="var-box-type">Long（整数）</div>
+        <div class="var-box-value" id="vv-i">0</div>
+      </div>
+      <div class="var-box" id="vb-name">
+        <div class="var-box-label">name</div>
+        <div class="var-box-type">String（文字）</div>
+        <div class="var-box-value" id="vv-name" style="font-size:14px">""</div>
+      </div>
+      <div class="var-box" id="vb-flag">
+        <div class="var-box-label">flag</div>
+        <div class="var-box-type">Boolean</div>
+        <div class="var-box-value" id="vv-flag" style="font-size:14px">False</div>
+      </div>
+    </div>
+    <div class="demo-controls">
+      <p>ボタンを押すと変数に値が入ります</p>
+      <button class="btn btn-blue btn-sm" onclick="doAssign()">&#x25B6; 代入を実行</button>
+      <button class="btn btn-outline btn-sm" onclick="doReset()">&#x21BA; リセット</button>
+      <p id="assign-code" style="font-family:monospace;font-size:12px;color:#2563eb;margin-top:4px"></p>
+    </div>
+  </div>
+
+  <p class="viz-title">&#x1F4CB; よく使う型の一覧</p>
+  <div class="cards-3">
+    <div class="card3">
+      <div class="card3-icon">&#x1F522;</div>
+      <div class="card3-title">Long（整数）</div>
+      <div class="card3-desc">ループのカウンター・行番号など整数全般に使う。最も頻出。</div>
+      <span class="card3-tag tag-blue">Dim i As Long</span>
+    </div>
+    <div class="card3">
+      <div class="card3-icon">&#x1F4DD;</div>
+      <div class="card3-title">String（文字列）</div>
+      <div class="card3-desc">名前・ファイル名・評価など文字列に使う。ダブルクォートで代入。</div>
+      <span class="card3-tag tag-green">Dim name As String</span>
+    </div>
+    <div class="card3">
+      <div class="card3-icon">&#x1F504;</div>
+      <div class="card3-title">Boolean（真偽値）</div>
+      <div class="card3-desc">True か False の2値だけ。「処理したか否か」などのフラグに使う。</div>
+      <span class="card3-tag tag-amber">Dim flag As Boolean</span>
+    </div>
+  </div>
+
+  <pre><code><span class="ck">Dim</span> i       <span class="ck">As Long</span>      <span class="cc">' 整数（ループのカウンターに）</span>
+<span class="ck">Dim</span> name    <span class="ck">As String</span>    <span class="cc">' 文字列</span>
+<span class="ck">Dim</span> price   <span class="ck">As Double</span>    <span class="cc">' 小数点あり数値</span>
+<span class="ck">Dim</span> flag    <span class="ck">As Boolean</span>   <span class="cc">' True / False</span>
+<span class="ck">Dim</span> ws      <span class="ck">As Worksheet</span> <span class="cc">' シートを入れる箱 ← Set が必要！</span>
+<span class="ck">Const</span> FOLDER <span class="ck">As String</span> = <span class="cs">"C:\data\"</span>  <span class="cc">' 定数（変わらない値）</span>
+
+i = <span class="cn">5</span>
+name = <span class="cs">"田中"</span>
+<span class="ck">Set</span> ws = Worksheets(<span class="cs">"集計"</span>)    <span class="cc">' オブジェクト型には Set が必要！</span></code></pre>
+
+  <div class="tricky">
+    <strong>&#x1F605; ここでよくつまずきます：Worksheet には Set が必要！</strong><br>
+    普通の変数は <code>i = 5</code> と書けばOKですが、<code>Worksheet</code> や <code>Workbook</code> のような「オブジェクト型」は <code>Set ws = Worksheets("集計")</code> のように <code>Set</code> をつけます。<br>
+    忘れると「オブジェクト変数が設定されていません」というエラーが出ます。<strong>「またこのエラーか」→ まず Set を確認</strong>。
+  </div>
+</section>
+
+<!-- ═══ セル ════════════════════════════════════════════════ -->
+<section class="section" id="cells">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F4CA;</span>
+    <div>
+      <div class="sec-title">セルを触る <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">Excelのマス目を読んだり書いたりする2つの方法</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    Excelって、実はすべてのセルが「行番号・列番号」の座標で管理されているんです。<br>
+    A1 とか B2 という書き方に慣れすぎていて気づかないけど、<strong>A列は1列目、B列は2列目… というルールがある</strong>んですよ。<br>
+    だから VBA では <code>Cells(1, 1)</code> って書くと A1 のことになります。「え、A1 って書けないの？」と思うかもしれませんが、実は両方書けます。使い分けのコツを見ていきましょう！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F5FA;&#xFE0F; セルは「座標で呼ぶ」と覚えてください。</strong><br>
+    地図で「北緯35度・東経139度」と指定するのと同じ感覚。<code>Cells(2, 3)</code> は「2行目・3列目」= C2セルです。
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title"><code>Cells(行, 列)</code> ── ループで使いやすい</div>
+        <div class="step-desc">行と列を数字で指定。<code>For i = 2 To lastRow</code> のように変数を使えるので、ループの中で行を変えながら処理できる。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title"><code>Range("A1")</code> ── 固定セルを名前で指定</div>
+        <div class="step-desc">「タイトルは常にA1」など固定のセルを指定するとき。コードが読みやすくなる。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title"><code>.Value</code> で読み書き</div>
+        <div class="step-desc">書き込みは <code>Cells(2,1).Value = "田中"</code>、読み込みは <code>name = Cells(2,1).Value</code>。</div>
+      </div>
+    </div>
+  </div>
+
+  <p class="viz-title">&#x1F4CA; Cells(行, 列) の座標イメージ</p>
+  <div style="margin:20px 0">
+    <div class="excel-grid">
+      <table>
+        <tr><th style="width:50px"></th><th>A列(1)</th><th>B列(2)</th><th>C列(3)</th><th>D列(4)</th></tr>
+        <tr><td class="row-header">1行</td><td class="cell-data">商品名</td><td class="cell-data">数量</td><td class="cell-data">単価</td><td class="cell-data">金額</td></tr>
+        <tr><td class="row-header">2行</td><td class="cell-data">りんご</td><td class="cell-data">3</td>
+          <td class="cell-hl">&#x2605; 150<br><small>Cells(2,3)</small></td><td class="cell-data">450</td></tr>
+        <tr><td class="row-header">3行</td><td class="cell-data">みかん</td><td class="cell-data">5</td><td class="cell-data">80</td>
+          <td class="cell-cursor">計算中<br><small>Cells(i,4)</small></td></tr>
+      </table>
+    </div>
+    <p style="font-size:13px;color:var(--muted);margin-top:8px">&#x1F7E1; 黄色 = <code>Cells(2,3)</code>（C2セル） &#x1F535; 青 = ループで処理中のセル</p>
+  </div>
+
+  <pre><code>Cells(<span class="cn">2</span>, <span class="cn">3</span>)                          <span class="cc">' 2行3列 = C2セル</span>
+Range(<span class="cs">"A1"</span>)                         <span class="cc">' 名前で指定</span>
+
+Cells(<span class="cn">2</span>, <span class="cn">1</span>).Value = <span class="cs">"田中"</span>         <span class="cc">' A2に書き込む</span>
+name = Cells(<span class="cn">2</span>, <span class="cn">1</span>).Value            <span class="cc">' A2の値を読み込む</span>
+
+<span class="cc">' ★ 最終行の取得（必ず覚えたい定番パターン）</span>
+lastRow = Cells(Rows.Count, <span class="cn">1</span>).End(xlUp).Row</code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; <code>Cells(Rows.Count, 1).End(xlUp).Row</code> ── 意味がわからない…</strong><br>
+    分解して読みましょう：<br>
+    &#x2460; <code>Cells(Rows.Count, 1)</code> → A列の「一番最後の行」（約100万行目）<br>
+    &#x2461; <code>.End(xlUp)</code> → そこから上に向かって <kbd>Ctrl</kbd>+<kbd>&#x2191;</kbd> を押した結果のセル<br>
+    &#x2462; <code>.Row</code> → そのセルの行番号を取得<br>
+    Excelで実際に <kbd>Ctrl</kbd>+<kbd>&#x2191;</kbd> を押してみると、同じ動きをしますよ。
+  </div>
+
+  <div class="jitsumu">
+    <strong>&#x1F3E2; 実務での使い方：</strong><br>
+    毎月行数が変わる集計データに最適。<code>For i = 2 To lastRow</code> と書けば、データが100行でも1000行でも同じコードが動きます。
+  </div>
+</section>
+
+<!-- ═══ If ═════════════════════════════════════════════════ -->
+<section class="section" id="if">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F500;</span>
+    <div>
+      <div class="sec-title">もし〜ならば（If） <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">条件によって処理を変える。業務マクロの核心です。</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    みなさんって、無意識のうちに一日に何千回も「もし〜ならば」という判断をしていると思うんですよ。<br>
+    「もし雨なら傘を持って行こう」「もし残業なら外で夕食にしよう」「もし打ち合わせが長引いたら電車を1本遅らせよう」…<br>
+    <strong>人間の思考回路って、ほぼ全部 If 文でできてるんです。笑</strong><br>
+    プログラムも同じ。「もし売上が100万以上ならA評価」「もしファイルがあれば開く」——これをコードで書けると、一気にできることが増えます。
+  </div>
+
+  <div class="story">
+    <strong>&#x1F6A6; 信号と同じです。</strong><br>
+    「青なら進む、赤なら止まる、黄なら気をつけて進む」——それをコードで書いたのが If 文です。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; If 文の流れ（売上評価の例）</p>
+  <div style="display:flex;flex-direction:column;align-items:center;gap:6px;margin:20px 0">
+    <div class="flow-box start" style="max-width:220px">売上金額を受け取る</div>
+    <div class="flow-arrow">&#x2193;</div>
+    <div class="flow-box condition">売上 &ge; 100万円？</div>
+    <div style="display:flex;gap:32px;align-items:flex-start;margin:4px 0">
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <span class="flow-label yes">Yes</span>
+        <div class="flow-arrow">&#x2193;</div>
+        <div class="flow-box action-yes" style="max-width:120px">"A評価" を返す</div>
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+        <span class="flow-label no">No</span>
+        <div class="flow-arrow">&#x2193;</div>
+        <div class="flow-box condition">売上 &ge; 50万円？</div>
+        <div style="display:flex;gap:16px;align-items:flex-start;margin:4px 0">
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <span class="flow-label yes">Yes</span>
+            <div class="flow-arrow">&#x2193;</div>
+            <div class="flow-box action-yes" style="max-width:90px">"B評価"</div>
+          </div>
+          <div style="display:flex;flex-direction:column;align-items:center;gap:4px">
+            <span class="flow-label no">No</span>
+            <div class="flow-arrow">&#x2193;</div>
+            <div class="flow-box action-no" style="max-width:90px">"C評価"</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="flow-arrow">&#x2193;</div>
+    <div class="flow-box end" style="max-width:220px">評価をセルに書き込む</div>
+  </div>
+
+  <pre><code><span class="ck">If</span>     売上金額 >= <span class="cn">1000000</span> <span class="ck">Then</span>
+    評価 = <span class="cs">"A"</span>
+<span class="ck">ElseIf</span> 売上金額 >= <span class="cn">500000</span>  <span class="ck">Then</span>
+    評価 = <span class="cs">"B"</span>
+<span class="ck">Else</span>
+    評価 = <span class="cs">"C"</span>
+<span class="ck">End If</span>
+
+<span class="cc">' 複数条件：AかつB</span>
+<span class="ck">If</span> A > <span class="cn">0</span> <span class="ck">And</span> B > <span class="cn">0</span> <span class="ck">Then</span>  ...
+<span class="cc">' 複数条件：AまたはB</span>
+<span class="ck">If</span> A > <span class="cn">0</span> <span class="ck">Or</span>  B > <span class="cn">0</span> <span class="ck">Then</span>  ...</code></pre>
+
+  <div class="caution">
+    <strong>&#x26A0;&#xFE0F; 必ず「End If」で閉じること！</strong><br>
+    If を書いたら最後に <code>End If</code> が必要です。コツは<strong>最初に <code>If ... Then</code> と <code>End If</code> を両方書いてしまって、中身を後から埋める</strong>こと。
+  </div>
+
+  <div class="jitsumu">
+    <strong>&#x1F3E2; 実務での使い方：</strong><br>
+    「売上が100万以上ならA評価」「ファイルが存在するなら開く、なければスキップ」「シートが集計ならば処理、それ以外はスキップ」——業務マクロの半分以上は If 文で成り立っています。
+  </div>
+</section>
+
+<!-- ═══ ループ ════════════════════════════════════════════ -->
+<section class="section" id="loop">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F501;</span>
+    <div>
+      <div class="sec-title">繰り返す（For / Do While） <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">「同じ作業を何百回も繰り返す」という仕事を自動化する</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    ループを初めて書いて実行したとき、どんな感覚でしたか？<br>
+    「え、これだけで全部やってくれるの！？」って、ちょっと感動しませんでしたか？笑<br>
+    ループを覚えた瞬間、「今まであの作業は何だったんだ…」と少し悲しくなる方もいます。<strong>1000行のデータを手で処理していた時間を返してほしい、と。</strong><br>
+    でも、今日からはその必要はありません。ループに全部任せましょう！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F3ED; 工場のベルトコンベアのイメージです。</strong><br>
+    商品がひとつずつ流れてきて、同じ検査・加工を繰り返す。VBAのループも「2行目から最終行まで同じ処理を繰り返す」動きをします。人が2時間かかる作業が数秒で終わります。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; 3種類のループの使い分け</p>
+  <div class="cards-3">
+    <div class="card3">
+      <div class="card3-icon">&#x1F522;</div>
+      <div class="card3-title">For〜Next</div>
+      <div class="card3-desc">「何回繰り返すか」あらかじめわかっているとき。2行目から最終行まで、など。</div>
+      <span class="card3-tag tag-blue">範囲がわかる</span>
+    </div>
+    <div class="card3">
+      <div class="card3-icon">&#x1F4C2;</div>
+      <div class="card3-title">Do While〜Loop</div>
+      <div class="card3-desc">「いつ終わるかわからない」とき。ファイルがある限り続ける、など。</div>
+      <span class="card3-tag tag-amber">条件が続く間</span>
+    </div>
+    <div class="card3">
+      <div class="card3-icon">&#x1F4CB;</div>
+      <div class="card3-title">For Each〜Next</div>
+      <div class="card3-desc">全シート・全ファイルなど「コレクションの全部」に対して処理したいとき。</div>
+      <span class="card3-tag tag-green">全部に対して</span>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title"><code>For i = 2 To lastRow</code> と書く</div>
+        <div class="step-desc">i は 2 から始まり、lastRow まで 1 ずつ増えながら繰り返す。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">処理を書く（<code>Cells(i, ...)</code> で行を変えながら）</div>
+        <div class="step-desc">i が変わるたびに、Cells(i, 4) も次の行を指す。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title"><code>Next i</code> で閉じる</div>
+        <div class="step-desc">ここで i が 1 増えて、ループの先頭に戻る。</div>
+      </div>
+    </div>
+  </div>
+
+  <pre><code><span class="ck">Dim</span> i <span class="ck">As Long</span>
+<span class="ck">For</span> i = <span class="cn">2</span> <span class="ck">To</span> lastRow
+    Cells(i, <span class="cn">4</span>).Value = Cells(i, <span class="cn">2</span>).Value * Cells(i, <span class="cn">3</span>).Value
+<span class="ck">Next</span> i</code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; 「なんで i = 1 じゃなくて i = 2 から始めるの？」</strong><br>
+    1行目はヘッダー行（「商品名」「数量」などの見出し）であることが多いので、データのある2行目から処理を始めます。ヘッダー行を計算してしまうとエラーや変な結果になります。
+  </div>
+
+  <h3>Dir() ── 「フォルダのファイルを1つずつ取り出す」</h3>
+
+  <p class="viz-title">&#x1F3AE; インタラクティブ：Dir() の動きを確認</p>
+  <div class="stepper-track" style="margin:20px 0">
+    <div class="stepper-files">
+      <div class="stepper-file" id="sf-0">&#x1F4C4; 東京.xlsx</div>
+      <div class="stepper-file" id="sf-1">&#x1F4C4; 大阪.xlsx</div>
+      <div class="stepper-file" id="sf-2">&#x1F4C4; 名古屋.xlsx</div>
+    </div>
+    <div style="font-size:13px;color:var(--muted);margin-bottom:8px">Dir() の戻り値：</div>
+    <div class="stepper-result" id="stepper-result">
+      <span class="ret-empty">— まだ実行していません —</span>
+    </div>
+    <div class="stepper-controls">
+      <button class="btn btn-blue btn-sm" id="stepper-next" onclick="stepperNext()">&#x25B6; Dir() を呼ぶ</button>
+      <button class="btn btn-outline btn-sm" onclick="stepperReset()">&#x21BA; リセット</button>
+      <span class="stepper-status" id="stepper-status"></span>
+    </div>
+  </div>
+
+  <pre><code>fileName = Dir(<span class="cs">"C:\data\*.xlsx"</span>)   <span class="cc">' 最初だけ引数あり</span>
+<span class="ck">Do While</span> fileName &lt;&gt; <span class="cs">""</span>
+    <span class="cc">' 処理...</span>
+    fileName = Dir()               <span class="cc">' 次のファイルへ（引数なし）← 必須！</span>
+<span class="ck">Loop</span></code></pre>
+
+  <div class="tricky">
+    <strong>&#x1F605; Dir() の動きが直感に反しますよね。</strong><br>
+    最初の <code>Dir("*.xlsx")</code> は「最初のファイル名を返す」のに、2回目以降は <code>Dir()</code> と引数なしで「次のファイル名を返す」。<strong>「最初だけ引数あり、次からは引数なし」と丸暗記してOKです。</strong>
+  </div>
+
+  <div class="caution">
+    <strong>&#x26A0;&#xFE0F; 無限ループに注意！</strong><br>
+    <code>fileName = Dir()</code> を書き忘れると、同じファイルをずっと処理し続けてExcelが固まります。<kbd>Esc</kbd> キーで強制停止できます。
+  </div>
+</section>
+
+<!-- ═══ ブック ════════════════════════════════════════════ -->
+<section class="section" id="workbook">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F4C2;</span>
+    <div>
+      <div class="sec-title">ファイルとシートを操る <span class="sec-badge sb-d1">1日目</span></div>
+      <div class="sec-intro">ブックを開いて処理して閉じる。シートを追加・削除する</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    ファイルを開きっぱなしにしてPCが重くなった経験、ありませんか？<br>
+    VBAでも同じです。開いたファイルをずっと放置するとメモリを圧迫します。<br>
+    <strong>「開いたら必ず閉じる」——これだけで多くのトラブルが防げます。</strong><br>
+    あと、ファイルパスを絶対パス（C:¥Users¥yamada¥...）で書いてしまうと、自分のPCでしか動かなくなります。チームで使うツールを作るときは要注意です！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F4DA; 本棚から本を取り出して、読んで、棚に戻すイメージです。</strong><br>
+    開く→処理する→閉じる。この3ステップを守れば、ファイル操作は怖くありません。
+  </div>
+
+  <pre><code><span class="cc">' ★ ThisWorkbook.Path を使う（絶対パスより安全）</span>
+path = ThisWorkbook.Path & <span class="cs">""</span>
+
+<span class="cc">' 開く前にファイルの存在を確認（安全！）</span>
+<span class="ck">If</span> Dir(path & <span class="cs">"データ.xlsx"</span>) &lt;&gt; <span class="cs">""</span> <span class="ck">Then</span>
+    Workbooks.Open path & <span class="cs">"データ.xlsx"</span>
+    <span class="ck">Set</span> wb = ActiveWorkbook
+    <span class="ck">Set</span> ws = wb.Worksheets(<span class="cs">"Sheet1"</span>)
+    <span class="cc">' 処理 ...</span>
+    wb.Close SaveChanges:=<span class="ck">True</span>   <span class="cc">' ← 開いたら必ず閉じる！</span>
+<span class="ck">End If</span>
+
+<span class="cc">' シートを削除（確認ダイアログを消す）</span>
+Application.DisplayAlerts = <span class="ck">False</span>
+Worksheets(<span class="cs">"削除するシート"</span>).Delete
+Application.DisplayAlerts = <span class="ck">True</span>  <span class="cc">' ← 必ず戻す！</span></code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; <code>ThisWorkbook.Path</code> と絶対パス、どちらを使えばいい？</strong><br>
+    絶対パスで書くと「自分のPCでしか動かないツール」になります。<br>
+    <code>ThisWorkbook.Path</code> を使えば「どのPCに置いても動くツール」になります。<strong>チームで使うなら必ず ThisWorkbook.Path を使いましょう。</strong>
+  </div>
+</section>
+
+<!-- ═══ デバッグ ════════════════════════════════════════════ -->
+<section class="section" id="debug">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F41B;</span>
+    <div>
+      <div class="sec-title">デバッグ ── バグを探す武器 <span class="sec-badge sb-d2">2日目</span></div>
+      <div class="sec-intro">コードが思い通りに動かないとき、どこを見ればいい？</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    バグが出た時、みなさんはどう対処していますか？<br>
+    「もうわからん！」ってコードを全部消したり、PCを叩きたくなったりする気持ち…わかります笑<br>
+    でも実は、バグには<strong>「必ず原因がある」</strong>んです。ランダムに壊れることはありません。<br>
+    道具の使い方を知っていれば、ほとんどのバグは30分以内に見つかります。<br>
+    <strong>エラーは「敵」ではなく「ヒント」です。</strong> 冷静に一緒に追いかけましょう！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F373; レシピ通りに作ったのに料理がおいしくない。</strong><br>
+    材料も揃っている、手順も合っている、でも何かがおかしい。「全部捨てて最初からやり直す」はもったいない。「どこが間違っているか冷静に確認する」——それがデバッグです。
+  </div>
+
+  <p class="viz-title">&#x1F6E0;&#xFE0F; デバッグ 3 つの武器</p>
+  <div class="debug-cards">
+    <div class="debug-card c1">
+      <div class="debug-key">Ctrl + G</div>
+      <div class="debug-name">&#x2460; Debug.Print</div>
+      <div class="debug-desc">値をイミディエイトウィンドウに出力。止まらないのでループの中でも全部記録できる。</div>
+      <span class="debug-when">大量の値を記録したい</span>
+    </div>
+    <div class="debug-card c2">
+      <div class="debug-key">F9 &#x2192; F5</div>
+      <div class="debug-name">&#x2461; ブレークポイント</div>
+      <div class="debug-desc">行の左端クリックで赤丸●。F5実行するとその行でピタッと停止。変数をマウスオーバーで値確認。</div>
+      <span class="debug-when">ここで何が起きてる？</span>
+    </div>
+    <div class="debug-card c3">
+      <div class="debug-key">F8</div>
+      <div class="debug-name">&#x2462; ステップ実行</div>
+      <div class="debug-desc">F8を押すたびに1行ずつ進む。黄色ハイライトを目で追いながら変数の変化を確認。</div>
+      <span class="debug-when">どこがおかしいか追う</span>
+    </div>
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title">まず <code>Debug.Print</code> でループの値を全部出力してみる</div>
+        <div class="step-desc"><kbd>Ctrl</kbd>+<kbd>G</kbd> でイミディエイトウィンドウを開いて確認。「ここで変な値になってる！」と気づける。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">怪しい行にブレークポイント（<kbd>F9</kbd>）を置く</div>
+        <div class="step-desc">行の左端をクリックすると赤丸●が付く。F5で実行するとそこで止まり、変数の今の値をマウスオーバーで確認できる。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">どこが怪しいかまったくわからない → <kbd>F8</kbd> で最初からゆっくり</div>
+        <div class="step-desc">1行ずつ実行して黄色ハイライトを追う。時間はかかるが確実。</div>
+      </div>
+    </div>
+  </div>
+
+  <pre><code><span class="cc">' ── 武器① Debug.Print ─────────────────────</span>
+Debug.Print <span class="cs">"行:"</span> & i & <span class="cs">"  値:"</span> & Cells(i, <span class="cn">1</span>).Value
+
+<span class="cc">' ── 武器②③ はキーボード操作 ──────────────</span>
+<span class="cc">' F9 でブレークポイント設定 → F5で実行して停止</span>
+<span class="cc">' F8 でステップ実行（1行ずつ進む）</span></code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; 「MsgBoxで確認すればよくない？」と思いますよね。</strong><br>
+    MsgBox は毎回「OK」を押さないといけないので、100回ループする処理では100回クリックが必要になります。<code>Debug.Print</code> はクリック不要で全部流れていくので、<strong>ループの中の確認には断然 Debug.Print の方が楽です</strong>。
+  </div>
+
+  <p class="viz-title">&#x1F4CB; 3種類のエラーと見つけ方</p>
+  <div class="error-cards">
+    <div class="error-card e1">
+      <div class="error-dot">&#x1F534;</div>
+      <div>
+        <div class="error-name">コンパイルエラー</div>
+        <div class="error-when">実行前に検出される（文法ミス）</div>
+        <div class="error-tip">VBEが赤くハイライト。<code>End If</code> の閉じ忘れ・括弧ミスが多い。<strong>一番わかりやすいエラー。</strong></div>
+      </div>
+    </div>
+    <div class="error-card e2">
+      <div class="error-dot">&#x1F7E0;</div>
+      <div>
+        <div class="error-name">実行時エラー</div>
+        <div class="error-when">実行中に突然ダイアログが出る</div>
+        <div class="error-tip">エラー番号をそのままGoogleで検索すると解決策がすぐ見つかる。「型が一致しません」「インデックスが有効範囲にありません」が頻出。</div>
+      </div>
+    </div>
+    <div class="error-card e3">
+      <div class="error-dot">&#x1F7E1;</div>
+      <div>
+        <div class="error-name">論理エラー（一番厄介！）</div>
+        <div class="error-when">実行は成功するが結果が間違っている</div>
+        <div class="error-tip">VBAは一切教えてくれない。<strong>結果を見て初めて気づく</strong>。「合計が合わない」→ Debug.Print で変数を1つずつ追う。</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══ エラーを防ぐ ════════════════════════════════════════ -->
+<section class="section" id="errprev">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F6E1;</span>
+    <div>
+      <div class="sec-title">エラーを「防ぐ」 <span class="sec-badge sb-d2">2日目</span></div>
+      <div class="sec-intro">エラーが起きてから対処するより、起きないようにする</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    「マクロを実行したら急に止まった！」という経験、ありませんか？<br>
+    そういうとき、たいていの原因はこれです：<strong>「ファイルがない」「シートがない」「想定外のデータが入っていた」</strong><br>
+    実務では、想定外のことが普通に起きます。ファイルが届いていない月、誰かがシートを削除してしまった…など。<br>
+    「エラーが起きてから直す」より「エラーが起きないようにする」方が、ずっとスマートです。しかも、1日目で学んだ <code>If</code> と <code>Dir</code> だけで書けますよ！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F6AA; ドアを勢いよく開けてぶつかるより、ノックしてから開ける方が安全です。</strong><br>
+    ファイルを開くときも同じ。「このファイル、ちゃんとありますか？」と確認してから開く方が親切で安全なコードになります。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; 安全な開き方 vs 危険な開き方</p>
+  <div class="flow-compare">
+    <div class="flow-panel bad">
+      <div class="flow-panel-title">&#x274C; 危険な開き方</div>
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text"><span class="flow-step-code">Workbooks.Open filePath</span> を即実行</div></div>
+      <div style="text-align:center;color:var(--muted);font-size:18px;margin:6px 0">&#x2193;</div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">ファイルが存在しない場合…</div></div>
+      <div style="text-align:center;color:var(--muted);font-size:18px;margin:6px 0">&#x2193;</div>
+      <div class="flow-result">&#x1F4A5; 実行時エラー！マクロが止まる</div>
+    </div>
+    <div class="flow-panel good">
+      <div class="flow-panel-title">&#x2705; 安全な開き方</div>
+      <div class="flow-step"><div class="flow-step-num">1</div><div class="flow-step-text"><span class="flow-step-code">Dir(filePath) &lt;&gt; ""</span> でファイル確認</div></div>
+      <div style="text-align:center;color:var(--muted);font-size:18px;margin:6px 0">&#x2193;</div>
+      <div class="flow-step"><div class="flow-step-num">2</div><div class="flow-step-text">あれば → 開いて処理<br>なければ → メッセージ+スキップ</div></div>
+      <div style="text-align:center;color:var(--muted);font-size:18px;margin:6px 0">&#x2193;</div>
+      <div class="flow-result">&#x2705; エラーにならず次の処理へ</div>
+    </div>
+  </div>
+
+  <pre><code><span class="cc">' ✅ ファイル確認してから開く</span>
+<span class="ck">If</span> Dir(filePath) &lt;&gt; <span class="cs">""</span> <span class="ck">Then</span>
+    Workbooks.Open filePath
+<span class="ck">Else</span>
+    MsgBox filePath & <span class="cs">" が見つかりません"</span>
+<span class="ck">End If</span>
+
+<span class="cc">' ✅ シートの存在確認</span>
+<span class="ck">On Error Resume Next</span>             <span class="cc">' ← ここだけエラーを無視</span>
+<span class="ck">Set</span> ws = Worksheets(<span class="cs">"集計"</span>)
+<span class="ck">On Error GoTo 0</span>                  <span class="cc">' ← すぐリセット（この2行はセット！）</span>
+<span class="ck">If Not</span> ws <span class="ck">Is Nothing Then</span>
+    <span class="cc">' シートが存在する場合の処理</span>
+<span class="ck">End If</span></code></pre>
+
+  <div class="tricky">
+    <strong>&#x1F605; <code>On Error Resume Next</code> ── 怖くないですか？</strong><br>
+    「エラーを無視する」と聞くと不安になりますよね。<br>
+    大事なのは<strong>直後に必ず <code>On Error GoTo 0</code> でリセットすること</strong>。<strong>この2行は常にセットで書く</strong>、と覚えてください。
+  </div>
+</section>
+
+<!-- ═══ Function ════════════════════════════════════════════ -->
+<section class="section" id="function">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F527;</span>
+    <div>
+      <div class="sec-title">Function ── 答えを返す関数を作る <span class="sec-badge sb-d2">2日目</span></div>
+      <div class="sec-intro">同じ処理を1か所にまとめて何度でも使い回す</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    コードを書いていて「あれ、同じような処理を2回書いてる…」と感じた経験、ありませんか？<br>
+    そのとき心のどこかで「なんかスッキリしないな」と感じませんでしたか？<br>
+    <strong>その感覚、正解です！</strong><br>
+    プログラマーの世界に「DRY原則」という言葉があります。「Don't Repeat Yourself」——同じコードを繰り返すな、という意味です。<br>
+    Function を使って「共通の処理を1か所にまとめる」——これだけで修正が圧倒的に楽になります。
+  </div>
+
+  <div class="story">
+    <strong>&#x1F3EA; コンビニのレジマニュアルを作るイメージです。</strong><br>
+    修正が必要になったときもマニュアルを1か所直すだけで全員に反映されます。Function も同じ——処理を1か所にまとめておけば、修正はいつも1か所で済みます。
+  </div>
+
+  <p class="viz-title">&#x1F504; Before / After を切り替えて比較</p>
+  <div style="margin:20px 0">
+    <div class="ba-tabs">
+      <button class="ba-tab active bad" id="ba-tab-bad" onclick="baSwitch('bad')">&#x274C; Before（重複コード）</button>
+      <button class="ba-tab good" id="ba-tab-good" onclick="baSwitch('good')">&#x2705; After（Function化）</button>
+    </div>
+    <div class="ba-panel bad show" id="ba-panel-bad">Sub 月次集計()
+    ' 同じコードが3か所に散らばっている！
+    row1 = ws1.Cells(Rows.Count,1).End(xlUp).Row  ' ← 同じ
+    row2 = ws2.Cells(Rows.Count,1).End(xlUp).Row  ' ← 同じ
+    row3 = ws3.Cells(Rows.Count,1).End(xlUp).Row  ' ← 同じ
+    ' ⚠ 修正が必要になったら3か所全部直す必要がある
+End Sub</div>
+    <div class="ba-panel good" id="ba-panel-good">Function 最終行取得(ws As Worksheet, col As Long) As Long
+    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+    ' ✅ 修正はここだけ！全部に自動で反映される
+End Function
+
+Sub 月次集計()
+    row1 = 最終行取得(ws1, 1)  ' ← シンプル！
+    row2 = 最終行取得(ws2, 1)
+    row3 = 最終行取得(ws3, 1)
+End Sub</div>
+  </div>
+
+  <div class="steps">
+    <div class="step-item">
+      <div class="step-num">1</div>
+      <div>
+        <div class="step-title"><code>Function 名前(引数 As 型) As 戻り値の型</code> と書く</div>
+        <div class="step-desc">「この関数は〇〇を受け取って△△を返す」という宣言。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">2</div>
+      <div>
+        <div class="step-title">処理を書いて <code>関数名 = 戻り値</code> で答えを返す</div>
+        <div class="step-desc">他の言語の <code>return 値</code> に相当する書き方。End Function の前に書かないと 0 や空文字が返ってしまう。</div>
+      </div>
+    </div>
+    <div class="step-item">
+      <div class="step-num">3</div>
+      <div>
+        <div class="step-title">別の Sub から <code>result = 関数名(引数)</code> で呼び出す</div>
+        <div class="step-desc">どこからでも何度でも呼び出せる。</div>
+      </div>
+    </div>
+  </div>
+
+  <pre><code><span class="cc">' ── 定義 ─────────────────────────────────────</span>
+<span class="ck">Function</span> 最終行取得(ws <span class="ck">As Worksheet</span>, col <span class="ck">As Long</span>) <span class="ck">As Long</span>
+    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+<span class="ck">End Function</span>
+
+<span class="cc">' ── 呼び出し ──────────────────────────────────</span>
+lastRow = 最終行取得(ActiveSheet, <span class="cn">1</span>)
+grade   = 売上評価(Cells(i, <span class="cn">4</span>).Value)</code></pre>
+
+  <div class="tricky">
+    <strong>&#x1F605; 「関数名 = 値」という書き方、最初は不思議ですよね。</strong><br>
+    他の言語では <code>return 値</code> と書きますが、VBAでは <code>関数名 = 戻り値</code> と書きます。「この変数（関数名）に答えを入れておくよ」というイメージで覚えると少し納得できます。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; Sub にするか Function にするかの判断フロー</p>
+  <div class="decision-flow">
+    <div class="decision-q">「答え（値）を返してほしいか？」</div>
+    <div class="decision-row">
+      <div class="decision-branch yes">
+        <div class="decision-answer">Function</div>
+        <div class="decision-examples">「最終行は何行目？」<br>「この売上はA/B/C評価？」<br>「このシートは存在する？」<br>同じ計算が2か所以上ある</div>
+      </div>
+      <div class="decision-branch no">
+        <div class="decision-answer">Sub</div>
+        <div class="decision-examples">「データをB列からC列に転記して」<br>「完了メッセージを表示して」<br>「月別シートを作って仕分けして」<br>ボタンから直接実行する処理</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="jitsumu">
+    <strong>&#x1F3E2; 実務での使い方：</strong><br>
+    「最終行取得」はほぼすべての業務マクロで必要になります。一度 Function として書いておけば、新しいマクロを作るたびにコピーして使い回せます。
+  </div>
+</section>
+
+<!-- ═══ 最適化 ════════════════════════════════════════════ -->
+<section class="section" id="perf">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x26A1;</span>
+    <div>
+      <div class="sec-title">処理を速くする <span class="sec-badge sb-d2">2日目</span></div>
+      <div class="sec-intro">大量ファイルを処理するときの「速度アップ」定番コード</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    マクロを実行したら画面がチカチカして…Excelが固まった！？という経験、ありませんか？笑<br>
+    あれ、実は VBA が処理のたびに画面を更新しているせいなんです。100ファイル処理するなら、100回画面が更新される。それが遅さの原因です。<br>
+    <strong>ScreenUpdating を False にするだけで、10倍以上速くなることもあります。</strong><br>
+    「たったこれだけで？」と思いますよね。でも本当にこれだけです。やってみてください！
+  </div>
+
+  <div class="story">
+    <strong>&#x1F373; 「料理中に都度、鍋の中を見せてもらえる？」と言われたら…</strong><br>
+    毎回手を止めて見せるのは大変ですよね。VBAも処理のたびに画面を更新するので遅くなります。<code>ScreenUpdating = False</code> は「全部終わったら一気に見せます」という宣言です。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; ScreenUpdating の正しい使い方（3段階）</p>
+  <div class="timeline" style="margin:20px 0">
+    <div class="tl-stage before">
+      <div class="tl-icon">&#x1F527;</div>
+      <div class="tl-title">処理の前（必須）</div>
+      <div class="tl-body">3つをまとめてオフ</div>
+      <div class="tl-code">ScreenUpdating = False</div>
+      <div class="tl-code">Calculation = Manual</div>
+      <div class="tl-code">DisplayAlerts = False</div>
+    </div>
+    <div class="tl-arrow">&#x2192;</div>
+    <div class="tl-stage during">
+      <div class="tl-icon">&#x26A1;</div>
+      <div class="tl-title">処理中</div>
+      <div class="tl-body">画面更新なし<br>自動計算なし<br><strong>超高速！</strong></div>
+    </div>
+    <div class="tl-arrow">&#x2192;</div>
+    <div class="tl-stage after">
+      <div class="tl-icon">&#x2705;</div>
+      <div class="tl-title">処理の後（必須）</div>
+      <div class="tl-body">必ず元に戻す</div>
+      <div class="tl-code">ScreenUpdating = True</div>
+      <div class="tl-code">Calculation = Automatic</div>
+      <div class="tl-code">DisplayAlerts = True</div>
+    </div>
+  </div>
+
+  <pre><code>Application.ScreenUpdating  = <span class="ck">False</span>
+Application.Calculation     = xlCalculationManual
+Application.DisplayAlerts   = <span class="ck">False</span>
+
+<span class="cc">' 実際の処理 ...</span>
+
+Application.ScreenUpdating  = <span class="ck">True</span>
+Application.Calculation     = xlCalculationAutomatic
+Application.DisplayAlerts   = <span class="ck">True</span></code></pre>
+
+  <div class="caution">
+    <strong>&#x26A0;&#xFE0F; 「元に戻す」を絶対に忘れないでください！</strong><br>
+    Trueに戻し忘れると、Excelの画面がずっと更新されなくなります。もし固まったら、<kbd>Ctrl</kbd>+<kbd>G</kbd> でイミディエイトウィンドウを開いて <code>Application.ScreenUpdating = True</code> と入力して Enter を押せば直ります。
+  </div>
+</section>
+
+<!-- ═══ 組み込み関数 ════════════════════════════════════════ -->
+<section class="section" id="builtins">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F528;</span>
+    <div>
+      <div class="sec-title">便利な組み込み関数たち</div>
+      <div class="sec-intro">これだけ知っておけば、たいていの業務データは処理できます</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    業務データをVBAで処理していると、必ずと言っていいほどぶつかる壁があります。<br>
+    「セルから読んだ文字に、なぜか空白が混ざっていて一致しない！」<br>
+    「数値のはずなのに文字列として扱われて計算できない！」<br>
+    <strong>どちらも今日紹介する関数1つで解決できます。</strong> Trim と型変換、特に覚えておいてください。これで実務の「謎のエラー」がかなり減ります笑
+  </div>
+
+  <div class="story">
+    <strong>&#x1F4AC; Trim は「空白を除く消しゴム」です。</strong><br>
+    Excelのセルにスペースが混入していて「なぜか一致しない！」というトラブル、よくあります。<code>Trim(Cells(i,1).Value)</code> で囲むだけで解決することが多いです。
+  </div>
+
+  <p class="viz-title">&#x1F3AE; インタラクティブ：文字列操作の見え方</p>
+  <div class="str-demo">
+    <div class="str-chars" id="strChars"></div>
+    <div class="str-btns">
+      <button class="btn btn-outline btn-sm" onclick="strHighlight('left')">Left(3)</button>
+      <button class="btn btn-outline btn-sm" onclick="strHighlight('right')">Right(3)</button>
+      <button class="btn btn-outline btn-sm" onclick="strHighlight('mid')">Mid(2,3)</button>
+      <button class="btn btn-outline btn-sm" onclick="strHighlight('trim')">Trim（空白除去）</button>
+      <button class="btn btn-outline btn-sm" onclick="strHighlight('none')">リセット</button>
+    </div>
+    <div class="str-result" id="strResult"></div>
+  </div>
+
+  <pre><code>Len(<span class="cs">"Hello"</span>)            <span class="cc">' 文字数      → 5</span>
+Left(<span class="cs">"Hello"</span>, <span class="cn">3</span>)        <span class="cc">' 左から3文字 → "Hel"</span>
+Right(<span class="cs">"Hello"</span>, <span class="cn">3</span>)       <span class="cc">' 右から3文字 → "llo"</span>
+Mid(<span class="cs">"Hello"</span>, <span class="cn">2</span>, <span class="cn">3</span>)      <span class="cc">' 2文字目から3文字 → "ell"</span>
+Trim(<span class="cs">"  Hello  "</span>)       <span class="cc">' 前後の空白除去 → "Hello"</span>
+
+CLng(<span class="cs">"123"</span>)   <span class="cc">' 文字列 → Long</span>
+CStr(<span class="cn">123</span>)    <span class="cc">' 数値 → 文字列</span>
+Year(Now())   <span class="cc">' 現在の年</span>
+Month(Now())  <span class="cc">' 現在の月</span></code></pre>
+
+  <div class="question">
+    <strong>&#x1F914; 「型変換って何のためにするの？」</strong><br>
+    Excelのセルから読み込んだ「123」には2種類あります。<strong>数値の 123</strong>（右寄せ）と<strong>文字列の "123"</strong>（左寄せ）。文字列のまま計算しようとするとエラーや変な結果になります。「なんかおかしい」と思ったら型変換を試してみてください。
+  </div>
+</section>
+
+<!-- ═══ MsgBox ════════════════════════════════════════════ -->
+<section class="section" id="msgbox">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x1F4AC;</span>
+    <div>
+      <div class="sec-title">MsgBox ── ダイアログを表示する</div>
+      <div class="sec-intro">ユーザーへのメッセージや確認ダイアログを出す</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    「処理が完了したのかどうかわからない…」という経験はありませんか？<br>
+    マクロを実行したけど何も起きていないように見えて「動いた？動いてない？」という状態。<br>
+    <strong>MsgBox を最後に入れるだけで「完了しました！」と教えてくれます。</strong><br>
+    また、削除など「取り消せない操作」の前に「本当にいいですか？」と確認を取るのも親切な設計です。
+  </div>
+
+  <p class="viz-title">&#x1F4CA; よく使う2パターンのダイアログ</p>
+  <div class="dialog-row">
+    <div class="dialog-mock">
+      <div class="dialog-titlebar">&#x2139;&#xFE0F; 完了</div>
+      <div class="dialog-body">
+        <div class="d-icon">&#x2139;&#xFE0F;</div>
+        <div class="d-msg">処理が完了しました</div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="dialog-footer">
+        <div class="dialog-btn primary">OK</div>
+      </div>
+    </div>
+    <div class="dialog-mock">
+      <div class="dialog-titlebar">&#x2753; 確認</div>
+      <div class="dialog-body">
+        <div class="d-icon">&#x2753;</div>
+        <div class="d-msg">実行しますか？<br><small style="color:var(--muted)">この操作は取り消せません</small></div>
+        <div style="clear:both"></div>
+      </div>
+      <div class="dialog-footer">
+        <div class="dialog-btn primary">はい</div>
+        <div class="dialog-btn">いいえ</div>
+      </div>
+    </div>
+  </div>
+
+  <pre><code><span class="cc">' 完了を知らせるだけ</span>
+MsgBox <span class="cs">"処理が完了しました"</span>, vbInformation, <span class="cs">"完了"</span>
+
+<span class="cc">' 実行前に確認を取る</span>
+<span class="ck">Dim</span> ret <span class="ck">As Integer</span>
+ret = MsgBox(<span class="cs">"実行しますか？"</span>, vbYesNo + vbQuestion, <span class="cs">"確認"</span>)
+<span class="ck">If</span> ret = vbNo <span class="ck">Then Exit Sub</span>   <span class="cc">' いいえなら処理を中止</span></code></pre>
+</section>
+
+<!-- ═══ ショートカット ════════════════════════════════════ -->
+<section class="section" id="shortcuts">
+  <div class="sec-head">
+    <span class="sec-emoji">&#x2328;&#xFE0F;</span>
+    <div>
+      <div class="sec-title">覚えておきたいショートカット</div>
+      <div class="sec-intro">これだけ使えれば演習がぐっと楽になります</div>
+    </div>
+  </div>
+
+  <div class="chat">
+    <div class="chat-head">&#x1F4AC; ちょっと雑談</div>
+    ショートカットって最初は覚えるのが面倒に感じますよね。<br>
+    でも VBA のデバッグに関しては、<strong>F8 と Ctrl+G の2つだけ</strong>覚えれば80%は解決します。本当に。<br>
+    「F8でゆっくり動かして、Ctrl+Gで値を確認する」——この2つを手に染み込ませると、どんなバグでも冷静に向き合えるようになります。<br>
+    演習でぜひ使ってみてください！
+  </div>
+
+  <table>
+    <tr><th>キー</th><th>操作</th><th>これがあると何が嬉しいか</th></tr>
+    <tr><td><kbd>Alt</kbd>+<kbd>F11</kbd></td><td>VBEを開く/閉じる</td><td>ExcelとVBEを行き来するのに必須</td></tr>
+    <tr><td><kbd>F5</kbd></td><td>マクロを実行</td><td>通常の実行はこれ</td></tr>
+    <tr><td><kbd>F8</kbd></td><td>ステップ実行（1行ずつ）</td><td>バグ探しの基本。<strong>必ず覚える</strong></td></tr>
+    <tr><td><kbd>F9</kbd></td><td>ブレークポイント設定/解除</td><td>止めたい行に設定</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>G</kbd></td><td>イミディエイトウィンドウ</td><td>Debug.Print の出力を確認</td></tr>
+    <tr><td><kbd>Ctrl</kbd>+<kbd>Space</kbd></td><td>入力候補を表示</td><td>プロパティ名を忘れたときに助かる</td></tr>
+    <tr><td><kbd>Esc</kbd></td><td>実行を強制停止</td><td>無限ループになったときの救助ボタン</td></tr>
+  </table>
+
+  <div class="story">
+    <strong>&#x1F3AE; 特に「F8」と「Ctrl+G」は絶対に覚えてください。</strong><br>
+    「F8でゆっくり動かして、Ctrl+Gで値を確認する」——この2つを使いこなせるだけで、どんなバグでも冷静に向き合えるようになります。
+  </div>
+</section>
+
+</div><!-- .page-wrap -->
+
+<button id="toc-btn" onclick="document.getElementById('toc-overlay').classList.add('open')" title="目次">&#x2630;</button>
+
+<div id="toc-overlay" onclick="if(event.target===this)this.classList.remove('open')">
+  <div id="toc-panel">
+    <h2>&#x1F4D7; 目次</h2>
+    <a href="#basics" onclick="closeToc()">&#x1F4DD; 基本のかたち <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#vars" onclick="closeToc()">&#x1F4E6; 変数って何？ <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#cells" onclick="closeToc()">&#x1F4CA; セルを触る <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#if" onclick="closeToc()">&#x1F500; もし〜ならば <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#loop" onclick="closeToc()">&#x1F501; 繰り返す <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#workbook" onclick="closeToc()">&#x1F4C2; ファイルとシート <span class="toc-chip toc-d1">1日目</span></a>
+    <a href="#debug" onclick="closeToc()">&#x1F41B; デバッグ <span class="toc-chip toc-d2">2日目</span></a>
+    <a href="#errprev" onclick="closeToc()">&#x1F6E1; エラーを防ぐ <span class="toc-chip toc-d2">2日目</span></a>
+    <a href="#function" onclick="closeToc()">&#x1F527; Function <span class="toc-chip toc-d2">2日目</span></a>
+    <a href="#perf" onclick="closeToc()">&#x26A1; 処理を速くする <span class="toc-chip toc-d2">2日目</span></a>
+    <a href="#builtins" onclick="closeToc()">&#x1F528; 便利な関数たち</a>
+    <a href="#msgbox" onclick="closeToc()">&#x1F4AC; ダイアログ</a>
+    <a href="#shortcuts" onclick="closeToc()">&#x2328;&#xFE0F; ショートカット</a>
+    <button class="toc-close" onclick="closeToc()">閉じる</button>
+  </div>
+</div>
+
+<script>
+  const io = new IntersectionObserver(entries => {
+    entries.forEach(e => { if(e.isIntersecting) e.target.classList.add('visible'); });
+  }, { threshold: 0.08 });
+  document.querySelectorAll('.section').forEach(s => io.observe(s));
+
+  function closeToc() { document.getElementById('toc-overlay').classList.remove('open'); }
+
+  const assignSteps = [
+    {id:'vv-i',boxId:'vb-i',val:'5',code:'i = 5'},
+    {id:'vv-name',boxId:'vb-name',val:'"田中"',code:'name = "田中"'},
+    {id:'vv-flag',boxId:'vb-flag',val:'True',code:'flag = True'},
+  ];
+  let assignIdx = 0;
+  function doAssign() {
+    if(assignIdx >= assignSteps.length) return;
+    const s = assignSteps[assignIdx++];
+    const el = document.getElementById(s.id);
+    el.textContent = s.val;
+    el.style.fontSize = s.val.length > 2 ? '14px' : '';
+    el.classList.remove('changed'); void el.offsetWidth; el.classList.add('changed');
+    document.getElementById(s.boxId).classList.add('highlight');
+    document.getElementById('assign-code').textContent = s.code;
+    if(assignIdx >= assignSteps.length) {
+      const b = document.querySelector('[onclick="doAssign()"]');
+      b.disabled = true; b.style.opacity = '.4';
+    }
+  }
+  function doReset() {
+    document.getElementById('vv-i').textContent = '0'; document.getElementById('vv-i').style.fontSize = '';
+    document.getElementById('vv-name').textContent = '""'; document.getElementById('vv-name').style.fontSize = '';
+    document.getElementById('vv-flag').textContent = 'False'; document.getElementById('vv-flag').style.fontSize = '';
+    ['vb-i','vb-name','vb-flag'].forEach(id => document.getElementById(id).classList.remove('highlight'));
+    ['vv-i','vv-name','vv-flag'].forEach(id => document.getElementById(id).classList.remove('changed'));
+    document.getElementById('assign-code').textContent = '';
+    assignIdx = 0;
+    const b = document.querySelector('[onclick="doAssign()"]');
+    b.disabled = false; b.style.opacity = '';
+  }
+
+  let stepIdx = -1;
+  function stepperNext() {
+    stepIdx++;
+    ['東京.xlsx','大阪.xlsx','名古屋.xlsx'].forEach((f,i) => {
+      const el = document.getElementById('sf-'+i);
+      if(i < stepIdx) el.className = 'stepper-file done';
+      else if(i === stepIdx) el.className = 'stepper-file active';
+      else el.className = 'stepper-file';
+    });
+    const returns = ['"東京.xlsx"','"大阪.xlsx"','"名古屋.xlsx"','""（空文字） → ループ終了！'];
+    const call = stepIdx === 0 ? 'Dir("C:\\data\\*.xlsx")' : 'Dir()';
+    document.getElementById('stepper-result').innerHTML = call + ' → <span class="ret-val">' + returns[stepIdx] + '</span>';
+    document.getElementById('stepper-status').textContent = stepIdx < 3 ? (stepIdx+1)+' / 3 ファイル目' : '全ファイル処理完了！';
+    if(stepIdx >= 3) { const b = document.getElementById('stepper-next'); b.disabled = true; b.style.opacity = '.4'; }
+  }
+  function stepperReset() {
+    stepIdx = -1;
+    ['sf-0','sf-1','sf-2'].forEach(id => document.getElementById(id).className = 'stepper-file');
+    document.getElementById('stepper-result').innerHTML = '<span class="ret-empty">— まだ実行していません —</span>';
+    document.getElementById('stepper-status').textContent = '';
+    const b = document.getElementById('stepper-next'); b.disabled = false; b.style.opacity = '';
+  }
+
+  function baSwitch(mode) {
+    document.getElementById('ba-tab-bad').className = 'ba-tab'+(mode==='bad'?' active bad':'');
+    document.getElementById('ba-tab-good').className = 'ba-tab'+(mode==='good'?' active good':'');
+    document.getElementById('ba-panel-bad').className = 'ba-panel bad'+(mode==='bad'?' show':'');
+    document.getElementById('ba-panel-good').className = 'ba-panel good'+(mode==='good'?' show':'');
+  }
+
+  const STR = [' ','H','e','l','l','o',' '];
+  function buildStrChars(highlights, label) {
+    const wrap = document.getElementById('strChars');
+    wrap.innerHTML = '';
+    STR.forEach((ch,i) => {
+      const d = document.createElement('div');
+      d.className = 'str-char'+(highlights.includes(i)?' hl-'+label:'');
+      d.innerHTML = (ch===' '?'&nbsp;':ch)+'<span class="str-char-idx">'+(i+1)+'</span>';
+      wrap.appendChild(d);
+    });
+  }
+  function strHighlight(type) {
+    const res = document.getElementById('strResult');
+    if(type==='none') { buildStrChars([],'none'); res.innerHTML=''; return; }
+    const map = {
+      left:{idx:[1,2,3],label:'left',result:'Left(" Hello ",3) → <span>"Hel"</span>'},
+      right:{idx:[3,4,5],label:'right',result:'Right(" Hello ",3) → <span>"llo"</span>'},
+      mid:{idx:[2,3,4],label:'mid',result:'Mid(" Hello ",2,3) → <span>"ell"</span>'},
+      trim:{idx:[0,6],label:'trim',result:'Trim(" Hello ") → <span>"Hello"</span>（赤い空白が除去される）'},
+    };
+    const m = map[type];
+    buildStrChars(m.idx,m.label);
+    res.innerHTML = m.result;
+  }
+  buildStrChars([],'none');
+</script>
+</body>
+</html>

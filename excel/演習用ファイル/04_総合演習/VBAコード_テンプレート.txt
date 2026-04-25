@@ -1,0 +1,242 @@
+' ================================================================
+' 【総合演習】支店別売上集計ツール
+' ================================================================
+' 2日目で学んだすべての要素を組み合わせて
+' 実務で使えるツールを完成させましょう。
+'
+' ファイル名の形式: 支店名_YYYYMM.xlsx（例: 東京支店_202401.xlsx）
+' 各ファイルの「売上明細」シートの最終行 F列 に月間合計があります。
+'
+' ★ 進め方のルール ★
+'   各STEPの上に「参考例」があります。
+'   まず参考例をじっくり読んでから、
+'   [ 穴埋め ] と書かれた _______ の部分を埋めてください。
+'
+' 【穴埋め箇所まとめ】 ← まずここを確認！
+' ─────────────────────────────────────────────────────────
+'   [必須] 穴埋め①: Dir()でファイル存在確認の If 文を追加する
+'   [必須] 穴埋め②: 最終行取得 Function を呼び出す
+'   [推奨] 穴埋め③: 最適化設定をオン・オフする
+' ─────────────────────────────────────────────────────────
+'
+' 【取り組む順番の提案】
+'   ① まず穴埋め② だけ完成させてマクロを動かしてみる
+'   ② 次に穴埋め① を追加してエラー対策をする
+'   ③ 最後に穴埋め③ で高速化する
+' ================================================================
+
+
+' ================================================================
+' 共通 Function（完成済み・変更不要）
+' ================================================================
+
+' 演習2で作ったものと同じ Function です
+Function 最終行取得(ws As Worksheet, col As Long) As Long
+    最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row
+End Function
+
+' ファイル名から支店名を切り出す Function
+' 例: "東京支店_202401.xlsx" → "東京支店"
+Function 支店名を取得(fileName As String) As String
+    Dim parts() As String
+    parts = Split(Replace(fileName, ".xlsx", ""), "_")
+    支店名を取得 = parts(0)
+End Function
+
+' ファイル名から年月文字列を切り出す Function
+' 例: "東京支店_202401.xlsx" → "2024年01月"
+Function 年月を取得(fileName As String) As String
+    Dim parts() As String
+    parts = Split(Replace(fileName, ".xlsx", ""), "_")
+    年月を取得 = Left(parts(1), 4) & "年" & Right(parts(1), 2) & "月"
+End Function
+
+
+' ================================================================
+' 【穴埋め②の参考例】最終行取得 Function の使い方
+' ================================================================
+'
+'   ' 引数1: Worksheet型の変数、引数2: 基準にする列番号
+'   lastRow = 最終行取得(srcWs, 1)   ← A列(1列目)を基準に最終行を取得
+'
+'   ポイント:
+'   ① 第1引数にはシートの変数（Worksheet型）を渡す
+'   ② 第2引数には基準にする列の番号を渡す（A列=1, B列=2 ...）
+'   ③ 戻り値は Long型の行番号が返ってくる
+'
+' ================================================================
+
+
+' ================================================================
+' 【穴埋め①の参考例】Dir() でファイルの存在を確認するパターン
+' ================================================================
+'
+'   filePath = "C:\Data\月次売上.xlsx"
+'
+'   ' Dir(パス) がファイル名を返せば存在する → "" でなければ存在する
+'   If Dir(filePath) <> "" Then
+'
+'       Set wb = Workbooks.Open(filePath)   ' ← 存在する場合だけ開く
+'       ' ... ファイルを処理する ...
+'       wb.Close SaveChanges:=False
+'
+'   End If
+'                         ↑ ここに End If が必要！
+'
+'   ポイント:
+'   ① Dir(パス) は存在すればファイル名、なければ "" を返す
+'   ② If 〜 End If でファイル処理全体を囲む
+'   ③ これで「存在しないファイルを開こうとしてエラー」を防げる
+'
+' ================================================================
+
+
+' ================================================================
+' 【穴埋め③の参考例】最適化設定のオン・オフパターン
+' ================================================================
+'
+'   ' ─── 処理開始前（Sub の冒頭）に設定 ───
+'   Application.ScreenUpdating = False    ' 画面更新を止める（高速化）
+'   Application.Calculation = xlCalculationManual  ' 自動計算を止める（高速化）
+'   Application.DisplayAlerts = False     ' 確認ダイアログを非表示
+'
+'   ' ... メインの処理 ...
+'
+'   ' ─── 処理完了後（MsgBox の前）に必ず元に戻す ───
+'   Application.ScreenUpdating = True
+'   Application.Calculation = xlCalculationAutomatic
+'   Application.DisplayAlerts = True
+'
+'   ポイント:
+'   ① 必ずセットで使う（オフにしたら必ずオンに戻す！）
+'   ② 戻し忘れると Excel 全体の動作がおかしくなるので注意
+'   ③ ファイルが多いほどこの設定の効果が出る
+'
+' ================================================================
+
+
+' ================================================================
+' メインプロシージャ
+' ================================================================
+
+Sub 支店別売上集計()
+
+    Dim folderPath  As String
+    Dim fileName    As String
+    Dim filePath    As String
+    Dim wb          As Workbook
+    Dim srcWs       As Worksheet
+    Dim resultWs    As Worksheet
+    Dim resultRow   As Long
+    Dim lastRow     As Long
+    Dim totalSales  As Long
+    Dim recordCount As Long
+
+    ' ─── [ 穴埋め③ ] 最適化設定をここに追加しよう ───────────────
+    '   ヒント: 参考例③を見て、以下の3行のコメント（'）を外してください
+    ' Application.ScreenUpdating = False
+    ' Application.Calculation = xlCalculationManual
+    ' Application.DisplayAlerts = False
+
+    ' ─── 初期化（完成済み・変更不要）────────────────────────────
+    Set resultWs = ThisWorkbook.Worksheets("集計結果")
+    resultWs.Range("A2:E1000").ClearContents   ' 前回の結果をクリア
+    resultRow = 2                              ' 2行目から書き込み開始
+
+    folderPath = ThisWorkbook.Path & "\支店データ\"
+
+    ' ─── ファイルを1つずつ処理するループ ────────────────────────
+    fileName = Dir(folderPath & "*.xlsx")      ' 最初の .xlsx ファイルを取得
+
+    Do While fileName <> ""                    ' ファイルがなくなるまで繰り返す
+
+        filePath = folderPath & fileName
+
+        ' ─── [ 穴埋め① ] ここに If Dir(filePath) <> "" Then を追加する ──
+        '
+        '   ヒント: 参考例①の構造を見て
+        '   ① この行の下に If Dir(filePath) <> "" Then と書く
+        '   ② 下の「wb.Close 〜 Set wb = Nothing」の行まで If ブロックに入れる
+        '   ③ Set wb = Nothing の下に End If を書く
+        '
+        '   ★ 現時点では穴埋め①はスキップして、まず穴埋め②を完成させよう！
+        '     穴埋め②が動いたら穴埋め①に戻ってきてください。
+
+            Set wb    = Workbooks.Open(filePath, ReadOnly:=True)
+            Set srcWs = wb.Worksheets("売上明細")
+
+            ' ─── [ 穴埋め② ] 最終行取得 Function を呼び出す ─────────────
+            '   ヒント: 参考例②を見る。引数は srcWs と 1（A列を基準）
+            lastRow = 最終行取得(_______, _)
+
+            ' 月間合計を最終行の F列（6列目）から取得
+            totalSales  = srcWs.Cells(lastRow, 6).Value
+            recordCount = lastRow - 1   ' ヘッダー行を除いた明細件数
+
+            ' 集計結果シートに転記（完成済み）
+            resultWs.Cells(resultRow, 1).Value = 支店名を取得(fileName)
+            resultWs.Cells(resultRow, 2).Value = 年月を取得(fileName)
+            resultWs.Cells(resultRow, 3).Value = totalSales
+            resultWs.Cells(resultRow, 4).Value = recordCount
+            resultRow = resultRow + 1
+
+            wb.Close SaveChanges:=False
+            Set wb = Nothing
+
+        ' ─── [ 穴埋め① の End If ] をここに書く ──────────────────────
+
+        fileName = Dir()   ' 次のファイルを取得
+
+    Loop
+
+    ' ─── [ 穴埋め③ ] 最適化設定を元に戻す ──────────────────────
+    '   ヒント: 参考例③を見て、以下の3行のコメント（'）を外してください
+    ' Application.ScreenUpdating = True
+    ' Application.Calculation = xlCalculationAutomatic
+    ' Application.DisplayAlerts = True
+
+    MsgBox "集計が完了しました！" & vbCrLf & _
+           (resultRow - 2) & " 件のファイルを処理しました。", vbInformation, "完了"
+
+End Sub
+
+
+' ================================================================
+' ★ 発展課題（メインが完成したら挑戦してみましょう）
+' ================================================================
+'
+' 課題1: 集計結果シートに書式を設定する
+'
+'   ' ヘッダー行に背景色をつける
+'   resultWs.Rows(1).Interior.Color = RGB(68, 114, 196)  ' 青
+'   resultWs.Rows(1).Font.Color = RGB(255, 255, 255)     ' 白文字
+'
+'   ' C列（売上金額）に数値書式を設定する
+'   resultWs.Columns(3).NumberFormat = "#,##0"
+'
+' ──────────────────────────────────────────────────────────────
+'
+' 課題2: 処理時間をメッセージに表示する
+'
+'   ' Sub の冒頭で開始時刻を記録
+'   Dim startTime As Double
+'   startTime = Timer
+'
+'   ' ... メインの処理 ...
+'
+'   ' MsgBox に処理時間を追加
+'   MsgBox "集計完了！" & vbCrLf & _
+'          "処理時間: " & Format(Timer - startTime, "0.00") & "秒"
+'
+' ──────────────────────────────────────────────────────────────
+'
+' 課題3: 支店ごとの合計売上をサマリーとして別行に表示する
+'
+'   ヒント: Dictionary オブジェクトを使うか、
+'           集計後に SUMIF 関数をセルに設定する方法があります
+'
+'   ' セルに SUMIF 式を設定する例:
+'   resultWs.Cells(resultRow + 1, 3).Formula = _
+'       "=SUMIF(A:A,""東京支店"",C:C)"
+'
+' ================================================================

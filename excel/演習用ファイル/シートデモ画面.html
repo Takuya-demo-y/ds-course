@@ -1,0 +1,908 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>演習用Excelシート デモ画面</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', 'Meiryo', sans-serif;
+    background: #dfe3e8;
+    color: #333;
+    min-height: 100vh;
+    padding: 28px 16px 40px;
+  }
+  /* 本文を画面中央の読みやすい幅に収める */
+  .page-wrap {
+    max-width: 920px;
+    width: 100%;
+    margin: 0 auto;
+  }
+  h1 {
+    text-align: center;
+    font-size: 20px;
+    color: #1f497d;
+    margin-bottom: 24px;
+    padding: 14px;
+    background: #fff;
+    border-radius: 8px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  }
+  .exercise-block {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    margin-bottom: 36px;
+    overflow: hidden;
+  }
+  .exercise-header {
+    padding: 12px 20px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .ex1 .exercise-header { background: #c0392b; }
+  .ex2 .exercise-header { background: #27ae60; }
+  .ex3 .exercise-header { background: #2980b9; }
+  .ex4 .exercise-header { background: #8e44ad; }
+  .exercise-body { padding: 16px 20px 20px; }
+  .exercise-desc {
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 14px;
+    line-height: 1.6;
+  }
+
+  /* Excel-like window */
+  .excel-window {
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    overflow: hidden;
+    margin-bottom: 16px;
+  }
+  .excel-titlebar {
+    background: linear-gradient(to bottom, #217346, #1a5c37);
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .excel-titlebar .icon { font-size: 16px; }
+  .excel-toolbar {
+    background: #f3f3f3;
+    border-bottom: 1px solid #ccc;
+    padding: 4px 8px;
+    display: flex;
+    gap: 4px;
+  }
+  .excel-toolbar span {
+    font-size: 11px;
+    color: #444;
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: default;
+  }
+  .excel-toolbar span:hover { background: #dde8f0; }
+
+  .excel-formula-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    padding: 3px 8px;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .cell-ref {
+    width: 50px;
+    border: 1px solid #aaa;
+    padding: 2px 4px;
+    font-size: 12px;
+    text-align: center;
+    color: #333;
+    background: #fff;
+  }
+  .formula-input {
+    flex: 1;
+    border: 1px solid #aaa;
+    padding: 2px 6px;
+    font-size: 12px;
+    color: #333;
+    background: #fff;
+  }
+
+  .sheet-area {
+    overflow-x: auto;
+  }
+  table {
+    border-collapse: collapse;
+    font-size: 12px;
+    width: 100%;
+  }
+  .row-header {
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+    width: 36px;
+    min-width: 36px;
+    text-align: center;
+    color: #777;
+    padding: 3px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .col-header {
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+    text-align: center;
+    color: #555;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 80px;
+  }
+  td {
+    border: 1px solid #d0d0d0;
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+  .header-row td {
+    background: #bdd7ee;
+    font-weight: bold;
+    color: #1f497d;
+    text-align: center;
+  }
+  .data-row:nth-child(even) td:not(.row-header) { background: #f9f9f9; }
+  .data-row:nth-child(odd) td:not(.row-header) { background: #fff; }
+  .num { text-align: right; }
+  .center { text-align: center; }
+  .empty { color: #ccc; font-style: italic; }
+  .formula-cell { color: #1a6b3a; }
+  .todo-cell {
+    background: #fff2cc !important;
+    color: #7d6608;
+    font-style: italic;
+    font-size: 11px;
+  }
+  .result-a { background: #c6efce !important; color: #276221; font-weight: bold; text-align: center; }
+  .result-b { background: #ffeb9c !important; color: #9c5700; font-weight: bold; text-align: center; }
+  .result-c { background: #ffc7ce !important; color: #9c0006; font-weight: bold; text-align: center; }
+
+  /* Sheet tabs */
+  .sheet-tabs {
+    display: flex;
+    background: #e8e8e8;
+    border-top: 1px solid #bbb;
+    padding: 0 8px;
+    gap: 2px;
+    align-items: flex-end;
+  }
+  .tab {
+    padding: 5px 14px;
+    font-size: 12px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    cursor: pointer;
+    background: #d0d0d0;
+    color: #555;
+  }
+  .tab.active {
+    background: #fff;
+    color: #333;
+    font-weight: bold;
+    border-color: #bbb;
+  }
+  .tab.monthly { background: #dce6f1; color: #1f497d; font-size: 11px; }
+  .tab-add { padding: 5px 10px; font-size: 16px; color: #888; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 800px) { .two-col { grid-template-columns: 1fr; } }
+
+  .note-box {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 12px;
+    color: #555;
+    line-height: 1.6;
+    margin-top: 12px;
+  }
+  .note-box strong { color: #e65100; }
+  .bug-mark {
+    background: #ffcccc;
+    color: #c0392b;
+    font-weight: bold;
+    padding: 1px 4px;
+    border-radius: 3px;
+    font-size: 11px;
+  }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-right: 6px;
+  }
+  .badge-red { background: #fde8e8; color: #c0392b; border: 1px solid #e8a0a0; }
+  .badge-green { background: #e8f5e9; color: #27ae60; border: 1px solid #a0d0a8; }
+  .badge-blue { background: #e3f2fd; color: #1565c0; border: 1px solid #90caf9; }
+  .badge-purple { background: #f3e5f5; color: #6a1b9a; border: 1px solid #ce93d8; }
+
+  .arrow {
+    text-align: center;
+    font-size: 28px;
+    color: #888;
+    padding: 4px 0;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+<h1>📊 演習用Excelファイル シートデモ画面</h1>
+
+<!-- ============================================================ -->
+<!-- 演習1: デバッグ演習 -->
+<!-- ============================================================ -->
+<div class="exercise-block ex1">
+  <div class="exercise-header">
+    <span class="badge badge-red">演習1</span> デバッグ演習 — 売上計算マクロ（バグが2箇所あります）
+  </div>
+  <div class="exercise-body">
+    <p class="exercise-desc">
+      「売上データ」シートの <strong>D列（売上金額）</strong> に B列×C列 の結果を書き込むマクロです。
+      バグを修正すると D2:D11 の合計が <strong>¥2,670,000</strong> になります。
+    </p>
+
+    <div class="excel-window">
+      <div class="excel-titlebar">
+        <span class="icon">📗</span>
+        デバッグ演習.xlsx — Microsoft Excel
+      </div>
+      <div class="excel-formula-bar">
+        <input class="cell-ref" value="D2" readonly>
+        <span>fx</span>
+        <input class="formula-input" value="" readonly placeholder="（マクロ実行後に値が入ります）">
+      </div>
+      <div class="sheet-area">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th>
+              <th class="col-header">B</th>
+              <th class="col-header">C</th>
+              <th class="col-header">D</th>
+              <th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>商品名</td>
+              <td>数量</td>
+              <td>単価（円）</td>
+              <td>売上金額（円）</td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>りんご</td>
+              <td class="num">10</td>
+              <td class="num">50,000</td>
+              <td class="todo-cell">← マクロで書き込む</td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>みかん</td>
+              <td class="num">25</td>
+              <td class="num">15,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">4</td>
+              <td>ぶどう</td>
+              <td class="num">8</td>
+              <td class="num">120,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">5</td>
+              <td>いちご</td>
+              <td class="num">40</td>
+              <td class="num">30,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">6</td>
+              <td>メロン</td>
+              <td class="num">5</td>
+              <td class="num">200,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">7</td>
+              <td>バナナ</td>
+              <td class="num">60</td>
+              <td class="num">8,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">8</td>
+              <td>もも</td>
+              <td class="num">15</td>
+              <td class="num">80,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">9</td>
+              <td>なし</td>
+              <td class="num">20</td>
+              <td class="num">45,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">10</td>
+              <td>キウイ</td>
+              <td class="num">30</td>
+              <td class="num">20,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">11</td>
+              <td>スイカ</td>
+              <td class="num">3</td>
+              <td class="num">150,000</td>
+              <td class="todo-cell"></td>
+              <td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">12</td>
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs">
+        <div class="tab active">売上データ</div>
+        <div class="tab-add">＋</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>バグ1（For文の開始行）:</strong> ヘッダー行（1行目）からループが始まってしまっています。<br>
+      <strong>バグ2（書き込み先の列）:</strong> D列（4）ではなくE列（5）に書き込んでいます。<br>
+      ✅ 修正後: D2:D11 の合計が <strong>¥2,670,000</strong> になれば正解！
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習2: Function演習 -->
+<!-- ============================================================ -->
+<div class="exercise-block ex2">
+  <div class="exercise-header">
+    <span class="badge badge-green">演習2</span> Function演習 — 売上評価マクロ
+  </div>
+  <div class="exercise-body">
+    <p class="exercise-desc">
+      D列の売上金額を判定して <strong>E列に A / B / C のランク</strong>を書き込みます。
+      Function を2つ作り、それを呼び出す Sub を完成させます。
+    </p>
+
+    <div class="two-col">
+      <!-- Before -->
+      <div>
+        <p style="font-size:12px; color:#888; margin-bottom:6px;">▼ マクロ実行 <strong>前</strong></p>
+        <div class="excel-window">
+          <div class="excel-titlebar">
+            <span class="icon">📗</span> Function演習.xlsx
+          </div>
+          <div class="sheet-area">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th>
+                  <th class="col-header">B</th>
+                  <th class="col-header">C</th>
+                  <th class="col-header">D</th>
+                  <th class="col-header">E</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>担当者</td>
+                  <td>支店</td>
+                  <td>商品</td>
+                  <td>売上金額</td>
+                  <td>評価</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>田中</td><td>東京</td><td>製品A</td>
+                  <td class="num">1,250,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>鈴木</td><td>大阪</td><td>製品B</td>
+                  <td class="num">480,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>佐藤</td><td>名古屋</td><td>製品A</td>
+                  <td class="num">720,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">5</td>
+                  <td>山田</td><td>福岡</td><td>製品C</td>
+                  <td class="num">320,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">6</td>
+                  <td>中村</td><td>札幌</td><td>製品B</td>
+                  <td class="num">890,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">7</td>
+                  <td>伊藤</td><td>東京</td><td>製品A</td>
+                  <td class="num">1,100,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs">
+            <div class="tab active">売上データ</div>
+            <div class="tab-add">＋</div>
+          </div>
+        </div>
+      </div>
+
+      <!-- After -->
+      <div>
+        <p style="font-size:12px; color:#888; margin-bottom:6px;">▼ マクロ実行 <strong>後</strong>（完成イメージ）</p>
+        <div class="excel-window">
+          <div class="excel-titlebar">
+            <span class="icon">📗</span> Function演習.xlsx
+          </div>
+          <div class="sheet-area">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th>
+                  <th class="col-header">B</th>
+                  <th class="col-header">C</th>
+                  <th class="col-header">D</th>
+                  <th class="col-header">E</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>担当者</td>
+                  <td>支店</td>
+                  <td>商品</td>
+                  <td>売上金額</td>
+                  <td>評価</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>田中</td><td>東京</td><td>製品A</td>
+                  <td class="num">1,250,000</td>
+                  <td class="result-a">A</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>鈴木</td><td>大阪</td><td>製品B</td>
+                  <td class="num">480,000</td>
+                  <td class="result-c">C</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>佐藤</td><td>名古屋</td><td>製品A</td>
+                  <td class="num">720,000</td>
+                  <td class="result-b">B</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">5</td>
+                  <td>山田</td><td>福岡</td><td>製品C</td>
+                  <td class="num">320,000</td>
+                  <td class="result-c">C</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">6</td>
+                  <td>中村</td><td>札幌</td><td>製品B</td>
+                  <td class="num">890,000</td>
+                  <td class="result-b">B</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">7</td>
+                  <td>伊藤</td><td>東京</td><td>製品A</td>
+                  <td class="num">1,100,000</td>
+                  <td class="result-a">A</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs">
+            <div class="tab active">売上データ</div>
+            <div class="tab-add">＋</div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>評価の基準:</strong>
+      <span class="result-a" style="padding:2px 8px; border-radius:4px;">A</span> 1,000,000円以上 ／
+      <span class="result-b" style="padding:2px 8px; border-radius:4px;">B</span> 500,000円以上 ／
+      <span class="result-c" style="padding:2px 8px; border-radius:4px;">C</span> 500,000円未満
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習3: シート操作演習 -->
+<!-- ============================================================ -->
+<div class="exercise-block ex3">
+  <div class="exercise-header">
+    <span class="badge badge-blue">演習3</span> シート操作演習 — 月別シート自動振り分けマクロ
+  </div>
+  <div class="exercise-body">
+    <p class="exercise-desc">
+      「全データ」シートに1年分の売上データが入っています。
+      A列の日付を見て、月ごとに自動で振り分けて <strong>12枚の月別シート</strong>に転記します。
+    </p>
+
+    <!-- 全データシート -->
+    <p style="font-size:12px; font-weight:bold; color:#1565c0; margin-bottom:6px;">【全データ】シート（転記元）</p>
+    <div class="excel-window">
+      <div class="excel-titlebar">
+        <span class="icon">📗</span> シート操作演習.xlsx
+      </div>
+      <div class="sheet-area">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th>
+              <th class="col-header">B</th>
+              <th class="col-header">C</th>
+              <th class="col-header">D</th>
+              <th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>日付</td>
+              <td>支店名</td>
+              <td>商品カテゴリ</td>
+              <td>担当者</td>
+              <td>売上金額（円）</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>2024/01/10</td><td>東京</td><td>食品</td><td>田中</td><td class="num">320,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>2024/01/23</td><td>大阪</td><td>日用品</td><td>鈴木</td><td class="num">185,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">4</td>
+              <td>2024/02/07</td><td>名古屋</td><td>食品</td><td>佐藤</td><td class="num">440,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">5</td>
+              <td>2024/02/18</td><td>東京</td><td>電化製品</td><td>山田</td><td class="num">890,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">6</td>
+              <td>2024/03/05</td><td>福岡</td><td>日用品</td><td>中村</td><td class="num">210,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">7</td>
+              <td>2024/03/22</td><td>大阪</td><td>食品</td><td>伊藤</td><td class="num">560,000</td>
+            </tr>
+            <tr class="data-row" style="color:#aaa; font-style:italic;">
+              <td class="row-header">8</td>
+              <td colspan="5" style="text-align:center; color:#bbb;">… 以下、12月まで続く（合計 120件）</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs">
+        <div class="tab active">全データ</div>
+        <div class="tab-add">＋</div>
+      </div>
+    </div>
+
+    <div class="arrow">⬇ マクロ実行</div>
+
+    <!-- 月別シート -->
+    <p style="font-size:12px; font-weight:bold; color:#1565c0; margin-bottom:6px;">【1月】シート（振り分け後イメージ）</p>
+    <div class="excel-window">
+      <div class="excel-titlebar">
+        <span class="icon">📗</span> シート操作演習.xlsx
+      </div>
+      <div class="sheet-area">
+        <table>
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th>
+              <th class="col-header">B</th>
+              <th class="col-header">C</th>
+              <th class="col-header">D</th>
+              <th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>日付</td>
+              <td>支店名</td>
+              <td>商品カテゴリ</td>
+              <td>担当者</td>
+              <td>売上金額（円）</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>2024/01/10</td><td>東京</td><td>食品</td><td>田中</td><td class="num">320,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>2024/01/23</td><td>大阪</td><td>日用品</td><td>鈴木</td><td class="num">185,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">4</td>
+              <td></td><td></td><td></td><td></td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs">
+        <div class="tab">全データ</div>
+        <div class="tab active">1月</div>
+        <div class="tab monthly">2月</div>
+        <div class="tab monthly">3月</div>
+        <div class="tab monthly" style="color:#999;">…</div>
+        <div class="tab monthly">12月</div>
+        <div class="tab-add">＋</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      ✅ <strong>完成条件:</strong> 1月〜12月の12枚のシートに、全データが日付の月ごとに正しく振り分けられていること。<br>
+      各月シートの件数の合計 = 全データシートの総件数 になれば正解！
+    </div>
+  </div>
+</div>
+
+
+<!-- ============================================================ -->
+<!-- 演習4: 総合演習 -->
+<!-- ============================================================ -->
+<div class="exercise-block ex4">
+  <div class="exercise-header">
+    <span class="badge badge-purple">演習4</span> 総合演習 — 支店別売上集計ツール
+  </div>
+  <div class="exercise-body">
+    <p class="exercise-desc">
+      フォルダ内にある複数の支店別Excelファイルを自動で開いて、
+      売上合計を「集計結果」シートに転記するツールを完成させます。
+    </p>
+
+    <div class="two-col">
+      <!-- 売上明細ファイル -->
+      <div>
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">
+          📁 支店データ/ フォルダの中身
+        </p>
+        <div style="background:#f5f5f5; border:1px solid #ddd; border-radius:6px; padding:12px; font-size:12px; margin-bottom:12px;">
+          <div style="display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px solid #eee;">
+            <span>📗</span> 東京支店_202401.xlsx
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px solid #eee;">
+            <span>📗</span> 大阪支店_202401.xlsx
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px 0; border-bottom:1px solid #eee;">
+            <span>📗</span> 名古屋支店_202401.xlsx
+          </div>
+          <div style="display:flex; align-items:center; gap:8px; padding:4px 0;">
+            <span>📗</span> 福岡支店_202401.xlsx
+          </div>
+        </div>
+
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">
+          【東京支店_202401.xlsx】売上明細シート
+        </p>
+        <div class="excel-window">
+          <div class="excel-titlebar">
+            <span class="icon">📗</span> 東京支店_202401.xlsx
+          </div>
+          <div class="sheet-area">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th>
+                  <th class="col-header">B</th>
+                  <th class="col-header">C</th>
+                  <th class="col-header">D</th>
+                  <th class="col-header">E</th>
+                  <th class="col-header">F</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>日付</td><td>担当者</td><td>商品</td><td>数量</td><td>単価</td><td>売上金額</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>2024/01/05</td><td>田中</td><td>製品A</td><td class="num">5</td><td class="num">200,000</td><td class="num">1,000,000</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>2024/01/12</td><td>田中</td><td>製品B</td><td class="num">3</td><td class="num">150,000</td><td class="num">450,000</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>2024/01/20</td><td>山田</td><td>製品A</td><td class="num">8</td><td class="num">200,000</td><td class="num">1,600,000</td>
+                </tr>
+                <tr class="data-row" style="background:#dce6f1 !important;">
+                  <td class="row-header">5</td>
+                  <td colspan="5" style="font-weight:bold; color:#1f497d;">月間合計</td>
+                  <td class="num" style="font-weight:bold; color:#c0392b;">3,050,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs">
+            <div class="tab active">売上明細</div>
+            <div class="tab-add">＋</div>
+          </div>
+        </div>
+        <p style="font-size:11px; color:#888; margin-top:6px;">
+          ※ F列の最終行に月間合計が入っています（マクロはここを読み取る）
+        </p>
+      </div>
+
+      <!-- 集計結果シート -->
+      <div>
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">
+          【集計ツール.xlsm】集計結果シート（書き込み先）
+        </p>
+        <div class="excel-window">
+          <div class="excel-titlebar">
+            <span class="icon">📙</span> 集計ツール.xlsm（マクロ入り）
+          </div>
+          <div class="sheet-area">
+            <table>
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th>
+                  <th class="col-header">B</th>
+                  <th class="col-header">C</th>
+                  <th class="col-header">D</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>支店名</td>
+                  <td>年月</td>
+                  <td>月間合計売上</td>
+                  <td>明細件数</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>東京支店</td><td>2024年01月</td>
+                  <td class="num">3,050,000</td><td class="num">3</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>大阪支店</td><td>2024年01月</td>
+                  <td class="num">1,840,000</td><td class="num">4</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>名古屋支店</td><td>2024年01月</td>
+                  <td class="num">2,200,000</td><td class="num">5</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">5</td>
+                  <td>福岡支店</td><td>2024年01月</td>
+                  <td class="num">980,000</td><td class="num">2</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">6</td>
+                  <td></td><td></td><td></td><td></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs">
+            <div class="tab active">集計結果</div>
+            <div class="tab-add">＋</div>
+          </div>
+        </div>
+
+        <div class="note-box" style="margin-top:12px;">
+          ✅ <strong>完成条件:</strong><br>
+          ① 支店データフォルダの全 .xlsx ファイルを自動で処理<br>
+          ② ファイルごとに支店名・年月・合計売上・件数が転記される<br>
+          ③ 存在しないファイルでエラーが出ないこと（Dir()チェック）
+        </div>
+      </div>
+    </div>
+
+    <!-- Flow diagram -->
+    <div style="margin-top:16px; background:#f8f0ff; border:1px solid #ce93d8; border-radius:8px; padding:14px;">
+      <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:10px;">処理の流れ</p>
+      <div style="display:flex; align-items:center; gap:8px; font-size:12px; flex-wrap:wrap;">
+        <div style="background:#fff; border:1px solid #ce93d8; border-radius:6px; padding:6px 12px; text-align:center;">
+          📁 フォルダを<br>スキャン
+        </div>
+        <span style="font-size:18px; color:#8e44ad;">→</span>
+        <div style="background:#fff; border:1px solid #ce93d8; border-radius:6px; padding:6px 12px; text-align:center;">
+          📗 ファイルを<br>1つ開く
+        </div>
+        <span style="font-size:18px; color:#8e44ad;">→</span>
+        <div style="background:#fff; border:1px solid #ce93d8; border-radius:6px; padding:6px 12px; text-align:center;">
+          📊 最終行の<br>合計を取得
+        </div>
+        <span style="font-size:18px; color:#8e44ad;">→</span>
+        <div style="background:#fff; border:1px solid #ce93d8; border-radius:6px; padding:6px 12px; text-align:center;">
+          📝 集計結果<br>シートに転記
+        </div>
+        <span style="font-size:18px; color:#8e44ad;">→</span>
+        <div style="background:#fff; border:1px solid #ce93d8; border-radius:6px; padding:6px 12px; text-align:center;">
+          ❌ ファイルを<br>閉じる
+        </div>
+        <span style="font-size:18px; color:#8e44ad;">→</span>
+        <div style="background:#f3e5f5; border:1px solid #8e44ad; border-radius:6px; padding:6px 12px; text-align:center; font-weight:bold; color:#6a1b9a;">
+          🔁 次のファイルへ
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="text-align:center; color:#888; font-size:11px; padding:16px 0 0;">
+  演習用Excelシート デモ画面 — 実際のデータはExcelファイルに入力してご利用ください
+</div>
+
+</div><!-- /.page-wrap -->
+
+</body>
+</html>

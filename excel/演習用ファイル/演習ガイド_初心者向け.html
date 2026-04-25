@@ -1,0 +1,1270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>演習ガイド（初心者向け）— 問題・手順・画面イメージ</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { scroll-behavior: smooth; }
+  body {
+    font-family: 'Segoe UI', 'Meiryo', 'Hiragino Sans', sans-serif;
+    background: #e8ecf1;
+    color: #333;
+    min-height: 100vh;
+    padding: 24px 14px 48px;
+    line-height: 1.65;
+    font-size: 15px;
+  }
+  .page-wrap { max-width: 960px; margin: 0 auto; }
+
+  h1 {
+    text-align: center;
+    font-size: 22px;
+    color: #1f497d;
+    margin-bottom: 12px;
+    padding: 16px;
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+  }
+  .subtitle {
+    text-align: center;
+    font-size: 13px;
+    color: #666;
+    margin-bottom: 28px;
+  }
+
+  h2 {
+    font-size: 18px;
+    color: #1f497d;
+    margin: 32px 0 14px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #bdd7ee;
+  }
+  h3 {
+    font-size: 15px;
+    color: #333;
+    margin: 20px 0 10px;
+  }
+
+  .intro-card {
+    background: #fff;
+    border-radius: 10px;
+    padding: 20px 22px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 24px;
+  }
+  .intro-card p { margin-bottom: 12px; }
+  .intro-card p:last-child { margin-bottom: 0; }
+
+  .toc {
+    background: #f8fafc;
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 14px 18px;
+    margin-top: 14px;
+  }
+  .toc ul { list-style: none; padding-left: 0; }
+  .toc li { margin: 6px 0; }
+  .toc a { color: #1565c0; text-decoration: none; }
+  .toc a:hover { text-decoration: underline; }
+
+  table.files-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 12px 0;
+  }
+  .files-table th, .files-table td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    text-align: left;
+    vertical-align: top;
+  }
+  .files-table th { background: #e3f2fd; color: #0d47a1; }
+  .files-table code { font-size: 12px; background: #f5f5f5; padding: 1px 5px; border-radius: 3px; }
+
+  .goal-box {
+    background: #e8f5e9;
+    border-left: 4px solid #2e7d32;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+  .file-box {
+    background: #fff3e0;
+    border-left: 4px solid #ef6c00;
+    padding: 12px 16px;
+    border-radius: 0 8px 8px 0;
+    margin: 14px 0;
+    font-size: 14px;
+  }
+
+  ol.steps {
+    margin: 12px 0 12px 1.2em;
+    padding: 0;
+  }
+  ol.steps li { margin: 10px 0; }
+  ol.steps strong { color: #1f497d; }
+
+  .excel-window {
+    border: 1px solid #bbb;
+    border-radius: 6px;
+    overflow: hidden;
+    margin: 14px 0;
+  }
+  .excel-titlebar {
+    background: linear-gradient(to bottom, #217346, #1a5c37);
+    color: #fff;
+    padding: 6px 12px;
+    font-size: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+  .excel-titlebar .icon { font-size: 16px; }
+  .excel-formula-bar {
+    display: flex;
+    align-items: center;
+    background: #fff;
+    border-bottom: 1px solid #ccc;
+    padding: 3px 8px;
+    gap: 6px;
+    font-size: 12px;
+  }
+  .cell-ref {
+    width: 50px;
+    border: 1px solid #aaa;
+    padding: 2px 4px;
+    font-size: 12px;
+    text-align: center;
+    color: #333;
+    background: #fff;
+  }
+  .formula-input {
+    flex: 1;
+    border: 1px solid #aaa;
+    padding: 2px 6px;
+    font-size: 12px;
+    color: #333;
+    background: #fff;
+  }
+  .sheet-area { overflow-x: auto; }
+  table.grid {
+    border-collapse: collapse;
+    font-size: 12px;
+    width: 100%;
+  }
+  .row-header {
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+    width: 36px;
+    min-width: 36px;
+    text-align: center;
+    color: #777;
+    padding: 3px;
+    font-size: 11px;
+    font-weight: bold;
+  }
+  .col-header {
+    background: #f2f2f2;
+    border: 1px solid #d0d0d0;
+    text-align: center;
+    color: #555;
+    padding: 4px 8px;
+    font-size: 11px;
+    font-weight: bold;
+    min-width: 72px;
+  }
+  .grid td {
+    border: 1px solid #d0d0d0;
+    padding: 4px 8px;
+    white-space: nowrap;
+  }
+  .header-row td {
+    background: #bdd7ee;
+    font-weight: bold;
+    color: #1f497d;
+    text-align: center;
+  }
+  .data-row:nth-child(even) td:not(.row-header) { background: #f9f9f9; }
+  .data-row:nth-child(odd) td:not(.row-header) { background: #fff; }
+  .num { text-align: right; }
+  .empty { color: #aaa; font-style: italic; font-size: 11px; }
+  .todo-cell {
+    background: #fff2cc !important;
+    color: #7d6608;
+    font-style: italic;
+    font-size: 11px;
+  }
+  .result-a { background: #c6efce !important; color: #276221; font-weight: bold; text-align: center; }
+  .result-b { background: #ffeb9c !important; color: #9c5700; font-weight: bold; text-align: center; }
+  .result-c { background: #ffc7ce !important; color: #9c0006; font-weight: bold; text-align: center; }
+  .sheet-tabs {
+    display: flex;
+    background: #e8e8e8;
+    border-top: 1px solid #bbb;
+    padding: 0 8px;
+    gap: 2px;
+    align-items: flex-end;
+    flex-wrap: wrap;
+  }
+  .tab {
+    padding: 5px 12px;
+    font-size: 11px;
+    border: 1px solid #bbb;
+    border-bottom: none;
+    border-radius: 4px 4px 0 0;
+    background: #d0d0d0;
+    color: #555;
+  }
+  .tab.active {
+    background: #fff;
+    color: #333;
+    font-weight: bold;
+  }
+  .tab.monthly { background: #dce6f1; color: #1f497d; }
+  .tab-add { padding: 5px 10px; font-size: 14px; color: #888; }
+
+  .two-col { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+  @media (max-width: 820px) { .two-col { grid-template-columns: 1fr; } }
+
+  .note-box {
+    background: #fff8e1;
+    border-left: 4px solid #ffc107;
+    padding: 10px 14px;
+    border-radius: 4px;
+    font-size: 13px;
+    color: #555;
+    margin-top: 12px;
+  }
+  .note-box strong { color: #e65100; }
+
+  .exercise-block {
+    background: #fff;
+    border-radius: 10px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    margin-bottom: 28px;
+    overflow: hidden;
+  }
+  .exercise-header {
+    padding: 12px 18px;
+    font-size: 15px;
+    font-weight: bold;
+    color: #fff;
+  }
+  .ex1 .exercise-header { background: #c0392b; }
+  .ex2 .exercise-header { background: #27ae60; }
+  .ex3 .exercise-header { background: #2980b9; }
+  .ex4 .exercise-header { background: #8e44ad; }
+  .exercise-body { padding: 18px 20px 22px; }
+  .badge {
+    display: inline-block;
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 12px;
+    font-weight: bold;
+    margin-right: 6px;
+    background: rgba(255,255,255,0.25);
+  }
+  .arrow { text-align: center; font-size: 24px; color: #888; padding: 6px 0; }
+
+  .section-anchor { scroll-margin-top: 16px; }
+  footer {
+    text-align: center;
+    color: #888;
+    font-size: 12px;
+    margin-top: 28px;
+  }
+
+  /* ----- 回答・解説追記（認知負荷を下げるレイアウト） ----- */
+  .appendix-hero {
+    background: linear-gradient(135deg, #1e3a5f 0%, #2c5282 100%);
+    color: #fff;
+    border-radius: 10px;
+    padding: 18px 20px;
+    margin-bottom: 22px;
+    font-size: 14px;
+    line-height: 1.65;
+  }
+  .appendix-hero h2 {
+    color: #fff;
+    border: none;
+    margin: 0 0 10px;
+    padding: 0;
+    font-size: 18px;
+  }
+  .appendix-hero code {
+    background: rgba(255,255,255,0.18);
+    color: #fff;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 12px;
+  }
+  .one-line-takeaway {
+    background: #edf7ff;
+    border: 1px solid #90caf9;
+    border-radius: 8px;
+    padding: 10px 14px;
+    font-size: 14px;
+    margin: 12px 0;
+    color: #0d47a1;
+  }
+  .read-order {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    align-items: center;
+    margin: 10px 0 14px;
+    font-size: 13px;
+  }
+  .read-order span {
+    background: #fff;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    padding: 5px 12px;
+    color: #333;
+  }
+  .read-order .arr {
+    border: none;
+    background: none;
+    color: #888;
+    padding: 0 2px;
+    font-weight: bold;
+  }
+  .svg-flow {
+    width: 100%;
+    max-width: 680px;
+    height: auto;
+    display: block;
+    margin: 14px auto;
+    border-radius: 8px;
+    background: #fafafa;
+    border: 1px solid #e0e0e0;
+  }
+  .answer-snapshot {
+    background: #f1f8e9;
+    border: 1px solid #8bc34a;
+    border-radius: 8px;
+    padding: 12px 14px;
+    margin: 12px 0;
+    font-size: 14px;
+  }
+  .answer-snapshot strong { color: #33691e; }
+  .mistake-vs-fix {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+    margin: 10px 0;
+  }
+  .mistake-vs-fix th, .mistake-vs-fix td {
+    border: 1px solid #ccc;
+    padding: 8px 10px;
+    vertical-align: top;
+  }
+  .mistake-vs-fix th { background: #fce4ec; color: #880e4f; width: 32%; }
+  .mistake-vs-fix th.fix { background: #e8f5e9; color: #1b5e20; }
+  details.low-load {
+    margin: 12px 0;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background: #fafafa;
+    padding: 0 12px 10px;
+  }
+  details.low-load > summary {
+    cursor: pointer;
+    font-weight: bold;
+    color: #1565c0;
+    padding: 10px 0;
+    list-style: none;
+  }
+  details.low-load > summary::-webkit-details-marker { display: none; }
+  details.low-load[open] > summary {
+    border-bottom: 1px solid #eee;
+    margin-bottom: 8px;
+    padding-bottom: 8px;
+  }
+  .col-map {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+    gap: 8px;
+    margin: 10px 0;
+  }
+  .col-map div {
+    background: #fff;
+    border: 1px solid #bdbdbd;
+    border-radius: 6px;
+    padding: 8px 6px;
+    text-align: center;
+    font-size: 12px;
+  }
+  .col-map div em {
+    font-style: normal;
+    font-weight: bold;
+    color: #c62828;
+    display: block;
+    font-size: 16px;
+    margin-top: 4px;
+  }
+  .step-pill {
+    display: inline-block;
+    background: #eceff1;
+    color: #37474f;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 2px 8px;
+    border-radius: 4px;
+    margin-right: 6px;
+  }
+  h4.answer-h4 {
+    font-size: 14px;
+    color: #37474f;
+    margin: 18px 0 8px;
+    padding-left: 10px;
+    border-left: 4px solid #607d8b;
+  }
+</style>
+</head>
+<body>
+
+<div class="page-wrap">
+
+<h1>演習ガイド（初心者向け）</h1>
+<p class="subtitle">各Excelファイルの「問題」「やること」を最初に整理し、手順と画面イメージで解説します。</p>
+
+<div class="intro-card">
+  <p><strong>このページの読み方</strong>　上から順に「フォルダ内のファイル一覧」→「4つの演習のゴール」→ 各演習のステップとデモ画面、の順で読んでください。デモは実際のExcel画面を模したイメージです（見た目の参考用）。<strong>回答だけ先に知りたい場合</strong>は目次の「7〜11」（回答と解説）へジャンプしてください。</p>
+  <div class="toc">
+    <strong>目次</strong>
+    <ul>
+      <li><a href="#files">1. 演習フォルダ内のファイル一覧</a></li>
+      <li><a href="#summary">2. 4つの演習でやること（一覧）</a></li>
+      <li><a href="#ex1">3. 演習1 — デバッグ演習</a></li>
+      <li><a href="#ex2">4. 演習2 — Function演習</a></li>
+      <li><a href="#ex3">5. 演習3 — シート操作演習</a></li>
+      <li><a href="#ex4">6. 演習4 — 総合演習</a></li>
+      <li><a href="#answers-intro">7. 回答と解説（はじめに）</a></li>
+      <li><a href="#answers-ex1">8. 演習1の答え・図解</a></li>
+      <li><a href="#answers-ex2">9. 演習2の答え・図解</a></li>
+      <li><a href="#answers-ex3">10. 演習3の答え・図解</a></li>
+      <li><a href="#answers-ex4">11. 演習4の答え・図解</a></li>
+    </ul>
+  </div>
+</div>
+
+<!-- ===================== ファイル一覧 ===================== -->
+<h2 id="files" class="section-anchor">1. 演習フォルダ内のファイル一覧</h2>
+<div class="intro-card">
+  <p>演習では「Excel本体」と「VBAのコード断片（.txt）」を組み合わせて使います。次の表で、どのファイルが何の役割かを確認してください。</p>
+  <table class="files-table">
+    <thead>
+      <tr>
+        <th style="width:22%">場所</th>
+        <th>ファイル名</th>
+        <th style="width:36%">役割</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><code>01_デバッグ演習/</code></td>
+        <td><code>デバッグ演習.xlsx</code></td>
+        <td>売上データのシートでマクロを動かす本体。</td>
+      </tr>
+      <tr>
+        <td><code>01_デバッグ演習/</code></td>
+        <td><code>VBAコード_バグあり.txt</code></td>
+        <td>意図的にバグのあるコード。これを標準モジュールに貼り付けて直す。</td>
+      </tr>
+      <tr>
+        <td><code>01_デバッグ演習/</code></td>
+        <td><code>VBAコード_解答.txt</code></td>
+        <td>正解コード（困ったときの確認用）。</td>
+      </tr>
+      <tr>
+        <td><code>02_Function演習/</code></td>
+        <td><code>売上評価データ.xlsx</code></td>
+        <td>担当者・売上などが入った表。マクロで評価列を埋める。</td>
+      </tr>
+      <tr>
+        <td><code>02_Function演習/</code></td>
+        <td><code>VBAコード_テンプレート.txt</code> / <code>VBAコード_解答.txt</code></td>
+        <td>穴埋め用テンプレートと解答。</td>
+      </tr>
+      <tr>
+        <td><code>03_シート操作演習/</code></td>
+        <td><code>月次売上データ.xlsx</code></td>
+        <td>「全データ」シートから月別シートへ振り分ける演習用。</td>
+      </tr>
+      <tr>
+        <td><code>03_シート操作演習/</code></td>
+        <td><code>VBAコード_テンプレート.txt</code> / <code>VBAコード_解答.txt</code></td>
+        <td>穴埋め用と解答。</td>
+      </tr>
+      <tr>
+        <td><code>04_総合演習/</code></td>
+        <td><code>集計ツール_ベース.xlsx</code></td>
+        <td>集計結果を書き込むマクロ用のベース。マクロを入れたら <strong>マクロ有効ブック（.xlsm）</strong>として保存してください。</td>
+      </tr>
+      <tr>
+        <td><code>04_総合演習/支店データ/</code></td>
+        <td><code>東京支店_202401.xlsx</code> など多数</td>
+        <td>支店名_年月形式の明細ファイル。マクロがこれらを開いて数値を読み取る。</td>
+      </tr>
+      <tr>
+        <td><code>04_総合演習/</code></td>
+        <td><code>VBAコード_テンプレート.txt</code> / <code>VBAコード_解答.txt</code></td>
+        <td>穴埋め用と解答。</td>
+      </tr>
+    </tbody>
+  </table>
+  <p style="font-size:13px; color:#666;">Excelでマクロを使うには「開発」タブの表示やマクロのセキュリティ設定が必要な場合があります。研修の指示に従ってください。</p>
+</div>
+
+<!-- ===================== 4演習サマリー ===================== -->
+<h2 id="summary" class="section-anchor">2. 4つの演習でやること（一覧）</h2>
+<div class="intro-card">
+  <table class="files-table">
+    <thead>
+      <tr>
+        <th style="width:12%">演習</th>
+        <th style="width:28%">主なExcelファイル</th>
+        <th>問題／やること（ゴール）</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td><strong>1</strong></td>
+        <td><code>デバッグ演習.xlsx</code></td>
+        <td>バグのあるマクロを直し、<strong>D列に 数量×単価</strong>が入り、<strong>D2:D11 の合計が ¥2,670,000</strong>になること。</td>
+      </tr>
+      <tr>
+        <td><strong>2</strong></td>
+        <td><code>売上評価データ.xlsx</code></td>
+        <td><strong>Function（関数）を作り</strong>、売上金額に応じて <strong>E列に A/B/C の評価</strong>を書き込むマクロを完成させること。</td>
+      </tr>
+      <tr>
+        <td><strong>3</strong></td>
+        <td><code>月次売上データ.xlsx</code></td>
+        <td>「全データ」の行を日付の月で見て、<strong>1月〜12月のシート</strong>に振り分けて転記すること。</td>
+      </tr>
+      <tr>
+        <td><strong>4</strong></td>
+        <td><code>集計ツール_ベース.xlsx</code> ＋ <code>支店データ/</code></td>
+        <td>フォルダ内の各支店ファイルを開き、<strong>「売上明細」シートの最終行・F列の月間合計</strong>などを読み、<strong>「集計結果」シート</strong>に一覧で書き込むこと（存在しないファイルはエラーにならないよう対策）。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- ===================== 演習1 ===================== -->
+<div class="exercise-block ex1 section-anchor" id="ex1">
+  <div class="exercise-header"><span class="badge">演習1</span> デバッグ演習（デバッグ演習.xlsx）</div>
+  <div class="exercise-body">
+
+    <div class="goal-box">
+      <strong>ゴール：</strong>「売上データ」シートの <strong>D列（売上金額）</strong> に、各行について <strong>B列×C列</strong> の計算結果をマクロで書き込む。修正後、<strong>D2:D11 の合計が ¥2,670,000</strong> なら正解です。
+    </div>
+    <div class="file-box">
+      <strong>使うファイル：</strong> <code>01_デバッグ演習/デバッグ演習.xlsx</code>　＋　<code>VBAコード_バグあり.txt</code> の内容を VBA に貼り付けます。
+    </div>
+
+    <h3>ステップバイステップ</h3>
+    <ol class="steps">
+      <li><strong>Excelを開く</strong>　<code>デバッグ演習.xlsx</code> を開き、下のデモのように「売上データ」シートに商品名・数量・単価があることを確認します。</li>
+      <li><strong>エディタを開く</strong>　キーボードで <kbd>Alt</kbd> + <kbd>F11</kbd> を押し、Visual Basic エディタ（VBE）を開きます。</li>
+      <li><strong>標準モジュールを用意</strong>　メニューから「挿入」→「標準モジュール」を選び、空のモジュールを作ります。</li>
+      <li><strong>コードを貼る</strong>　<code>VBAコード_バグあり.txt</code> をメモ帳などで開き、すべてコピーして標準モジュールに貼り付けます。</li>
+      <li><strong>ウォームアップから試す</strong>　まず <code>ウォームアップ_Debug練習</code> という Sub にカーソルを置き、<kbd>F5</kbd> で実行します。<kbd>Ctrl</kbd> + <kbd>G</kbd> でイミディエイトウィンドウを開き、<code>Debug.Print</code> の出力を見てデバッグの感覚を掴みます。</li>
+      <li><strong>本番のバグを探す</strong>　<code>売上計算</code> を実行すると、意図と違う結果になります。コメントのヒントに沿って、<strong>ループの開始行</strong>と<strong>書き込む列番号</strong>の2か所を見直します。</li>
+      <li><strong>動作確認</strong>　もう一度 <code>売上計算</code> を実行し、D2:D11 を選択したときの合計が <strong>¥2,670,000</strong> か確認します。</li>
+    </ol>
+
+    <p style="font-size:13px; color:#666; margin-bottom:8px;">▼ シートの見た目（実行前：D列は空またはおかしい値のイメージ）</p>
+    <div class="excel-window">
+      <div class="excel-titlebar"><span class="icon">📗</span> デバッグ演習.xlsx — Microsoft Excel</div>
+      <div class="excel-formula-bar">
+        <input class="cell-ref" value="D2" readonly>
+        <span>fx</span>
+        <input class="formula-input" value="" readonly>
+      </div>
+      <div class="sheet-area">
+        <table class="grid">
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th>
+              <th class="col-header">B</th>
+              <th class="col-header">C</th>
+              <th class="col-header">D</th>
+              <th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>商品名</td><td>数量</td><td>単価（円）</td><td>売上金額（円）</td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>りんご</td><td class="num">10</td><td class="num">50,000</td>
+              <td class="todo-cell">← マクロで B×C を書く</td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>みかん</td><td class="num">25</td><td class="num">15,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">4</td>
+              <td>ぶどう</td><td class="num">8</td><td class="num">120,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">5</td>
+              <td>いちご</td><td class="num">40</td><td class="num">30,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">6</td>
+              <td>メロン</td><td class="num">5</td><td class="num">200,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">7</td>
+              <td>バナナ</td><td class="num">60</td><td class="num">8,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">8</td>
+              <td>もも</td><td class="num">15</td><td class="num">80,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">9</td>
+              <td>なし</td><td class="num">20</td><td class="num">45,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">10</td>
+              <td>キウイ</td><td class="num">30</td><td class="num">20,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">11</td>
+              <td>スイカ</td><td class="num">3</td><td class="num">150,000</td>
+              <td class="todo-cell"></td><td></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs">
+        <div class="tab active">売上データ</div>
+        <div class="tab-add">＋</div>
+      </div>
+    </div>
+
+    <div class="note-box">
+      <strong>覚えておくこと：</strong> 1行目は見出し（ヘッダー）なので、データのループは通常 <strong>2行目から</strong>始めます。列は A=1, B=2, C=3, D=4… と数えます。
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 演習2 ===================== -->
+<div class="exercise-block ex2 section-anchor" id="ex2">
+  <div class="exercise-header"><span class="badge">演習2</span> Function演習（売上評価データ.xlsx）</div>
+  <div class="exercise-body">
+
+    <div class="goal-box">
+      <strong>ゴール：</strong>売上金額に応じて <strong>A / B / C</strong> を返す <code>Function</code> と、最終行を返す <code>Function</code> を作り、<strong>E列の「評価」</strong>をマクロで埋めます。
+      <br>基準：<strong>100万円以上 → A</strong>、<strong>50万円以上 → B</strong>、<strong>50万円未満 → C</strong>。
+    </div>
+    <div class="file-box">
+      <strong>使うファイル：</strong> <code>02_Function演習/売上評価データ.xlsx</code>　＋　<code>VBAコード_テンプレート.txt</code>（<code>_______</code> の穴埋め）。
+    </div>
+
+    <h3>ステップバイステップ</h3>
+    <ol class="steps">
+      <li><strong>ブックを開く</strong>　<code>売上評価データ.xlsx</code> を開き、A〜D列にデータ、E列に「評価」見出しがあることを確認します。</li>
+      <li><strong>テンプレートを貼る</strong>　<code>VBAコード_テンプレート.txt</code> を標準モジュールに貼り付けます。</li>
+      <li><strong>STEP1：売上評価関数</strong>　参考例（季節判定）と同じ形で、金額のしきい値と A/B/C の文字を穴埋めします。イミディエイトで <code>? 売上評価(1500000)</code> などと打って試せます。</li>
+      <li><strong>STEP2：最終行取得</strong>　指定したシート・列の最終行を返す <code>Function</code> の空欄を埋めます。</li>
+      <li><strong>STEP3：呼び出し側</strong>　ループで各行の D列を読み、<code>売上評価</code> の結果を E列に書き込む処理を完成させます。</li>
+      <li><strong>実行と確認</strong>　マクロを実行し、下の「実行後」のイメージのように E列に A/B/C が並べば成功です。</li>
+    </ol>
+
+    <div class="two-col">
+      <div>
+        <p style="font-size:12px; color:#666; margin-bottom:6px;"><strong>実行前</strong>（E列は空）</p>
+        <div class="excel-window">
+          <div class="excel-titlebar"><span class="icon">📗</span> 売上評価データ.xlsx</div>
+          <div class="sheet-area">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th><th class="col-header">B</th><th class="col-header">C</th>
+                  <th class="col-header">D</th><th class="col-header">E</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>担当者</td><td>支店</td><td>商品</td><td>売上金額</td><td>評価</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>田中</td><td>東京</td><td>製品A</td><td class="num">1,250,000</td>
+                  <td class="empty">（空白）</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>鈴木</td><td>大阪</td><td>製品B</td><td class="num">480,000</td>
+                  <td class="empty"></td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>佐藤</td><td>名古屋</td><td>製品A</td><td class="num">720,000</td>
+                  <td class="empty"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs"><div class="tab active">売上データ</div><div class="tab-add">＋</div></div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px; color:#666; margin-bottom:6px;"><strong>実行後</strong>（完成イメージ）</p>
+        <div class="excel-window">
+          <div class="excel-titlebar"><span class="icon">📗</span> 売上評価データ.xlsx</div>
+          <div class="sheet-area">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th><th class="col-header">B</th><th class="col-header">C</th>
+                  <th class="col-header">D</th><th class="col-header">E</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>担当者</td><td>支店</td><td>商品</td><td>売上金額</td><td>評価</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>田中</td><td>東京</td><td>製品A</td><td class="num">1,250,000</td>
+                  <td class="result-a">A</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>鈴木</td><td>大阪</td><td>製品B</td><td class="num">480,000</td>
+                  <td class="result-c">C</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td>佐藤</td><td>名古屋</td><td>製品A</td><td class="num">720,000</td>
+                  <td class="result-b">B</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs"><div class="tab active">売上データ</div><div class="tab-add">＋</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 演習3 ===================== -->
+<div class="exercise-block ex3 section-anchor" id="ex3">
+  <div class="exercise-header"><span class="badge">演習3</span> シート操作演習（月次売上データ.xlsx）</div>
+  <div class="exercise-body">
+
+    <div class="goal-box">
+      <strong>ゴール：</strong>「全データ」シートの各行について、<strong>A列の日付の「月」</strong>を見て、対応する <strong>「1月」〜「12月」シート</strong>に同じ内容の行をコピーします。あわせて、マクロの前半で <strong>月別シートを用意（既存なら削除して作り直し）</strong>する処理を穴埋めで完成させます。
+    </div>
+    <div class="file-box">
+      <strong>使うファイル：</strong> <code>03_シート操作演習/月次売上データ.xlsx</code>　＋　<code>VBAコード_テンプレート.txt</code>
+      <br><strong>列の意味（全データ）：</strong> A=日付、B=支店名、C=商品カテゴリ、D=担当者、E=売上金額
+    </div>
+
+    <h3>ステップバイステップ</h3>
+    <ol class="steps">
+      <li><strong>ブックを開く</strong>　「全データ」シートに、1年分のような売上一覧があることを確認します。</li>
+      <li><strong>コードを貼る</strong>　テンプレートを標準モジュールに貼り、<code>月別シートを準備する</code> と <code>（振り分け用のSub）</code> の穴埋めに取り組みます（詳細はテンプレ内の STEP1・STEP2）。</li>
+      <li><strong>STEP1から取り組む</strong>　1月〜12月のシート名をループで作り、既に同名シートがある場合は削除してから追加する、という流れをコードで表します。</li>
+      <li><strong>STEP2で振り分け</strong>　全データの最終行までループし、日付から月を求めて、該当する「◯月」シートの次の空行に行をコピーします。</li>
+      <li><strong>確認</strong>　各月シートに、その月の日付の行だけが並び、件数の合計が「全データ」と一致すれば良い出来です。</li>
+    </ol>
+
+    <p style="font-size:13px; font-weight:bold; color:#1565c0; margin:14px 0 6px;">【全データ】転記元シート（イメージ）</p>
+    <div class="excel-window">
+      <div class="excel-titlebar"><span class="icon">📗</span> 月次売上データ.xlsx</div>
+      <div class="sheet-area">
+        <table class="grid">
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th><th class="col-header">B</th><th class="col-header">C</th>
+              <th class="col-header">D</th><th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>日付</td><td>支店名</td><td>商品カテゴリ</td><td>担当者</td><td>売上金額（円）</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>2024/01/10</td><td>東京</td><td>食品</td><td>田中</td><td class="num">320,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>2024/01/23</td><td>大阪</td><td>日用品</td><td>鈴木</td><td class="num">185,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">4</td>
+              <td>2024/02/07</td><td>名古屋</td><td>食品</td><td>佐藤</td><td class="num">440,000</td>
+            </tr>
+            <tr class="data-row" style="color:#aaa; font-style:italic;">
+              <td class="row-header">5</td>
+              <td colspan="5" style="text-align:center;">… 日付の月ごとに「1月」「2月」…シートへ振り分ける</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs"><div class="tab active">全データ</div><div class="tab-add">＋</div></div>
+    </div>
+
+    <div class="arrow">⬇ マクロ実行後</div>
+
+    <p style="font-size:13px; font-weight:bold; color:#1565c0; margin-bottom:6px;">【1月】シート例（1月の行だけが集まるイメージ）</p>
+    <div class="excel-window">
+      <div class="excel-titlebar"><span class="icon">📗</span> 月次売上データ.xlsx</div>
+      <div class="sheet-area">
+        <table class="grid">
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">A</th><th class="col-header">B</th><th class="col-header">C</th>
+              <th class="col-header">D</th><th class="col-header">E</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="header-row">
+              <td class="row-header">1</td>
+              <td>日付</td><td>支店名</td><td>商品カテゴリ</td><td>担当者</td><td>売上金額（円）</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">2</td>
+              <td>2024/01/10</td><td>東京</td><td>食品</td><td>田中</td><td class="num">320,000</td>
+            </tr>
+            <tr class="data-row">
+              <td class="row-header">3</td>
+              <td>2024/01/23</td><td>大阪</td><td>日用品</td><td>鈴木</td><td class="num">185,000</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs">
+        <div class="tab">全データ</div>
+        <div class="tab active">1月</div>
+        <div class="tab monthly">2月</div>
+        <div class="tab monthly">3月</div>
+        <div class="tab monthly" style="color:#999;">…</div>
+        <div class="tab monthly">12月</div>
+        <div class="tab-add">＋</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 演習4 ===================== -->
+<div class="exercise-block ex4 section-anchor" id="ex4">
+  <div class="exercise-header"><span class="badge">演習4</span> 総合演習（集計ツール ＋ 支店データ）</div>
+  <div class="exercise-body">
+
+    <div class="goal-box">
+      <strong>ゴール：</strong><code>支店データ</code> フォルダ内の <strong>支店名_YYYYMM.xlsx</strong> を順に処理し、各ファイルの <strong>「売上明細」シート</strong>で <strong>最終行の F列（月間合計）</strong> と件数などを読み取り、集計用ブックの <strong>「集計結果」シート</strong>に一覧で書き込みます。<code>Dir</code> でファイルの存在確認を行い、無いパスでエラーにならないようにします（テンプレートの穴埋め①②③）。
+    </div>
+    <div class="file-box">
+      <strong>使うファイル：</strong> <code>04_総合演習/集計ツール_ベース.xlsx</code>（マクロ保存時は <strong>.xlsm</strong>）と、<code>04_総合演習/支店データ/</code> 内の複数の <code>.xlsx</code>。<code>VBAコード_テンプレート.txt</code> をモジュールに貼り付けます。
+    </div>
+
+    <h3>ステップバイステップ</h3>
+    <ol class="steps">
+      <li><strong>フォルダ構成を確認</strong>　集計ツールと <code>支店データ</code> フォルダの位置関係を、マクロ内のパス設定（テンプレの指定）と一致させます。必要ならパスを自分のPC向けに直します。</li>
+      <li><strong>ベースブックにマクロを入れる</strong>　<code>集計ツール_ベース.xlsx</code> をマクロ有効ブックとして保存し、テンプレートのコードを標準モジュールに貼ります。</li>
+      <li><strong>穴埋め②から（推奨）</strong>　開いたブックの「売上明細」で最終行を取得し、F列の合計と明細件数を集計シートに書く処理を完成させ、一度動く状態にします。</li>
+      <li><strong>穴埋め①で安全策</strong>　<code>Dir(ファイルパス)</code> が空でないときだけファイルを開く、という分岐を入れて、存在しないファイルで止まらないようにします。</li>
+      <li><strong>穴埋め③（推奨）</strong>　画面更新や計算を一時オフにするなど、処理の最適化を入れて大量ファイルでも速く安定します。</li>
+      <li><strong>結果確認</strong>　「集計結果」シートに、支店名・年月・合計・件数がファイルの数だけ行で増えていれば成功に近いです。</li>
+    </ol>
+
+    <div class="two-col">
+      <div>
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">📁 支店データ／ の例</p>
+        <div style="background:#f5f5f5; border:1px solid #ddd; border-radius:6px; padding:10px 12px; font-size:12px; margin-bottom:10px;">
+          <div style="padding:4px 0; border-bottom:1px solid #eee;">📗 東京支店_202401.xlsx</div>
+          <div style="padding:4px 0; border-bottom:1px solid #eee;">📗 大阪支店_202401.xlsx</div>
+          <div style="padding:4px 0;">📗 … ほか多数</div>
+        </div>
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">各支店ファイル「売上明細」シート（イメージ）</p>
+        <div class="excel-window">
+          <div class="excel-titlebar"><span class="icon">📗</span> 東京支店_202401.xlsx</div>
+          <div class="sheet-area">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th><th class="col-header">B</th><th class="col-header">C</th>
+                  <th class="col-header">D</th><th class="col-header">E</th><th class="col-header">F</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>日付</td><td>担当者</td><td>商品</td><td>数量</td><td>単価</td><td>売上金額</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>2024/01/05</td><td>田中</td><td>製品A</td><td class="num">5</td><td class="num">200,000</td><td class="num">1,000,000</td>
+                </tr>
+                <tr class="data-row" style="background:#dce6f1 !important;">
+                  <td class="row-header">5</td>
+                  <td colspan="5" style="font-weight:bold; color:#1f497d;">月間合計（最終行・F列を読む）</td>
+                  <td class="num" style="font-weight:bold; color:#c0392b;">3,050,000</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs"><div class="tab active">売上明細</div><div class="tab-add">＋</div></div>
+        </div>
+      </div>
+      <div>
+        <p style="font-size:12px; font-weight:bold; color:#6a1b9a; margin-bottom:6px;">集計ツール「集計結果」シート（書き込み先イメージ）</p>
+        <div class="excel-window">
+          <div class="excel-titlebar"><span class="icon">📙</span> 集計ツール_ベース.xlsm（マクロ保存後）</div>
+          <div class="sheet-area">
+            <table class="grid">
+              <thead>
+                <tr>
+                  <th class="col-header" style="width:36px"></th>
+                  <th class="col-header">A</th><th class="col-header">B</th>
+                  <th class="col-header">C</th><th class="col-header">D</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="header-row">
+                  <td class="row-header">1</td>
+                  <td>支店名</td><td>年月</td><td>月間合計売上</td><td>明細件数</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">2</td>
+                  <td>東京支店</td><td>2024年01月</td><td class="num">3,050,000</td><td class="num">3</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">3</td>
+                  <td>大阪支店</td><td>2024年01月</td><td class="num">1,840,000</td><td class="num">4</td>
+                </tr>
+                <tr class="data-row">
+                  <td class="row-header">4</td>
+                  <td colspan="4" style="text-align:center; color:#999; font-style:italic;">… 処理したファイル分だけ行が増える</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="sheet-tabs"><div class="tab active">集計結果</div><div class="tab-add">＋</div></div>
+        </div>
+        <div class="note-box" style="margin-top:10px;">
+          処理の流れ：<strong>フォルダをスキャン</strong> → <strong>ファイルを開く</strong> → <strong>最終行・合計を取得</strong> → <strong>集計結果に1行追加</strong> → <strong>ファイルを閉じる</strong> → 次のファイルへ繰り返し。
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===================== 回答・解説（認知負荷を下げる追記） ===================== -->
+<h2 id="answers-intro" class="section-anchor">7. 回答と解説（受講生の認知負荷を下げる読み方）</h2>
+<div class="appendix-hero">
+  <h2>この章だけで「答え」と「意味」が追えるようにしました</h2>
+  <p>上のセクション（演習1〜4）は<strong>問題の地図</strong>、ここから先は<strong>答えの地図</strong>です。迷子になりにくいよう、次の工夫を入れています。</p>
+  <ul style="margin:10px 0 0 1.1em; line-height:1.75;">
+    <li><strong>1演習＝最初に1文だけ</strong>（いま何を覚えればよいか）</li>
+    <li><strong>図 → 手順 → 答え表</strong>の順（いきなりコードを読ませない）</li>
+    <li><strong>「もう少しだけ」は折りたたみ</strong>（必要な人だけ開く）</li>
+    <li>列番号 <code>A=1 … D=4 …</code> は何度も出します（暗記させない）</li>
+  </ul>
+</div>
+
+<div class="intro-card">
+  <p><strong>おすすめの読み順（1回15分イメージ）</strong></p>
+  <div class="read-order">
+    <span>図で全体像</span><span class="arr">→</span>
+    <span>答え表を見る</span><span class="arr">→</span>
+    <span>Excelで照合</span><span class="arr">→</span>
+    <span>折りたたみは後回し</span>
+  </div>
+  <p class="mini-legend" style="margin:0;">コードの全文は各フォルダの <code>VBAコード_解答.txt</code> が正本です。このページは「どこを直すか／何を書くか」を視覚で先に掴むためのガイドです。</p>
+</div>
+
+<!-- ----- 演習1 回答 ----- -->
+<div class="exercise-block ex1 section-anchor" id="answers-ex1">
+  <div class="exercise-header"><span class="badge">回答</span> 演習1 — デバッグ（答え・図解）</div>
+  <div class="exercise-body">
+    <div class="one-line-takeaway"><strong>いま1つだけ：</strong>データは<strong>2行目から</strong>回し、売上は<strong>D列（列番号4）</strong>に書く。</div>
+
+    <svg class="svg-flow" viewBox="0 0 640 130" xmlns="http://www.w3.org/2000/svg" aria-label="行とループのイメージ">
+      <title>行とループのイメージ</title>
+      <rect x="10" y="10" width="180" height="36" rx="6" fill="#ffebee" stroke="#c62828"/>
+      <text x="100" y="34" text-anchor="middle" font-size="13" fill="#b71c1c">1行目＝見出し（計算しない）</text>
+      <rect x="220" y="10" width="410" height="36" rx="6" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="425" y="34" text-anchor="middle" font-size="13" fill="#1b5e20">2行目〜最終行＝データ（ここを For で回す）</text>
+      <path d="M 100 54 L 100 68 L 425 68 L 425 54" fill="none" stroke="#666" stroke-width="1.5" marker-end="url(#m-ex1-arrow)"/>
+      <defs><marker id="m-ex1-arrow" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <text x="320" y="62" text-anchor="middle" font-size="12" fill="#555">ループはここからスタート</text>
+      <rect x="10" y="82" width="300" height="38" rx="6" fill="#fff" stroke="#1976d2"/>
+      <text x="160" y="106" text-anchor="middle" font-size="12" fill="#0d47a1">書き込み先：D列 ＝ Cells(行, 4)</text>
+      <rect x="330" y="82" width="300" height="38" rx="6" fill="#fce4ec" stroke="#ad1457"/>
+      <text x="480" y="106" text-anchor="middle" font-size="12" fill="#880e4f">よくある間違い：E列 ＝ Cells(行, 5)</text>
+    </svg>
+
+    <h4 class="answer-h4">Excelの見方（列番号の地図）</h4>
+    <div class="col-map">
+      <div>A列<em>1</em>商品名</div>
+      <div>B列<em>2</em>数量</div>
+      <div>C列<em>3</em>単価</div>
+      <div>D列<em>4</em>売上（書く）</div>
+      <div>E列<em>5</em>（今回は使わない）</div>
+    </div>
+
+    <h4 class="answer-h4">答え（修正は2か所だけ）</h4>
+    <table class="mistake-vs-fix">
+      <tr><th>バグのあった行（イメージ）</th><th class="fix">正解</th></tr>
+      <tr>
+        <td><code>For i = 1 To lastRow</code><br><span class="mini-legend">1行目の「商品名」まで計算に入る</span></td>
+        <td><code>For i = 2 To lastRow</code><br><span class="mini-legend">データ開始行から</span></td>
+      </tr>
+      <tr>
+        <td><code>Cells(i, 5).Value = 売上</code><br><span class="mini-legend">E列に書いてしまう</span></td>
+        <td><code>Cells(i, 4).Value = 売上</code><br><span class="mini-legend">D列に書く</span></td>
+      </tr>
+    </table>
+
+    <div class="answer-snapshot">
+      <strong>正解の確認：</strong> <code>売上計算</code> 実行後、<strong>D2:D11</strong> を選択 → ステータスバーの合計が <strong>¥2,670,000</strong>。
+    </div>
+
+    <details class="low-load">
+      <summary>もう少しだけ：なぜ「2」なのか／なぜ「4」なのか</summary>
+      <p><code>Cells(行, 列)</code> の「列」は左から数えた番号です。見出し行は人間が読むための行で、計算の材料ではありません。だからループは2行目から。売上列は表の設計上D列なので、列番号は4です。</p>
+    </details>
+  </div>
+</div>
+
+<!-- ----- 演習2 回答 ----- -->
+<div class="exercise-block ex2 section-anchor" id="answers-ex2">
+  <div class="exercise-header"><span class="badge">回答</span> 演習2 — Function（答え・図解）</div>
+  <div class="exercise-body">
+    <div class="one-line-takeaway"><strong>いま1つだけ：</strong>金額の判定は<strong>大きい条件から</strong>。最終行は<strong>D列基準</strong>、評価の出力は<strong>E列</strong>。</div>
+
+    <svg class="svg-flow" viewBox="0 0 640 200" xmlns="http://www.w3.org/2000/svg" aria-label="売上評価の分岐イメージ">
+      <title>売上評価の分岐</title>
+      <rect x="220" y="10" width="200" height="40" rx="8" fill="#e3f2fd" stroke="#1565c0"/>
+      <text x="320" y="36" text-anchor="middle" font-size="14" font-weight="bold" fill="#0d47a1">売上金額（数字）</text>
+      <rect x="40" y="80" width="150" height="50" rx="8" fill="#c8e6c9" stroke="#2e7d32"/>
+      <text x="115" y="110" text-anchor="middle" font-size="13" fill="#1b5e20">100万円以上？</text>
+      <rect x="245" y="80" width="150" height="50" rx="8" fill="#fff9c4" stroke="#f9a825"/>
+      <text x="320" y="110" text-anchor="middle" font-size="13" fill="#f57f17">50万円以上？</text>
+      <rect x="450" y="80" width="150" height="50" rx="8" fill="#ffcdd2" stroke="#c62828"/>
+      <text x="525" y="110" text-anchor="middle" font-size="13" fill="#b71c1c">それ以外</text>
+      <text x="115" y="155" text-anchor="middle" font-size="20" font-weight="bold" fill="#2e7d32">A</text>
+      <text x="320" y="155" text-anchor="middle" font-size="20" font-weight="bold" fill="#f57f17">B</text>
+      <text x="525" y="155" text-anchor="middle" font-size="20" font-weight="bold" fill="#c62828">C</text>
+      <path d="M 320 52 L 115 80" fill="none" stroke="#666" stroke-width="1.2"/>
+      <path d="M 320 52 L 320 80" fill="none" stroke="#666" stroke-width="1.2"/>
+      <path d="M 320 52 L 525 80" fill="none" stroke="#666" stroke-width="1.2"/>
+      <text x="320" y="185" text-anchor="middle" font-size="11" fill="#666">上から順に If → ElseIf → Else で「最初に当たった所」だけ実行されます</text>
+    </svg>
+
+    <h4 class="answer-h4">シート上の「読む列／書く列」</h4>
+    <div class="col-map">
+      <div>A〜C列<em>1〜3</em>今回はループで直接は使わない</div>
+      <div>D列<em>4</em>売上を読む</div>
+      <div>E列<em>5</em>評価を書く</div>
+    </div>
+
+    <h4 class="answer-h4">STEPごとの答え（穴埋め番号つき）</h4>
+    <table class="files-table">
+      <thead><tr><th>STEP</th><th>埋める内容（要点）</th></tr></thead>
+      <tbody>
+        <tr><td>STEP1</td><td><code>If 売上金額 &gt;= 1000000 Then</code> → <code>"A"</code> → <code>ElseIf ... &gt;= 500000</code> → <code>"B"</code> → <code>Else</code> → <code>"C"</code></td></tr>
+        <tr><td>STEP2</td><td><code>最終行取得 = ws.Cells(ws.Rows.Count, col).End(xlUp).Row</code></td></tr>
+        <tr><td>STEP3</td><td><code>lastRow = 最終行取得(ws, 4)</code>　と　<code>grade = 売上評価(sales)</code></td></tr>
+      </tbody>
+    </table>
+
+    <div class="answer-snapshot">
+      <strong>動作確認の順番：</strong> まずイミディエイトで <code>? 売上評価(1500000)</code> が <code>A</code> になること → そのあと <code>評価を入力する</code> を実行 → E列に A/B/C。
+    </div>
+
+    <details class="low-load">
+      <summary>もう少しだけ：なぜ「100万から先」に書くのか</summary>
+      <p>もし「50万以上」を先に書くと、120万円も最初の条件に入って <strong>B</strong> になってしまいます。だから<strong>厳しい（大きい）条件から</strong>並べます。</p>
+    </details>
+  </div>
+</div>
+
+<!-- ----- 演習3 回答 ----- -->
+<div class="exercise-block ex3 section-anchor" id="answers-ex3">
+  <div class="exercise-header"><span class="badge">回答</span> 演習3 — シート操作（答え・図解）</div>
+  <div class="exercise-body">
+    <div class="one-line-takeaway"><strong>いま1つだけ：</strong>日付から <code>Month</code> で「何月か」を取り、シート <strong>「◯月」</strong> の<strong>次の空行</strong>に A〜E をコピーする。</div>
+
+    <svg class="svg-flow" viewBox="0 0 640 160" xmlns="http://www.w3.org/2000/svg" aria-label="振り分けの流れ">
+      <title>振り分けの流れ</title>
+      <rect x="20" y="40" width="140" height="70" rx="8" fill="#e3f2fd" stroke="#1565c0"/>
+      <text x="90" y="70" text-anchor="middle" font-size="13" fill="#0d47a1">全データ</text>
+      <text x="90" y="92" text-anchor="middle" font-size="11" fill="#333">A列＝日付</text>
+      <path d="M 165 75 L 210 75" stroke="#666" stroke-width="2" marker-end="url(#m-ex3-a)"/>
+      <defs><marker id="m-ex3-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <text x="230" y="70" font-size="12" fill="#555">月を取得</text>
+      <text x="230" y="88" font-size="12" fill="#555">（Month）</text>
+      <path d="M 300 75 L 340 75" stroke="#666" stroke-width="2" marker-end="url(#m-ex3-b)"/>
+      <defs><marker id="m-ex3-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <rect x="350" y="25" width="70" height="40" rx="6" fill="#fff3e0" stroke="#ef6c00"/>
+      <text x="385" y="50" text-anchor="middle" font-size="12" fill="#e65100">1月</text>
+      <rect x="430" y="25" width="70" height="40" rx="6" fill="#fff3e0" stroke="#ef6c00"/>
+      <text x="465" y="50" text-anchor="middle" font-size="12" fill="#e65100">2月</text>
+      <text x="535" y="48" font-size="14" fill="#999">…</text>
+      <rect x="560" y="25" width="70" height="40" rx="6" fill="#fff3e0" stroke="#ef6c00"/>
+      <text x="595" y="50" text-anchor="middle" font-size="12" fill="#e65100">12月</text>
+      <rect x="350" y="95" width="280" height="44" rx="6" fill="#f1f8e9" stroke="#558b2f"/>
+      <text x="490" y="122" text-anchor="middle" font-size="12" fill="#33691e">転記先＝「最終行＋1行目」から A〜E を順に書く</text>
+    </svg>
+
+    <h4 class="answer-h4">STEP1（月別シートを準備）の穴埋め答え</h4>
+    <table class="files-table">
+      <thead><tr><th>穴</th><th>答え</th><th>一言</th></tr></thead>
+      <tbody>
+        <tr><td>①</td><td><code>sheetName</code></td><td>消すシート名は <code>"1月"</code>…<code>"12月"</code></td></tr>
+        <tr><td>②</td><td><code>Nothing</code></td><td>「シートが取れたか」を <code>Not ws Is Nothing</code> で判定</td></tr>
+        <tr><td>③</td><td><code>Nothing</code></td><td>削除後は変数を空に戻す</td></tr>
+        <tr><td>④</td><td><code>sheetName</code></td><td>新シート名も同じ文字列</td></tr>
+      </tbody>
+    </table>
+
+    <h4 class="answer-h4">STEP2（振り分け）の穴埋め答え</h4>
+    <table class="files-table">
+      <thead><tr><th>穴</th><th>答え</th><th>一言</th></tr></thead>
+      <tbody>
+        <tr><td>⑤</td><td><code>sheetName</code></td><td>転記先シートを名前で指定</td></tr>
+        <tr><td>⑥</td><td><code>1</code>（<code>+ 1</code>）</td><td>A列の最終行の<strong>次の行</strong>＝空行</td></tr>
+        <tr><td>⑦〜⑩</td><td><code>2, 3, 4, 5</code></td><td>転記元の B〜E 列（行は <code>i</code> のまま）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="answer-snapshot">
+      <strong>まとめ実行：</strong> <code>月別振り分け実行</code> ＝ STEP1のあと STEP2。各月シートの件数の合計が「全データ」と一致すれば良い状態です。
+    </div>
+
+    <details class="low-load">
+      <summary>もう少しだけ：「次の空行」はなぜ +1？</summary>
+      <p>転記先シートにはヘッダーが1行目にあります。データが2行目まで入っているなら「最終行」は2。その次に書きたいので <strong>+1</strong> で3行目、という考え方です。</p>
+    </details>
+  </div>
+</div>
+
+<!-- ----- 演習4 回答 ----- -->
+<div class="exercise-block ex4 section-anchor" id="answers-ex4">
+  <div class="exercise-header"><span class="badge">回答</span> 演習4 — 総合（答え・図解）</div>
+  <div class="exercise-body">
+    <div class="one-line-takeaway"><strong>いま1つだけ：</strong>フォルダ内の各 <code>.xlsx</code> を開き、<strong>売上明細の最終行×F列</strong>を読んで、<strong>集計結果</strong>に1行ずつ足す。開く前に <code>Dir</code> で存在確認。</div>
+
+    <svg class="svg-flow" viewBox="0 0 640 190" xmlns="http://www.w3.org/2000/svg" aria-label="集計ツールの流れ">
+      <title>集計ツールの流れ</title>
+      <rect x="20" y="30" width="120" height="50" rx="8" fill="#f3e5f5" stroke="#7b1fa2"/>
+      <text x="80" y="60" text-anchor="middle" font-size="12" fill="#4a148c">支店データ</text>
+      <text x="80" y="78" text-anchor="middle" font-size="10" fill="#666">フォルダ</text>
+      <path d="M 145 55 L 185 55" stroke="#666" stroke-width="2" marker-end="url(#m-ex4-a)"/>
+      <defs><marker id="m-ex4-a" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <rect x="190" y="20" width="130" height="70" rx="8" fill="#fff8e1" stroke="#f9a825"/>
+      <text x="255" y="48" text-anchor="middle" font-size="11" fill="#e65100">Dir で存在？</text>
+      <text x="255" y="66" text-anchor="middle" font-size="11" fill="#e65100">（穴埋め①）</text>
+      <text x="255" y="84" text-anchor="middle" font-size="10" fill="#666">無ければスキップ</text>
+      <path d="M 325 55 L 365 55" stroke="#666" stroke-width="2" marker-end="url(#m-ex4-b)"/>
+      <defs><marker id="m-ex4-b" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <rect x="370" y="20" width="120" height="70" rx="8" fill="#e8f5e9" stroke="#2e7d32"/>
+      <text x="430" y="48" text-anchor="middle" font-size="11" fill="#1b5e20">開く</text>
+      <text x="430" y="66" text-anchor="middle" font-size="11" fill="#1b5e20">売上明細</text>
+      <text x="430" y="84" text-anchor="middle" font-size="10" fill="#666">ReadOnly</text>
+      <path d="M 495 55 L 535 55" stroke="#666" stroke-width="2" marker-end="url(#m-ex4-c)"/>
+      <defs><marker id="m-ex4-c" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto"><polygon points="0 0, 8 4, 0 8" fill="#666"/></marker></defs>
+      <rect x="540" y="20" width="85" height="70" rx="8" fill="#e3f2fd" stroke="#1565c0"/>
+      <text x="582" y="50" text-anchor="middle" font-size="11" fill="#0d47a1">最終行</text>
+      <text x="582" y="68" text-anchor="middle" font-size="11" fill="#0d47a1">F列</text>
+      <text x="582" y="84" text-anchor="middle" font-size="10" fill="#666">合計</text>
+      <path d="M 582 95 L 582 115 L 200 115 L 200 130" fill="none" stroke="#666" stroke-width="1.5" marker-end="url(#m-ex4-d)"/>
+      <defs><marker id="m-ex4-d" markerWidth="8" markerHeight="8" refX="4" refY="6" orient="auto"><polygon points="0 0, 8 6, 0 12" fill="#666"/></marker></defs>
+      <rect x="90" y="130" width="460" height="48" rx="8" fill="#fce4ec" stroke="#c2185b"/>
+      <text x="320" y="158" text-anchor="middle" font-size="13" fill="#880e4f">集計ツール本体の「集計結果」シートに1行追加 → ファイルを閉じる → 次へ</text>
+    </svg>
+
+    <h4 class="answer-h4">各ブック「売上明細」の読み取りポイント（図で覚える）</h4>
+    <div class="excel-window" style="max-width:520px">
+      <div class="excel-titlebar"><span class="icon">📗</span> 支店ファイル内「売上明細」</div>
+      <div class="sheet-area">
+        <table class="grid">
+          <thead>
+            <tr>
+              <th class="col-header" style="width:36px"></th>
+              <th class="col-header">…</th>
+              <th class="col-header">F（6列目）</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="data-row"><td class="row-header">1</td><td colspan="1">見出し行</td><td class="num">…</td></tr>
+            <tr class="data-row"><td class="row-header">2</td><td>明細データ</td><td class="num">行の金額</td></tr>
+            <tr class="data-row"><td class="row-header" style="background:#ffecb3">最終</td><td style="background:#ffecb3;font-weight:bold">月間合計ラベルなど</td><td class="num" style="background:#c8e6c9;font-weight:bold">← この値を読む</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="sheet-tabs"><div class="tab active">売上明細</div></div>
+    </div>
+
+    <h4 class="answer-h4">穴埋めの答え</h4>
+    <table class="files-table">
+      <thead><tr><th>穴</th><th>答え（コードの形）</th><th>一言</th></tr></thead>
+      <tbody>
+        <tr><td>②</td><td><code>lastRow = 最終行取得(srcWs, 1)</code></td><td>A列で最終行（テンプレの指定どおり）</td></tr>
+        <tr><td>①</td><td><code>If Dir(filePath) &lt;&gt; "" Then</code> … <code>End If</code></td><td>開く処理を丸ごと囲む（存在するときだけ）</td></tr>
+        <tr><td>③</td><td>冒頭で ScreenUpdating / Calculation / DisplayAlerts を <strong>False</strong>、終わりに <strong>True</strong> に戻す</td><td>速く・安定（必ず戻す）</td></tr>
+      </tbody>
+    </table>
+
+    <div class="answer-snapshot">
+      <strong>正解の目安：</strong> 解答テキストでは <strong>24ファイル</strong>（4支店×6か月）想定で完了メッセージの件数が揃う例になっています。フォルダの実ファイル数に応じて件数は変わります。
+    </div>
+
+    <details class="low-load">
+      <summary>もう少しだけ：保存は .xlsm になぜ必要？</summary>
+      <p>マクロを含めて保存するにはブック形式が <strong>マクロ有効ブック</strong> である必要があります。ベースの <code>.xlsx</code> のままだとマクロが保存できないため、演習の指示どおり <code>.xlsm</code> で保存してください。</p>
+    </details>
+  </div>
+</div>
+
+<div class="intro-card" style="margin-top:8px;">
+  <p style="margin:0;font-size:13px;color:#555;"><strong>講師メモ（認知負荷）：</strong> 受講生には「このページの該当演習だけ開く」運用がおすすめです。全文を縦に読ませるより、<strong>演習に入る直前に該当セクションだけ見せる</strong>と迷いが減ります。</p>
+</div>
+
+<footer>
+  デモ画面は学習用の見た目イメージです。数値・行数は実ファイルと異なる場合があります。<br>
+  詳細なレイアウト確認用に <code>シートデモ画面.html</code> も参照できます。<br>
+  <span style="color:#555">追記：</span>セクション「7〜11」は回答・図解の早見表です（<code>VBAコード_解答.txt</code> と併用）。
+</footer>
+
+</div>
+</body>
+</html>

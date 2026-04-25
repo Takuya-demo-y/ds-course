@@ -1,0 +1,253 @@
+' ================================================================
+' 【演習3】シート操作演習 - 月別シート自動振り分けマクロ
+' ================================================================
+' 「全データ」シートの売上データを月ごとに振り分けて
+' 月別シートに転記するマクロを完成させてください。
+'
+' 【データ構造】「全データ」シート
+'   A列: 日付（例: 2024/01/15）
+'   B列: 支店名
+'   C列: 商品カテゴリ
+'   D列: 担当者
+'   E列: 売上金額
+'
+' ★ 進め方のルール ★
+'   各STEPの上に「参考例」があります。
+'   まず参考例をじっくり読んでから、
+'   [ 穴埋め ] と書かれた _______ の部分を埋めてください。
+'
+' 【穴埋め箇所まとめ】
+'   STEP1: 穴埋め① ② ③ ④  （月別シートを準備する）
+'   STEP2: 穴埋め⑤ ⑥ ⑦〜⑩（データを月別に振り分ける）
+' ================================================================
+
+
+' ================================================================
+' STEP 1: 月別シートを準備する Sub
+' ================================================================
+' 1月～12月のシートを自動で作成します。
+' シートが既にある場合は一度削除してから作り直します。
+'
+' ──────────────────────────────────────────────────────────────
+' 【参考例A】シートが存在するか確認して削除するパターン
+' ──────────────────────────────────────────────────────────────
+'
+'   Dim ws As Worksheet
+'
+'   ' ① On Error Resume Next でエラーを一時的に無視する
+'   '    （存在しないシート名を指定してもエラーにならないようにする）
+'   On Error Resume Next
+'   Set ws = Worksheets("週報")    ← 存在すれば取得、しなければ Nothing のまま
+'   On Error GoTo 0                ← エラー無視を解除（ここから先は普通に）
+'
+'   ' ② 取得できた場合（= シートが存在した場合）は削除する
+'   If Not ws Is Nothing Then      ← Nothing でない = 取得できた = 存在した
+'       ws.Delete
+'       Set ws = Nothing           ← 変数をリセット（次のループに備えて重要！）
+'   End If
+'
+'   ' ③ 新しいシートを末尾に追加してシート名を設定する
+'   Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = "週報"
+'
+'   ポイント:
+'   ① On Error Resume Next / On Error GoTo 0 はセットで使う
+'   ② Is Nothing で変数が「空かどうか」を確認する
+'   ③ Set ws = Nothing のリセットを忘れると次のループに影響する！
+'
+' ──────────────────────────────────────────────────────────────
+' 参考例Aを参考にして、下の [ 穴埋め①②③④ ] を完成させてください。
+' ──────────────────────────────────────────────────────────────
+
+Sub 月別シートを準備する()
+
+    Dim i         As Long
+    Dim sheetName As String
+    Dim ws        As Worksheet
+
+    Application.DisplayAlerts = False   ' 削除時の確認ダイアログを非表示にする
+
+    For i = 1 To 12
+
+        sheetName = i & "月"   ' "1月", "2月", ..., "12月" という文字列を作る
+
+        ' --- シートが既に存在する場合は削除する ---
+        On Error Resume Next
+        Set ws = Worksheets(_______)   ' [ 穴埋め① ] シート名を指定（変数を使う）
+        On Error GoTo 0
+
+        If Not ws Is _______ Then      ' [ 穴埋め② ] 何と比較する？（参考例②を見る）
+            ws.Delete
+            Set ws = _______           ' [ 穴埋め③ ] 変数をリセット（参考例②を見る）
+        End If
+
+        ' --- 新しいシートを末尾に追加してシート名を設定する ---
+        ' [ 穴埋め④ ] 参考例Aの③を参考に、sheetName という変数を使って書こう
+        Worksheets.Add(After:=Worksheets(Worksheets.Count)).Name = _______
+
+        ' --- 追加したシートにヘッダーを設定する（完成済み・変更不要）---
+        With Worksheets(sheetName)
+            .Cells(1, 1).Value = "日付"
+            .Cells(1, 2).Value = "支店名"
+            .Cells(1, 3).Value = "商品カテゴリ"
+            .Cells(1, 4).Value = "担当者"
+            .Cells(1, 5).Value = "売上金額（円）"
+        End With
+
+    Next i
+
+    Application.DisplayAlerts = True
+    MsgBox "月別シートの準備が完了しました！（1月～12月）"
+
+End Sub
+
+'
+' 【STEP1 動作確認の方法】
+'   このSubを実行してみましょう。
+'   ① Excelのシートタブに「1月」「2月」...「12月」が追加されれば正解
+'   ② もう一度実行しても同じ結果になれば削除→再作成が正しく動いている証拠
+'
+
+
+' ================================================================
+' STEP 2: データを月別シートに振り分ける Sub
+' ================================================================
+'
+' ──────────────────────────────────────────────────────────────
+' 【参考例B】転記先の次の空行を求めてデータをコピーするパターン
+' ──────────────────────────────────────────────────────────────
+'
+'   Dim srcWs      As Worksheet  ' コピー元シート
+'   Dim dstWs      As Worksheet  ' コピー先シート
+'   Dim dstLastRow As Long
+'
+'   For i = 2 To lastRow
+'
+'       ' ① コピー先シートを取得する
+'       deptName  = srcWs.Cells(i, 3).Value   ' C列から振り分けキーを取得
+'       Set dstWs = Worksheets(deptName)       ' 振り分け先シートを取得
+'
+'       ' ② 転記先の「次の空行」を求める
+'       '    Rows.Count で最終行、End(xlUp) で上方向、+1 で次の空行
+'       dstLastRow = dstWs.Cells(dstWs.Rows.Count, 1).End(xlUp).Row + 1
+'       '                                                              ↑
+'       '                                              +1 で次の空行になる
+'
+'       ' ③ 転記元の値を転記先にコピーする（列ごとに1行ずつ書く）
+'       dstWs.Cells(dstLastRow, 1).Value = srcWs.Cells(i, 1).Value  ' A列
+'       dstWs.Cells(dstLastRow, 2).Value = srcWs.Cells(i, 2).Value  ' B列
+'       dstWs.Cells(dstLastRow, 3).Value = srcWs.Cells(i, 3).Value  ' C列
+'
+'   Next i
+'
+'   ポイント:
+'   ① 転記先シートの取得は Set dstWs = Worksheets(シート名)
+'   ② dstLastRow + 1 で「データを書き込む次の空行」が分かる
+'   ③ 転記は「転記先のセル.Value = 転記元のセル.Value」の繰り返し
+'
+' ──────────────────────────────────────────────────────────────
+' 参考例Bを参考にして、[ 穴埋め⑤〜⑩ ] を完成させてください。
+' ──────────────────────────────────────────────────────────────
+
+Sub データを月別に振り分ける()
+
+    Dim srcWs      As Worksheet   ' 全データシート（コピー元）
+    Dim dstWs      As Worksheet   ' 月別シート（コピー先）
+    Dim i          As Long
+    Dim lastRow    As Long
+    Dim dstLastRow As Long
+    Dim dateVal    As Date
+    Dim monthNum   As Long
+    Dim sheetName  As String
+
+    Application.ScreenUpdating = False   ' 画面更新を止めて高速化
+
+    Set srcWs = ThisWorkbook.Worksheets("全データ")
+    lastRow = srcWs.Cells(srcWs.Rows.Count, 1).End(xlUp).Row
+
+    For i = 2 To lastRow
+
+        ' 日付から「月」の番号を取り出す（例: 2024/03/15 → 3）
+        dateVal  = srcWs.Cells(i, 1).Value
+        monthNum = Month(dateVal)       ' Month() 関数で月番号(1〜12)を取得
+        sheetName = monthNum & "月"    ' "3" & "月" → "3月" という文字列
+
+        ' [ 穴埋め⑤ ] 転記先シートを取得してください
+        '   ヒント: 参考例Bの①を見る。シート名は sheetName を使う
+        Set dstWs = Worksheets(_______)
+
+        ' [ 穴埋め⑥ ] 転記先の次の空行を求めてください
+        '   ヒント: 参考例Bの②の式の ??? の部分を埋める。+1 を忘れずに！
+        dstLastRow = dstWs.Cells(dstWs.Rows.Count, 1).End(xlUp).Row + ___
+
+        ' [ 穴埋め⑦〜⑩ ] A〜E列（5列分）を転記してください
+        '   ヒント: 参考例Bの③を見る。A列(1)はすでに完成しています
+        dstWs.Cells(dstLastRow, 1).Value = srcWs.Cells(i, 1).Value   ' A列（完成）
+        dstWs.Cells(dstLastRow, 2).Value = srcWs.Cells(i, _).Value   ' [ 穴埋め⑦ ] B列
+        dstWs.Cells(dstLastRow, 3).Value = srcWs.Cells(i, _).Value   ' [ 穴埋め⑧ ] C列
+        dstWs.Cells(dstLastRow, 4).Value = srcWs.Cells(i, _).Value   ' [ 穴埋め⑨ ] D列
+        dstWs.Cells(dstLastRow, 5).Value = srcWs.Cells(i, _).Value   ' [ 穴埋め⑩ ] E列
+
+    Next i
+
+    Application.ScreenUpdating = True
+    MsgBox "振り分けが完了しました！" & vbCrLf & _
+           "各月シートのデータ件数を確認してください。"
+
+End Sub
+
+
+' ================================================================
+' まとめて実行する Sub（完成済み・変更不要）
+' ================================================================
+' STEP1 と STEP2 をまとめて実行する便利なSubです。
+
+Sub 月別振り分け実行()
+    Call 月別シートを準備する    ' ① まず月別シートを作る
+    Call データを月別に振り分ける ' ② 次にデータを振り分ける
+End Sub
+
+'
+' 【最終動作確認の方法】
+'   「月別振り分け実行」を実行して
+'   ① 1月〜12月シートにデータが振り分けられているか確認
+'   ② 全データシートの件数と、各月シートの合計件数が一致するか確認
+'
+
+
+' ================================================================
+' ★ 発展課題（メインが完成したら挑戦してみましょう）
+' ================================================================
+'
+' 課題1: 各月シートのヘッダー行に背景色をつける
+'
+'   ヒント：月別シートを準備するループの中で追加します
+'
+'   With Worksheets(sheetName)
+'       .Rows(1).Interior.Color = RGB(173, 216, 230)  ' 水色
+'       .Rows(1).Font.Bold = True                     ' 太字
+'   End With
+'
+' ──────────────────────────────────────────────────────────────
+'
+' 課題2: 各月シートの最終行に月間合計売上を表示する
+'
+'   ヒント：振り分けループが終わった後、各月シートで合計を計算
+'
+'   Dim m As Long
+'   For m = 1 To 12
+'       With Worksheets(m & "月")
+'           Dim lastR As Long
+'           lastR = .Cells(.Rows.Count, 1).End(xlUp).Row
+'           .Cells(lastR + 1, 5).Value = _
+'               Application.WorksheetFunction.Sum(.Range("E2:E" & lastR))
+'       End With
+'   Next m
+'
+' ──────────────────────────────────────────────────────────────
+'
+' 課題3: E列（売上金額）に数値書式（#,##0）を設定する
+'
+'   ヒント：
+'   Worksheets(sheetName).Columns(5).NumberFormat = "#,##0"
+'
+' ================================================================
